@@ -63,7 +63,6 @@ async def handle_webapp(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(chat_id=CHANNEL_ID, text=message, parse_mode="Markdown")
         await update.message.reply_text("✅ Job posted successfully!")
 
-# Register handlers
 tg_app.add_handler(CommandHandler("start", start))
 tg_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
 tg_app.add_handler(MessageHandler(filters.StatusUpdate.WEB_APP_DATA, handle_webapp))
@@ -79,13 +78,19 @@ def webhook():
     asyncio.run(tg_app.process_update(Update.de_json(update, tg_app.bot)))
     return "ok", 200
 
-# === Startup ===
-async def startup():
+# === Webhook Setup ===
+async def setup_webhook():
     await tg_app.initialize()
-    await tg_app.start()
     await tg_app.bot.set_webhook(WEBHOOK_URL)
+    print("✅ Webhook set successfully!")
+
+def run_flask():
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    asyncio.get_event_loop().run_until_complete(startup())
-    app.run(host="0.0.0.0", port=port)
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(setup_webhook())
+    # Run Flask in the same process
+    run_flask()
