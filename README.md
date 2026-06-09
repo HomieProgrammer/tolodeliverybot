@@ -18,3 +18,4 @@ View your app in AI Studio: https://ai.studio/apps/7547ca6d-21ad-45e9-ae85-c92de
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+"# telegram-delivery-bot" 
