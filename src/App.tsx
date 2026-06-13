@@ -40,10 +40,10 @@ export default function App() {
   
   // Custom user profile and mini-app checkout state
   const [customerProfile, setCustomerProfile] = useState({
-    name: "Dagim Halala",
-    phone: "0916031177",
-    address: "Bole, Addis Ababa",
-    pickupAddress: "Tolo Kitchen Hub"
+    name: "",
+    phone: "",
+    address: "",
+    pickupAddress: ""
   });
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
@@ -52,6 +52,14 @@ export default function App() {
   const [paymentStep, setPaymentStep] = useState<'details' | 'waiting' | 'success'>('details');
   const [paymentType, setPaymentType] = useState<'telebirr' | 'cbe_birr' | 'cbe_bank'>('telebirr');
   const [bankTxRef, setBankTxRef] = useState('CBE-TX-9281729A');
+  const [payerPhone, setPayerPhone] = useState('');
+
+  // Sync payerPhone with profile phone only when opening the modal, and default to blank if it's default dummy phone
+  useEffect(() => {
+    if (paymentDraftOrderId) {
+      setPayerPhone(customerProfile.phone === '0911223344' ? '' : customerProfile.phone);
+    }
+  }, [paymentDraftOrderId, customerProfile.phone]);
 
   // View Control: On mobile, users can toggle panes if side-by-side is crowded
   const [currentPane, setCurrentPane] = useState<'consumer' | 'admin' | 'tracking'>('consumer');
@@ -750,15 +758,15 @@ export default function App() {
       {/* ADVANCE PAYMENT CASHLESS CHECKOUT MINI-APP */}
       <AnimatePresence>
         {paymentDraftOrderId && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto">
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-150 relative"
+              className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl border border-slate-150 relative flex flex-col max-h-[94vh] sm:max-h-[90vh] my-auto"
             >
               {/* Header */}
-              <div className="bg-indigo-600 text-white px-5 py-4 flex justify-between items-center">
+              <div className="bg-indigo-600 text-white px-5 py-4 flex justify-between items-center shrink-0">
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-indigo-200" />
                   <div>
@@ -780,7 +788,7 @@ export default function App() {
                 const isPhoneInvalid = cleanPhone.length !== 10;
                 const isProfileIncomplete = !customerProfile.name.trim() || !customerProfile.phone.trim() || !customerProfile.address.trim() || isPhoneInvalid;
                 return (
-                  <div className="p-5 space-y-4">
+                  <div className="p-5 space-y-4 overflow-y-auto flex-1 min-h-0">
                     <div className="bg-slate-50 border border-slate-150 p-3.5 rounded-xl font-sans space-y-3">
                       <div className="flex items-center justify-between">
                         <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest block">Recipient Delivery Address Form</span>
@@ -904,18 +912,18 @@ export default function App() {
                       {/* Owner Account Details Announcement */}
                       <div className="bg-indigo-50/70 border border-indigo-150 rounded-xl p-3 font-sans">
                         <span className="block text-[10.5px] font-extrabold text-indigo-900 mb-1.5 uppercase tracking-wider flex items-center gap-1.5">
-                          👑 Verified Merchant (Owner Account) Destination:
+                          👑 Verified Merchant (Corporate Account) Destination:
                         </span>
                         <div className="space-y-1 font-sans text-xs">
                           {paymentType === 'telebirr' && (
                             <div className="space-y-1">
                               <div className="flex items-center justify-between text-indigo-950 font-medium">
                                 <span>Account Name:</span>
-                                <span className="font-bold">Dagim Halala</span>
+                                <span className="font-bold text-indigo-900">Tolo Delivery Service plc</span>
                               </div>
                               <div className="flex items-center justify-between text-indigo-950 font-medium">
-                                <span>Telebirr Merchant No:</span>
-                                <span className="font-mono bg-white border border-indigo-150 text-indigo-800 px-2 py-0.5 rounded font-bold text-[12px] select-all">0916031177</span>
+                                <span>Telebirr Till No:</span>
+                                <span className="font-mono bg-white border border-indigo-150 text-indigo-800 px-2 py-0.5 rounded font-bold text-[12px] select-all">890412</span>
                               </div>
                             </div>
                           )}
@@ -923,11 +931,11 @@ export default function App() {
                             <div className="space-y-1">
                               <div className="flex items-center justify-between text-indigo-950 font-medium">
                                 <span>Account Name:</span>
-                                <span className="font-bold">Dagim Halala</span>
+                                <span className="font-bold text-indigo-900">Tolo Delivery Service plc</span>
                               </div>
                               <div className="flex items-center justify-between text-indigo-950 font-medium">
-                                <span>CBE Birr Phone Code:</span>
-                                <span className="font-mono bg-white border border-indigo-150 text-indigo-800 px-2 py-0.5 rounded font-bold text-[12px] select-all">0916031177</span>
+                                <span>CBE Birr Till Code:</span>
+                                <span className="font-mono bg-white border border-indigo-150 text-indigo-800 px-2 py-0.5 rounded font-bold text-[12px] select-all">110928</span>
                               </div>
                             </div>
                           )}
@@ -935,11 +943,11 @@ export default function App() {
                             <div className="text-indigo-950 space-y-1 pt-0.5">
                               <div className="flex items-center justify-between font-medium">
                                 <span>CBE Account Name:</span>
-                                <span className="font-bold">Dagim Halala</span>
+                                <span className="font-bold text-indigo-900">Tolo Delivery Corporate Group</span>
                               </div>
                               <div className="flex items-center justify-between font-medium">
                                 <span>CBE Account No:</span>
-                                <span className="font-mono bg-white border border-indigo-150 text-indigo-800 px-2 py-0.5 rounded font-bold text-[11px] select-all">1000100603326</span>
+                                <span className="font-mono bg-white border border-indigo-150 text-indigo-800 px-2 py-0.5 rounded font-bold text-[11px] select-all">1000293817162</span>
                               </div>
                             </div>
                           )}
@@ -952,11 +960,11 @@ export default function App() {
                           <input 
                             type="text" 
                             placeholder="e.g. 0911234567"
-                            value={customerProfile.phone}
-                            onChange={(e) => setCustomerProfile(prev => ({ ...prev, phone: e.target.value }))}
+                            value={payerPhone}
+                            onChange={(e) => setPayerPhone(e.target.value)}
                             className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-850 font-mono focus:outline-none focus:ring-1 focus:ring-sky-500"
                           />
-                          <p className="text-[9.5px] text-sky-650 mt-1 font-sans font-medium">Pays directly to Dagim Halala's merchant account. Your phone will receive the push OTP token screen.</p>
+                          <p className="text-[9.5px] text-sky-650 mt-1 font-sans font-medium">Pays directly to our official corporate telebirr merchant account. Your phone will receive an automated interactive push notification.</p>
                         </div>
                       )}
                       {paymentType === 'cbe_birr' && (
@@ -965,11 +973,11 @@ export default function App() {
                           <input 
                             type="text" 
                             placeholder="e.g. 0911234567"
-                            value={customerProfile.phone}
-                            onChange={(e) => setCustomerProfile(prev => ({ ...prev, phone: e.target.value }))}
+                            value={payerPhone}
+                            onChange={(e) => setPayerPhone(e.target.value)}
                             className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-850 font-mono focus:outline-none focus:ring-1 focus:ring-amber-500"
                           />
-                          <p className="text-[9.5px] text-amber-650 mt-1 font-sans font-medium">Using Commercial Bank of Ethiopia mobile wallet transfer directly to Dagim Halala's CBE Birr account.</p>
+                          <p className="text-[9.5px] text-amber-650 mt-1 font-sans font-medium">Using Commercial Bank of Ethiopia mobile money to transfer directly to the official corporate CBE Birr merchant till.</p>
                         </div>
                       )}
                       {paymentType === 'cbe_bank' && (
@@ -983,7 +991,7 @@ export default function App() {
                             className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-850 font-mono focus:outline-none focus:ring-1 focus:ring-purple-500"
                             required
                           />
-                          <p className="text-[9.5px] text-purple-650 font-sans">Once you transfer money to our official Bank Account <strong>1000100603326</strong> above, enter the reference code here to verify.</p>
+                          <p className="text-[9.5px] text-purple-650 font-sans">Once you transfer money to our official Bank Account above, enter the reference code here to verify.</p>
                         </div>
                       )}
                       <p className="text-[10px] text-slate-450 leading-relaxed font-light font-sans">Your transaction details are securely processed directly to Tolo Delivery's brand merchant platform.</p>
@@ -1056,7 +1064,7 @@ export default function App() {
 
               {/* STEP 2: LOADING GATEWAY SCREEN */}
               {paymentStep === 'waiting' && (
-                <div className="p-8 text-center space-y-4">
+                <div className="p-8 text-center space-y-4 overflow-y-auto flex-1">
                   <div className="flex justify-center">
                     <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
                   </div>
@@ -1072,7 +1080,7 @@ export default function App() {
 
               {/* STEP 3: TRANSACTION COMPLETE RECEIPT SUCCESS */}
               {paymentStep === 'success' && (
-                <div className="p-6 text-center space-y-4 font-sans">
+                <div className="p-6 text-center space-y-4 font-sans overflow-y-auto flex-1">
                   <div className="flex justify-center">
                     <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
                       <CheckCircle2 className="w-8 h-8" />

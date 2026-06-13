@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ToggleLeft, ToggleRight, Settings, Plus, RotateCcw, Package, DollarSign, ListOrdered, Percent, Sparkles, CheckSquare, XSquare, Clock } from 'lucide-react';
+import { ToggleLeft, ToggleRight, Settings, Plus, RotateCcw, Package, DollarSign, ListOrdered, Percent, Sparkles, CheckSquare, XSquare, Clock, Terminal, Globe, ExternalLink, Copy, Check } from 'lucide-react';
 import { MenuItem, Order, OrderStatus } from '../types';
 
 interface AdminDashboardProps {
@@ -18,7 +18,42 @@ export default function AdminDashboard({
   orders,
   onCancelActiveOrder
 }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'catalog' | 'orders' | 'metrics'>('catalog');
+  const [activeTab, setActiveTab] = useState<'catalog' | 'orders' | 'metrics' | 'bot-setup'>('catalog');
+  const [botToken, setBotToken] = useState('8139963672:AAEl_yourTokenHere');
+  const [customTunnelUrl, setCustomTunnelUrl] = useState('');
+  const [tunnelType, setTunnelType] = useState<'workspace' | 'ngrok'>('workspace');
+  const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
+
+  // Simulation state for payload webhook
+  const [simText, setSimText] = useState('I want 2 Cheeseburgers and a Cappuccino');
+  const [simStatus, setSimStatus] = useState<'idle' | 'testing' | 'success'>('idle');
+  const [simResult, setSimResult] = useState<any>(null);
+
+  const handleCopy = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedCmd(id);
+    setTimeout(() => {
+      setCopiedCmd(null);
+    }, 1500);
+  };
+
+  const handleSimulateWebhook = async () => {
+    setSimStatus('testing');
+    setSimResult(null);
+    try {
+      const response = await fetch('/api/parse-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: simText })
+      });
+      const data = await response.json();
+      setSimResult(data);
+      setSimStatus('success');
+    } catch (err) {
+      setSimResult({ error: 'Failed to access parse route: ' + String(err) });
+      setSimStatus('success');
+    }
+  };
 
   const getStatusColor = (status: OrderStatus) => {
     switch (status) {
@@ -44,27 +79,34 @@ export default function AdminDashboard({
             <span className="text-[10px] text-slate-400 block font-light">Small-City Partner Dashboard Control</span>
           </div>
         </div>
-        <div className="flex gap-1.5 text-xs bg-slate-800 p-1 rounded-lg">
+        <div className="flex gap-1.5 text-xs bg-slate-800 p-1 rounded-lg overflow-x-auto max-w-full">
           <button
             id="tab-catalog"
             onClick={() => setActiveTab('catalog')}
-            className={`py-1.5 px-3 rounded-md transition font-medium cursor-pointer ${activeTab === 'catalog' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:text-white'}`}
+            className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === 'catalog' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:text-white'}`}
           >
             Ready catalog
           </button>
           <button
             id="tab-orders"
             onClick={() => setActiveTab('orders')}
-            className={`py-1.5 px-3 rounded-md transition font-medium cursor-pointer ${activeTab === 'orders' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:text-white'}`}
+            className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === 'orders' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:text-white'}`}
           >
             Live orders ({orders.length})
           </button>
           <button
             id="tab-metrics"
             onClick={() => setActiveTab('metrics')}
-            className={`py-1.5 px-3 rounded-md transition font-medium cursor-pointer ${activeTab === 'metrics' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:text-white'}`}
+            className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === 'metrics' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:text-white'}`}
           >
             Metrics
+          </button>
+          <button
+            id="tab-bot-setup"
+            onClick={() => setActiveTab('bot-setup')}
+            className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === 'bot-setup' ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-300 hover:text-white'}`}
+          >
+            Bot & Ngrok Setup
           </button>
         </div>
       </div>
@@ -265,6 +307,197 @@ export default function AdminDashboard({
               <p className="text-xs text-slate-500 leading-relaxed">
                 In smaller cities (under 100k population), customer relationships thrive on personal proximity. Classic food delivery apps feel dry. Giving the user the freedom to &ldquo;just type&rdquo; resembles talking directly to a local shop teller, ensuring unparalleled retention and supreme simplicity for elderly or tech-averse locals!
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* TELEGRAM BOT & NGROK SETUP TAB */}
+        {activeTab === 'bot-setup' && (
+          <div className="space-y-5">
+            <div>
+              <h4 className="font-bold text-slate-900 text-sm">Telegram Bot & Ngrok Local Tunnel Setup</h4>
+              <p className="text-xs text-slate-500 mt-0.5">Connect your real Telegram Bot directly to this backend using Secure Dev Tunnels (ngrok) or our direct Cloud Run URL structure.</p>
+            </div>
+
+            {/* TUNNEL SELECTION CARD */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-4">
+              <span className="text-[11px] uppercase tracking-wider text-indigo-600 font-bold block">1. Select Delivery Webhook Host Type</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setTunnelType('workspace')}
+                  className={`p-3 rounded-xl border text-left cursor-pointer transition ${tunnelType === 'workspace' ? 'bg-white border-indigo-500 shadow-sm ring-1 ring-indigo-500/10' : 'bg-slate-50/50 hover:bg-slate-50 border-slate-200'}`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Globe className={`w-4 h-4 ${tunnelType === 'workspace' ? 'text-indigo-600' : 'text-slate-400'}`} />
+                    <span className="font-bold text-xs text-slate-800">Direct Public Preview URL</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed">Use our secure, always-on Cloud Run development URL directly. No tunnel utility installation needed!</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTunnelType('ngrok')}
+                  className={`p-3 rounded-xl border text-left cursor-pointer transition ${tunnelType === 'ngrok' ? 'bg-white border-indigo-500 shadow-sm ring-1 ring-indigo-500/10' : 'bg-slate-50/50 hover:bg-slate-50 border-slate-200'}`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Terminal className={`w-4 h-4 ${tunnelType === 'ngrok' ? 'text-indigo-600' : 'text-slate-400'}`} />
+                    <span className="font-bold text-xs text-slate-800">Ngrok Local Tunnel</span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed">Perfect if you download/export this workspace to run on your local computer via <code>npm run dev</code> on port 3000.</p>
+                </button>
+              </div>
+
+              {/* INPUT CONTROLS */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div className="space-y-1">
+                  <label className="text-[10.5px] font-bold text-slate-705 block">Telegram Bot Token (from @BotFather)</label>
+                  <input
+                    type="text"
+                    value={botToken}
+                    onChange={(e) => setBotToken(e.target.value)}
+                    placeholder="e.g. 8139963672:AAEl_yourTokenHere"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  />
+                </div>
+
+                {tunnelType === 'ngrok' ? (
+                  <div className="space-y-1">
+                    <label className="text-[10.5px] font-bold text-slate-705 block">Your Custom Ngrok URL</label>
+                    <input
+                      type="text"
+                      value={customTunnelUrl}
+                      onChange={(e) => setCustomTunnelUrl(e.target.value)}
+                      placeholder="e.g. https://xxxx-yy-zz.ngrok-free.app"
+                      className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-mono focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    <label className="text-[10.5px] font-bold text-slate-450 block">Current Public App Domain (Read Only)</label>
+                    <div className="bg-slate-100 border border-slate-200 rounded-lg px-3 py-1 text-xs font-mono text-slate-500 select-all truncate">
+                      {typeof window !== 'undefined' ? window.location.origin : 'https://ais-dev-o3dqdf3222mogm3qode6kb-813996367247.europe-west2.run.app'}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* INTEGRATION GUIDE CARDS */}
+            <div className="space-y-4">
+              <span className="text-[11px] uppercase tracking-wider text-slate-400 font-bold block">2. Setup Code Scripts</span>
+
+              {/* STEP A: IF NGROK, RUN NGROK */}
+              {tunnelType === 'ngrok' && (
+                <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2">
+                  <span className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+                    <span className="w-5 h-5 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-[10px]">A</span>
+                    Start your local ngrok tunnel on port 3000:
+                  </span>
+                  <div className="bg-slate-950 text-slate-100 rounded-lg p-3 font-mono text-[11px] relative group flex items-center justify-between">
+                    <div>
+                      <span className="text-rose-400">$</span> ngrok http 3000
+                    </div>
+                    <button
+                      onClick={() => handleCopy("ngrok http 3000", "ngrok")}
+                      className="p-1 px-2.5 text-slate-400 hover:text-white rounded transition bg-slate-800 border border-slate-700 flex items-center gap-1 cursor-pointer font-sans"
+                    >
+                      {copiedCmd === 'ngrok' ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
+                      <span className="text-[9px] font-sans font-medium">{copiedCmd === 'ngrok' ? 'Copied' : 'Copy'}</span>
+                    </button>
+                  </div>
+                  <p className="text-[10.5px] text-slate-500 leading-snug">This translates local requests to a secure HTTPS URL so that Telegram can forward its webhooks to your laptop.</p>
+                </div>
+              )}
+
+              {/* STEP B: WEBHOOK COMMANDS */}
+              <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2">
+                <span className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+                  <span className="w-5 h-5 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-[10px]">
+                    {tunnelType === 'ngrok' ? 'B' : 'A'}
+                  </span>
+                  Register Webhook / Web URL callback on Telegram Server:
+                </span>
+                
+                {/* Generated curl command */}
+                <div className="bg-slate-950 text-slate-100 rounded-lg p-3 font-mono text-[11px] relative flex flex-col gap-2">
+                  <div className="flex justify-between items-center text-slate-400 text-[10px] border-b border-slate-800 pb-1.5 mb-1">
+                    <span>GENERATE UNIX CURL CODE STATEMENT</span>
+                    <button
+                      onClick={() => handleCopy(`curl -s -X POST "https://api.telegram.org/bot${botToken}/setWebhook?url=${tunnelType === 'workspace' ? (typeof window !== 'undefined' ? window.location.origin : '') : (customTunnelUrl || 'https://xxxx.ngrok-free.app')}/api/parse-order"`, "curl")}
+                      className="p-1 px-2 text-slate-400 hover:text-white rounded transition bg-slate-800 border border-slate-700 flex items-center gap-1 cursor-pointer"
+                    >
+                      {copiedCmd === 'curl' ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3" />}
+                      <span className="text-[9px] font-sans font-medium">{copiedCmd === 'curl' ? 'Copied!' : 'Copy Shell Command'}</span>
+                    </button>
+                  </div>
+                  <p className="text-slate-350 break-all font-mono text-[10.5px] leading-relaxed">
+                    curl -s -X POST &quot;https://api.telegram.org/bot<strong className="text-sky-300 font-bold">{botToken}</strong>/setWebhook?url=<strong className="text-emerald-400 font-bold">{tunnelType === 'workspace' ? (typeof window !== 'undefined' ? window.location.origin : 'https://dev-url') : (customTunnelUrl || 'https://xxxx.ngrok-free.app')}</strong>/api/parse-order&quot;
+                  </p>
+                </div>
+                <p className="text-[10.5px] text-slate-500 leading-snug">Fire this command in your Unix terminal or standard command prompt to inform Telegram where to submit text order updates.</p>
+              </div>
+
+              {/* STEP C: TELEGRAM BOTMENUBUTTON CONFIG */}
+              <div className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2">
+                <span className="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+                  <span className="w-5 h-5 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-[10px]">
+                    {tunnelType === 'ngrok' ? 'C' : 'B'}
+                  </span>
+                  Set WebApp Keyboard Launcher URL in BotFather:
+                </span>
+                
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-xs leading-relaxed space-y-2 text-slate-600">
+                  <p>1. Open <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" className="text-indigo-600 font-semibold underline inline-flex items-center gap-0.5">@BotFather<ExternalLink className="w-3 h-3 inline" /></a> inside Telegram.</p>
+                  <p>2. Send <strong>/newapp</strong> to create a new Mini App connected to your bot.</p>
+                  <p>3. When asked for the <strong>Web App URL</strong>, copy and paste this exact link:</p>
+                  <div className="bg-white border border-slate-200 p-2 text-slate-800 font-mono text-xs rounded flex justify-between items-center bg-white shadow-sm">
+                    <span className="font-bold text-indigo-600 truncate">{tunnelType === 'workspace' ? (typeof window !== 'undefined' ? window.location.origin : 'https://dev-url') : (customTunnelUrl || 'https://xxxx.ngrok-free.app')}</span>
+                    <button
+                      onClick={() => handleCopy(tunnelType === 'workspace' ? (typeof window !== 'undefined' ? window.location.origin : 'https://dev-url') : (customTunnelUrl || 'https://xxxx.ngrok-free.app'), "webappUrl")}
+                      className="p-1 px-2.5 text-[10px] text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded transition font-bold font-sans cursor-pointer flex items-center gap-1 shrink-0"
+                    >
+                      {copiedCmd === 'webappUrl' ? 'Copied!' : 'Copy Launch Link'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* INTERACTIVE SIMULATOR WEBHOOK PAYLOAD DEBUGGER */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+              <span className="text-[11px] uppercase tracking-wider text-indigo-600 font-bold block flex items-center gap-1">
+                <Terminal className="w-3.5 h-3.5 text-indigo-600" /> Webhook Payload Simulation Debugger
+              </span>
+              <p className="text-[11px] text-slate-500 leading-normal">Test how the backend server processes incoming webhook messages from your ngrok tunnel locally.</p>
+              
+              <div className="space-y-2">
+                <textarea
+                  value={simText}
+                  onChange={(e) => setSimText(e.target.value)}
+                  placeholder="Enter sample telegram message..."
+                  className="w-full bg-white border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 font-sans focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  rows={2}
+                />
+                
+                <button
+                  type="button"
+                  onClick={handleSimulateWebhook}
+                  disabled={simStatus === 'testing' || !simText.trim()}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl py-2 px-4 text-xs font-bold font-sans cursor-pointer transition disabled:opacity-50 block w-full text-center"
+                >
+                  {simStatus === 'testing' ? 'Transmitting mock webhook...' : 'Simulate Incoming Telegram Webhook JSON POST'}
+                </button>
+              </div>
+
+              {simResult && (
+                <div className="space-y-1.5 animate-fade-in">
+                  <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-wider font-bold">TELEGRAM API WEBHOOK SERVER WEB RESPONSE ACTION (JSON):</span>
+                  <div className="bg-slate-950 text-emerald-400 rounded-lg p-3 font-mono text-[10px] max-h-[160px] overflow-y-auto">
+                    <pre>{JSON.stringify(simResult, null, 2)}</pre>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

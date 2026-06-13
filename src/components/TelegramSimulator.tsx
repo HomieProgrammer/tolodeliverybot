@@ -436,8 +436,8 @@ export default function TelegramSimulator({
           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer shadow-md transform active:scale-95 duration-100 font-sans tracking-wide font-bold animate-pulse-subtle"
         >
           {isAmharic 
-            ? "🚀 ቶሎ የትዕዛዝ መተግበሪያ ይክፈቱ | Open Tolo Speedy Order App"
-            : "🚀 Open Tolo Speedy Order App & Share Location"}
+            ? "🚀 ቶሎ ክፈት | Open Tolo"
+            : "🚀 Open Tolo"}
         </button>
       </div>
 
