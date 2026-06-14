@@ -1,5 +1,5 @@
 {
-  "name": "Telegram Food Delivery Bot Prototype",
+  "name": "ቶሎ | Tollo Delivery",
   "description": "An interactive chatbot simulator and real-time order tracking dashboard for natural language food ordering.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

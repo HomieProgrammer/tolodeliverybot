@@ -47,6 +47,33 @@ export default function App() {
   });
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
+  // Bot configurations for direct Telegram operator alerts
+  const [botToken, setBotToken] = useState(() => localStorage.getItem('tolo_bot_token') || '8139963672:AAEl_yourTokenHere');
+  const [operatorChatId, setOperatorChatId] = useState(() => localStorage.getItem('tolo_operator_chat_id') || '7596617846');
+  const [operatorUsername, setOperatorUsername] = useState(() => localStorage.getItem('tolo_operator_username') || 'Cephasimon');
+  const [customTunnelUrl, setCustomTunnelUrl] = useState(() => localStorage.getItem('tolo_custom_tunnel_url') || '');
+  const [tunnelType, setTunnelType] = useState<'workspace' | 'ngrok'>(() => (localStorage.getItem('tolo_tunnel_type') as 'workspace' | 'ngrok') || 'workspace');
+
+  useEffect(() => {
+    localStorage.setItem('tolo_bot_token', botToken);
+  }, [botToken]);
+
+  useEffect(() => {
+    localStorage.setItem('tolo_operator_chat_id', operatorChatId);
+  }, [operatorChatId]);
+
+  useEffect(() => {
+    localStorage.setItem('tolo_operator_username', operatorUsername);
+  }, [operatorUsername]);
+
+  useEffect(() => {
+    localStorage.setItem('tolo_custom_tunnel_url', customTunnelUrl);
+  }, [customTunnelUrl]);
+
+  useEffect(() => {
+    localStorage.setItem('tolo_tunnel_type', tunnelType);
+  }, [tunnelType]);
+
   // Advance Payment Flow Mini-App State
   const [paymentDraftOrderId, setPaymentDraftOrderId] = useState<string | null>(null);
   const [paymentStep, setPaymentStep] = useState<'details' | 'waiting' | 'success'>('details');
@@ -80,18 +107,24 @@ export default function App() {
   useEffect(() => {
     loadMenu();
 
-    // Welcome messages for Telegram
+    // Welcome messages for Telegram /start onboarding flow
     setMessages([
       {
         id: 'msg_welcome_1',
         sender: 'bot',
-        text: "Hello! Welcome to ቶሎ/Tolo Delivery. 🛵💨\nI'm your speedy city food and parcel order companion. Ready to order?",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      },
-      {
-        id: 'msg_welcome_2',
-        sender: 'bot',
-        text: "Instead of clicking heavy menus, simply *write* what you want in natural text!\n\nFor example:\n\"Hi, I would like 2 Custom Pizzas and 2 BBQ Spare Ribs.\"\n\nI will instantly read your text, build your kitchen ticket, and enable real-time tracking!\n\n🌐 **Amharic Language Preference / አማርኛ**: You can toggle the Telegram interface to Amharic using the language button in the top menu bar anytime!",
+        type: 'start_flow',
+        text: "🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\n\nOrder quickly, track deliveries in real time, and pay securely.",
+        buttons: [
+          {
+            label: "🍔 Open Tollo Delivery",
+            url: "https://tolodeliverybot-production.up.railway.app",
+            actionType: "open_mini_app"
+          },
+          {
+            label: "📞 Contact Support",
+            actionType: "alert_support"
+          }
+        ],
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }
     ]);
@@ -139,6 +172,56 @@ export default function App() {
     }]);
 
     setIsParsing(true);
+
+    // 1.5 Support and Mini App Onboarding Interceptor (Requirement 5 & 6)
+    const normalizedText = text.toLowerCase().trim();
+    
+    if (text === "CONTACT_SUPPORT_TRIGGERED_ACTION") {
+      setTimeout(() => {
+        setMessages(prev => [...prev, {
+          id: 'msg_support_' + Date.now(),
+          sender: 'bot',
+          text: "📞 *Tollo Customer Care Desk*\n\nOur customer support desk is active 24/7.\n\nReplying directly to this bot goes directly to our live desk. Alternatively, you can email us at *support@tollodelivery.com* or call our toll-free support line at *9801*.\n\nHow can we help you today?",
+          timestamp: timestampStr
+        }]);
+        setIsParsing(false);
+      }, 600);
+      return;
+    }
+
+    const isStartCommand = normalizedText === '/start' || normalizedText === 'start';
+    const miniAppKeywords = [
+      "order food", "delivery", "menu", "start order", "track order",
+      "order", "track", "food", "burger", "pizza", "wrap", "waffle", "drink"
+    ];
+    const triggersMiniAppGuide = miniAppKeywords.some(keyword => normalizedText.includes(keyword)) || isStartCommand;
+
+    if (triggersMiniAppGuide) {
+      setTimeout(() => {
+        setMessages(prev => [...prev, {
+          id: 'msg_onboard_' + Date.now(),
+          sender: 'bot',
+          type: 'start_flow',
+          text: isStartCommand
+            ? "🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\n\nOrder quickly, track deliveries in real time, and pay securely."
+            : "🍔 *Tollo Mini App Assistant*\n\nTo place your order, browse our full live menu, track active deliveries, or manage your delivery parameters, please use our secure ቶሎ | Tollo Delivery Mini App directly inside Telegram by clicking the button below!",
+          buttons: [
+            {
+              label: "🍔 Open Tollo Delivery",
+              url: "https://tolodeliverybot-production.up.railway.app",
+              actionType: "open_mini_app"
+            },
+            {
+              label: "📞 Contact Support",
+              actionType: "alert_support"
+            }
+          ],
+          timestamp: timestampStr
+        }]);
+        setIsParsing(false);
+      }, 600);
+      return;
+    }
 
     let activeName = customerProfile.name;
     let activePhone = customerProfile.phone;
@@ -240,8 +323,8 @@ export default function App() {
 
       itemsListStr.forEach((itemStr, index) => {
         const cleanItemStr = itemStr.replace(/\.$/, '').trim();
-        // Regex to extract quantity, name, and optional embedded price format like "( $12.00 )" or "($12.00)"
-        const rMatch = cleanItemStr.match(/^(\d+)\s+(.+?)(?:\s+\(\$(\d+(?:\.\d+)?)\))?$/) || cleanItemStr.match(/^(\d+)x?\s+(.+)$/);
+        // Regex to extract quantity, name, and optional embedded price format like "( $12.00 )" or "($12.00)" or "(12.00 Birr)"
+        const rMatch = cleanItemStr.match(/^(\d+)\s+(.+?)(?:\s+\((?:[\$]|Br|Birr)?\s*(\d+(?:\.\d+)?)\s*(?:Birr|Br)?\))?$/i) || cleanItemStr.match(/^(\d+)x?\s+(.+)$/i);
         
         if (rMatch) {
           const qty = parseInt(rMatch[1]) || 1;
@@ -251,10 +334,10 @@ export default function App() {
           if (rMatch[3]) {
             price = parseFloat(rMatch[3]);
           } else {
-            const pMatch = name.match(/\(\$(\d+(?:\.\d+)?)\)/);
+            const pMatch = name.match(/\((?:[\$]|Br|Birr)?\s*(\d+(?:\.\d+)?)\s*(?:Birr|Br)?\)/i);
             if (pMatch) {
               price = parseFloat(pMatch[1]);
-              name = name.replace(/\(\$(\d+(?:\.\d+)?)\)/, '').trim();
+              name = name.replace(/\((?:[\$]|Br|Birr)?\s*(\d+(?:\.\d+)?)\s*(?:Birr|Br)?\)/i, '').trim();
             } else {
               const existingItem = menuItems.find(i => i.name.toLowerCase() === name.toLowerCase());
               if (existingItem) {
@@ -479,11 +562,54 @@ export default function App() {
     setMessages(prev => [...prev, {
       id: 'msg_bot_paid_receipt_' + Date.now(),
       sender: 'bot',
-      text: `💳 *TOLO SPEEDY PAYMENT VERIFIED* ✅\n\n👤 *Customer:* ${customerProfile.name}\n📞 *Contact Phone:* ${customerProfile.phone}\n📍 *Pick-Up From:* ${customerProfile.pickupAddress || "(Ready from Tolo Kitchen Hub)"}\n📍 *Drop-Off To:* ${customerProfile.address}\n\n*Advance Payment Made (1/3 of food):* $${advancePaid.toFixed(2)}\n*Remaining Balance (Due After Delivery):* $${remainingBalance.toFixed(2)} (inc. $${orderDeliveryFee.toFixed(2)} delivery fee payable after delivery)\n*Method:* ${methodLabel}\n*Receipt ID:* ${txId}\n\nOur kitchen has queued your order as CONFIRMED. Your 1/3 deposit is secured. The delivery fee is payable after the item is delivered. Live GPS tracking is now active!`,
+      text: `💳 *TOLO SPEEDY PAYMENT VERIFIED* ✅\n\n👤 *Customer:* ${customerProfile.name}\n📞 *Contact Phone:* ${customerProfile.phone}\n📍 *Pick-Up From:* ${customerProfile.pickupAddress || "(Ready from Tolo Kitchen Hub)"}\n📍 *Drop-Off To:* ${customerProfile.address}\n\n*Advance Payment Made (1/3 of food):* ${advancePaid.toFixed(2)} Birr\n*Remaining Balance (Due After Delivery):* ${remainingBalance.toFixed(2)} Birr (inc. ${orderDeliveryFee.toFixed(2)} Birr delivery fee payable after delivery)\n*Method:* ${methodLabel}\n*Receipt ID:* ${txId}\n\nOur kitchen has queued your order as CONFIRMED. Your 1/3 deposit is secured. The delivery fee is payable after the item is delivered. Live GPS tracking is now active!`,
       timestamp: timestampStr,
       type: 'tracking_link',
       trackingOrderId: draftId
     }]);
+
+    // Dispatch real-time Telegram alert message to operator
+    if (botToken && botToken !== "8139963672:AAEl_yourTokenHere" && operatorChatId) {
+      const itemsListText = targetOrder
+        ? targetOrder.items.map(it => `• ${it.quantity}x ${it.name} (${it.totalPrice.toFixed(2)} Birr)`).join('\n')
+        : '';
+        
+      const trackingUrl = `${window.location.origin}/?order=${draftId}`;
+      const alertPayload = `🔔 *Tolo Delivery Service alert!* 🔔\n` +
+        `👨‍🍳 *New Order Confirmed & Deposit Paid!*\n\n` +
+        `👤 *Customer:* ${customerProfile.name}\n` +
+        `📞 *Phone:* ${customerProfile.phone}\n` +
+        `📍 *Pick-Up:* ${customerProfile.pickupAddress || "Tolo Kitchen Hub"}\n` +
+        `📍 *Drop-Off Address:* ${customerProfile.address}\n\n` +
+        `🍔 *Items:* \n${itemsListText}\n\n` +
+        `🏢 *Total Food Cost:* ${orderSubtotal.toFixed(2)} Birr\n` +
+        `💳 *Deposit Paid (1/3):* ${advancePaid.toFixed(2)} Birr ✅\n` +
+        `💵 *Remaining Balance (Paid after delivery):* ${remainingBalance.toFixed(2)} Birr\n` +
+        `🎯 *Method:* ${methodLabel}\n` +
+        `🧾 *Receipt ID:* ${txId}\n\n` +
+        `👉 *Open Dispatch & Tracking Screen:* ${trackingUrl}`;
+
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: operatorChatId,
+          text: alertPayload,
+          parse_mode: "Markdown"
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.ok) {
+          console.log("Successfully transmitted operator dispatch to chat ID:", operatorChatId);
+        } else {
+          console.warn("Telegram API returned error delivering operator dispatch:", data);
+        }
+      })
+      .catch(netErr => {
+        console.error("Failed to post payload warning to Telegram Bot API:", netErr);
+      });
+    }
 
     setActiveTrackingOrderId(draftId);
     setPaymentDraftOrderId(null);
@@ -646,6 +772,16 @@ export default function App() {
                 onResetMenu={handleResetMenu}
                 orders={orders}
                 onCancelActiveOrder={handleCancelActiveOrder}
+                botToken={botToken}
+                setBotToken={setBotToken}
+                operatorChatId={operatorChatId}
+                setOperatorChatId={setOperatorChatId}
+                operatorUsername={operatorUsername}
+                setOperatorUsername={setOperatorUsername}
+                customTunnelUrl={customTunnelUrl}
+                setCustomTunnelUrl={setCustomTunnelUrl}
+                tunnelType={tunnelType}
+                setTunnelType={setTunnelType}
               />
             )}
             
@@ -1009,26 +1145,26 @@ export default function App() {
                         <div className="border-t border-dashed border-slate-200 pt-3 space-y-1.5 text-xs font-sans">
                           <div className="flex justify-between text-slate-500">
                             <span>Estimated Food Price (Subtotal):</span>
-                            <span className="font-mono">${mealPrice.toFixed(2)}</span>
+                            <span className="font-mono">{mealPrice.toFixed(2)} Birr</span>
                           </div>
                           <p className="text-[10.5px] text-amber-700 bg-amber-50 border border-amber-200 p-2 rounded-lg leading-relaxed font-sans font-medium">
                             📢 <strong>Price Holder Notice:</strong> This estimated total represents a pricing holder value only. For verification during authorization, you will only pay <strong>1/3 of this amount</strong> right now.
                           </p>
                           <div className="flex justify-between font-bold text-slate-800">
                             <span className="text-emerald-700">Advance Deposit Required (1/3 of food):</span>
-                            <span className="font-mono text-emerald-700 font-extrabold text-sm">${advancePrice.toFixed(2)}</span>
+                            <span className="font-mono text-emerald-700 font-extrabold text-sm">{advancePrice.toFixed(2)} Birr</span>
                           </div>
                           <div className="flex justify-between text-slate-500">
                             <span>Remaining Food Balance (Due At Delivery):</span>
-                            <span className="font-mono">${remainingMeal.toFixed(2)}</span>
+                            <span className="font-mono">{remainingMeal.toFixed(2)} Birr</span>
                           </div>
                           <div className="flex justify-between text-slate-500">
                             <span>Delivery Fee (Paid After Delivery):</span>
-                            <span className="font-mono">${shippingFee.toFixed(2)}</span>
+                            <span className="font-mono">{shippingFee.toFixed(2)} Birr</span>
                           </div>
                           <div className="flex justify-between font-semibold text-slate-900 border-t border-dashed border-slate-200 pt-1 text-indigo-700">
                             <span>Total Due Upon Delivery:</span>
-                            <span className="font-mono font-bold">${payableOnDelivery.toFixed(2)}</span>
+                            <span className="font-mono font-bold">{payableOnDelivery.toFixed(2)} Birr</span>
                           </div>
                         </div>
                       );
@@ -1117,19 +1253,19 @@ export default function App() {
                         <>
                           <div className="flex justify-between text-emerald-700 font-bold border-t border-dashed border-slate-150 pt-1">
                             <span>Advance Deposit paid:</span>
-                            <span>${advancePrice.toFixed(2)}</span>
+                            <span>{advancePrice.toFixed(2)} Birr</span>
                           </div>
                           <div className="flex justify-between text-slate-550 text-[10.5px]">
                             <span>Delivery Fee (Pay After):</span>
-                            <span>${deliveryFeeVal.toFixed(2)}</span>
+                            <span>{deliveryFeeVal.toFixed(2)} Birr</span>
                           </div>
                           <div className="flex justify-between text-slate-550 text-[10.5px]">
                             <span>Remaining meal price:</span>
-                            <span>${(mealPrice * 2 / 3).toFixed(2)}</span>
+                            <span>{(mealPrice * 2 / 3).toFixed(2)} Birr</span>
                           </div>
                           <div className="flex justify-between text-slate-800 font-bold border-t border-slate-200 pt-1">
                             <span>Pending Balance Due Upon Delivery:</span>
-                            <span>${payableOnDelivery.toFixed(2)}</span>
+                            <span>{payableOnDelivery.toFixed(2)} Birr</span>
                           </div>
                         </>
                       );

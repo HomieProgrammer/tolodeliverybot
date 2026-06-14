@@ -19,7 +19,7 @@ export default function ExplanationAlert({ onAutoPlaceOrder }: ExplanationAlertP
           <Lightbulb className="w-6 h-6" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight">ቶሎ/Tolo Delivery: Telegram-Style Delivery Bot</h2>
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight">ቶሎ | Tollo Delivery: Telegram-Style Delivery Bot</h2>
           <p className="text-sm text-slate-500 mt-1 max-w-4xl">
             This prototype simulates a **"Just Write It"** style bot. Instead of endless button-clicking or scrolling through long menu interfaces, users simply text their orders naturally or use our smart express panel. Our integrated server-side **Gemini AI model** instantly translates their text into structured kitchen tickets, matches available foods, and issues an active **real-time order tracker**.
           </p>

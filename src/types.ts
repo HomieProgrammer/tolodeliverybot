@@ -44,7 +44,7 @@ export interface ChatMessage {
   sender: 'user' | 'bot' | 'system';
   text: string;
   timestamp: string;
-  type?: 'text' | 'order_summary' | 'tracking_link';
+  type?: 'text' | 'order_summary' | 'tracking_link' | 'start_flow';
   orderSummary?: {
     items: OrderItem[];
     subtotal: number;
@@ -53,6 +53,11 @@ export interface ChatMessage {
     orderId: string;
   };
   trackingOrderId?: string;
+  buttons?: Array<{
+    label: string;
+    url?: string;
+    actionType?: 'open_mini_app' | 'open_url' | 'alert_support';
+  }>;
 }
 
 export interface ParsedResponse {

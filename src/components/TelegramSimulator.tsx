@@ -56,6 +56,7 @@ export default function TelegramSimulator({
   const [selectedItems, setSelectedItems] = useState<Record<string, number>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [formError, setFormError] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // List of extra custom items created on-the-fly by the customer
   const [customEnteredItems, setCustomEnteredItems] = useState<{ id: string; name: string; price: number; category: string; isAvailable: boolean; description: string }[]>([]);
@@ -123,7 +124,7 @@ export default function TelegramSimulator({
     const itemsList = Object.entries(selectedItems)
       .map(([id, qty]) => {
         const item = menuItems.find(i => i.id === id) || customEnteredItems.find(i => i.id === id);
-        return item ? `${qty} ${item.name} ($${item.price.toFixed(2)})` : null;
+        return item ? `${qty} ${item.name} (${item.price.toFixed(2)} Birr)` : null;
       })
       .filter(Boolean);
 
@@ -213,7 +214,7 @@ export default function TelegramSimulator({
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-bold text-sm tracking-tight">ቶሎ/Tolo Delivery ⚡</span>
+              <span className="font-bold text-sm tracking-tight">ቶሎ | Tollo Delivery ⚡</span>
               <span id="bot-badge" className="text-[9px] bg-[#1565c0] text-blue-100 px-1 py-0.2 rounded font-semibold uppercase">BOT</span>
             </div>
             <span className="text-xs text-blue-100/90 block font-light">
@@ -327,33 +328,33 @@ export default function TelegramSimulator({
                               </span>
                             )}
                           </div>
-                          <span className="font-mono text-slate-600 font-bold">${item.totalPrice.toFixed(2)}</span>
+                          <span className="font-mono text-slate-600 font-bold">{item.totalPrice.toFixed(2)} Birr</span>
                         </div>
                       ))}
 
                       <div className="pt-2 mt-1 border-t border-slate-200 space-y-1 font-mono text-[11.5px] text-slate-600">
                         <div className="flex justify-between">
                           <span>Estimated Food Price:</span>
-                          <span>${msg.orderSummary.subtotal.toFixed(2)}</span>
+                          <span>{msg.orderSummary.subtotal.toFixed(2)} Birr</span>
                         </div>
                         <p className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1.5 rounded-lg leading-relaxed font-sans font-medium">
                           ℹ️ <strong>Price Holder Alert:</strong> The listed price is a holder reference for placeholder billing. You only pay <strong>1/3</strong> of it now.
                         </p>
-                        <div className="flex justify-between font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                        <div className="flex justify-between font-semibold text-emerald-700 bg-emerald-55 px-1.5 py-0.5 rounded">
                           <span>Advance Payment Required (1/3):</span>
-                          <span>${(msg.orderSummary.subtotal / 3).toFixed(2)}</span>
+                          <span>{(msg.orderSummary.subtotal / 3).toFixed(2)} Birr</span>
                         </div>
                         <div className="flex justify-between">
                           <span>Delivery Fee (Paid After Delivery):</span>
-                          <span>${msg.orderSummary.deliveryFee.toFixed(2)}</span>
+                          <span>{msg.orderSummary.deliveryFee.toFixed(2)} Birr</span>
                         </div>
                         <div className="flex justify-between text-[11px] text-slate-500">
                           <span>Remaining Balance (Due After Delivery):</span>
-                          <span>${((msg.orderSummary.subtotal * 2 / 3) + msg.orderSummary.deliveryFee).toFixed(2)}</span>
+                          <span>{((msg.orderSummary.subtotal * 2 / 3) + msg.orderSummary.deliveryFee).toFixed(2)} Birr</span>
                         </div>
                         <div className="flex justify-between font-bold text-slate-900 border-t border-dashed border-slate-200 pt-1 text-xs">
                           <span>Total order value:</span>
-                          <span>${msg.orderSummary.total.toFixed(2)}</span>
+                          <span>{msg.orderSummary.total.toFixed(2)} Birr</span>
                         </div>
                       </div>
 
@@ -399,6 +400,51 @@ export default function TelegramSimulator({
                   </div>
                 )}
 
+                {/* Dynamic Inline Keyboard Buttons */}
+                {msg.buttons && msg.buttons.length > 0 && (
+                  <div className="mt-2.5 flex flex-col gap-1.5 w-full">
+                    {msg.buttons.map((btn, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => {
+                          if (btn.actionType === 'open_mini_app') {
+                            setToastMessage(`🚀 Launching Mini App...`);
+                            setTimeout(() => setToastMessage(null), 3000);
+                            setIsMenuOpen(true);
+                            if (btn.url) {
+                              try {
+                                window.open(btn.url, '_blank', 'noopener,noreferrer');
+                              } catch (e) {
+                                console.warn("window.open blocked, running drawer fallback.");
+                              }
+                            }
+                          } else if (btn.actionType === 'alert_support') {
+                            setToastMessage("📞 Direct support ticket opened!");
+                            setTimeout(() => setToastMessage(null), 3000);
+                            
+                            // Let's call onSendMessage with a support request code
+                            onSendMessage("CONTACT_SUPPORT_TRIGGERED_ACTION");
+                          } else {
+                            setToastMessage(`Opening URL...`);
+                            setTimeout(() => setToastMessage(null), 2000);
+                            if (btn.url) {
+                              try {
+                                window.open(btn.url, '_blank', 'noopener,noreferrer');
+                              } catch (e) {
+                                console.warn(e);
+                              }
+                            }
+                          }
+                        }}
+                        className="w-full bg-[#f0f3f6] hover:bg-[#e4ebf3] text-blue-600 rounded-xl py-2 px-3 text-xs font-bold text-center border border-slate-200/60 cursor-pointer transition flex items-center justify-center gap-1.5"
+                      >
+                        {btn.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 {/* Timestamp & Status double ticks */}
                 <div className="text-[9px] text-slate-400 text-right font-mono mt-1 select-none flex items-center justify-end gap-0.5">
                   <span>{msg.timestamp}</span>
@@ -418,7 +464,7 @@ export default function TelegramSimulator({
             <div className="bg-white text-slate-650 rounded-2xl rounded-bl-none px-4 py-3 border border-slate-100 shadow-sm flex items-center gap-2">
               <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />
               <span className="text-xs font-medium font-mono">
-                {isAmharic ? "ቶሎ/Tolo Delivery ትዕዛዝዎን በመተንተን ላይ ነው..." : "ቶሎ/Tolo Delivery is parsing your request..."}
+                {isAmharic ? "ቶሎ | Tollo Delivery ትዕዛዝዎን በመተንተን ላይ ነው..." : "ቶሎ | Tollo Delivery is parsing your request..."}
               </span>
             </div>
           </div>
@@ -432,12 +478,16 @@ export default function TelegramSimulator({
         <button
           id="btn-open-webapp-menu"
           type="button"
-          onClick={() => setIsMenuOpen(true)}
+          onClick={() => {
+            setToastMessage(`🚀 Launching ቶሎ | Tollo Delivery Mini App...`);
+            setTimeout(() => setToastMessage(null), 3000);
+            setIsMenuOpen(true);
+          }}
           className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer shadow-md transform active:scale-95 duration-100 font-sans tracking-wide font-bold animate-pulse-subtle"
         >
           {isAmharic 
-            ? "🚀 ቶሎ ክፈት | Open Tolo"
-            : "🚀 Open Tolo"}
+            ? "🍔 ቶሎ ክፈት | Open Tollo Delivery"
+            : "🍔 Open Tollo Delivery"}
         </button>
       </div>
 
@@ -666,7 +716,7 @@ export default function TelegramSimulator({
                       </div>
                       <div>
                         <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                          {isAmharic ? "ግምታዊ ዋጋ ($)" : "Estimated Price ($)"}
+                          {isAmharic ? "ግምታዊ ዋጋ (በብር)" : "Estimated Price (Birr)"}
                         </label>
                         <input 
                           type="number" 
@@ -724,7 +774,7 @@ export default function TelegramSimulator({
                           <div key={item.id} className="flex justify-between items-center bg-white border border-emerald-100 p-2.5 rounded-xl text-xs leading-none">
                             <div className="truncate min-w-0 pr-2">
                               <span className="font-bold text-slate-800">{item.name}</span>
-                              <span className="text-[10px] text-emerald-600 font-bold block mt-1">${item.price.toFixed(2)} each</span>
+                              <span className="text-[10px] text-emerald-600 font-bold block mt-1">{item.price.toFixed(2)} Birr each</span>
                             </div>
                             <div className="flex items-center gap-1.5 shrink-0">
                               <button
@@ -794,7 +844,7 @@ export default function TelegramSimulator({
                     className="w-full bg-emerald-600 hover:bg-emerald-750 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-95 shadow-md flex items-center justify-center gap-1.5 cursor-pointer font-sans"
                   >
                     <ShoppingBag className="w-4 h-4" /> 
-                    <span>{isAmharic ? `ምርጫዬን ላክ ($${getSelectedItemsTotalPrice().toFixed(2)})` : `Submit Customer Choices ($${getSelectedItemsTotalPrice().toFixed(2)})`}</span>
+                    <span>{isAmharic ? `ምርጫዬን ላክ (${getSelectedItemsTotalPrice().toFixed(2)} ብር)` : `Submit Customer Choices (${getSelectedItemsTotalPrice().toFixed(2)} Birr)`}</span>
                   </button>
                 </div>
               ) : (
@@ -806,6 +856,20 @@ export default function TelegramSimulator({
               )}
             </motion.div>
           </>
+        )}
+      </AnimatePresence>
+
+      {/* Floating native-like Telegram Toast message */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 15, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 15, scale: 0.95 }}
+            className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-slate-900/95 backdrop-blur-md text-white rounded-full px-5 py-2.5 text-xs font-semibold z-50 shadow-xl border border-slate-800 text-center pointer-events-none tracking-wide"
+          >
+            {toastMessage}
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
