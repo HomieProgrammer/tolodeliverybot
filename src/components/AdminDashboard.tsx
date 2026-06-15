@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { ToggleLeft, ToggleRight, Settings, Plus, RotateCcw, Package, DollarSign, ListOrdered, Percent, Sparkles, CheckSquare, XSquare, Clock, Terminal, Globe, ExternalLink, Copy, Check } from 'lucide-react';
+import { ToggleLeft, ToggleRight, Settings, Plus, RotateCcw, Package, DollarSign, ListOrdered, Percent, Sparkles, CheckSquare, XSquare, Clock, Terminal, Globe, ExternalLink, Copy, Check, X, Lock, Unlock } from 'lucide-react';
 import { MenuItem, Order, OrderStatus } from '../types';
 
 interface AdminDashboardProps {
@@ -9,6 +9,9 @@ interface AdminDashboardProps {
   onResetMenu: () => void;
   orders: Order[];
   onCancelActiveOrder: (orderId: string) => void;
+  onVerifyPayment: (orderId: string) => void;
+  onAssignDriver: (orderId: string, driver: { name: string; id: string; phone: string }) => void;
+  onDriverAccept: (orderId: string) => void;
   // Synced Telegram Bot & Operator Tunnel Configs
   botToken: string;
   setBotToken: (val: string) => void;
@@ -28,6 +31,9 @@ export default function AdminDashboard({
   onResetMenu,
   orders,
   onCancelActiveOrder,
+  onVerifyPayment,
+  onAssignDriver,
+  onDriverAccept,
   botToken,
   setBotToken,
   operatorChatId,
@@ -39,7 +45,38 @@ export default function AdminDashboard({
   tunnelType,
   setTunnelType
 }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'catalog' | 'orders' | 'metrics' | 'bot-setup'>('catalog');
+  const [activeTab, setActiveTab] = useState<'orders' | 'metrics' | 'bot-setup'>('orders');
+  const [passcode, setPasscode] = useState('');
+  const [isUnlocked, setIsUnlocked] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('tolo_admin_unlocked') === 'true';
+    }
+    return false;
+  });
+  const [passError, setPassError] = useState<string | null>(null);
+
+  const handleUnlock = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (passcode.trim() === 'Dag0916031177?') {
+      setIsUnlocked(true);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('tolo_admin_unlocked', 'true');
+      }
+      setPassError(null);
+    } else {
+      setPassError('Incorrect secure passcode! Please try again.');
+    }
+  };
+
+  const handleLock = () => {
+    setIsUnlocked(false);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('tolo_admin_unlocked');
+    }
+    setPasscode('');
+    setPassError(null);
+  };
+  const [driverAssignments, setDriverAssignments] = useState<Record<string, { name: string; id: string; phone: string }>>({});
   const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
   
   // OS-specific ngrok styling tab
@@ -134,189 +171,470 @@ export default function AdminDashboard({
           </div>
           <div>
             <h3 className="font-bold text-sm tracking-tight">ቶሎ/Tolo Delivery Kitchen Panel</h3>
-            <span className="text-[10px] text-slate-400 block font-light">Small-City Partner Dashboard Control</span>
+            <span className="text-[10px] text-slate-400 block font-light">
+              {isUnlocked ? "🟢 Active Session / Unlocked" : "🔒 Restricted Access"}
+            </span>
           </div>
         </div>
-        <div className="flex gap-1.5 text-xs bg-slate-800 p-1 rounded-lg overflow-x-auto max-w-full">
-          <button
-            id="tab-catalog"
-            onClick={() => setActiveTab('catalog')}
-            className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === 'catalog' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:text-white'}`}
-          >
-            Ready catalog
-          </button>
-          <button
-            id="tab-orders"
-            onClick={() => setActiveTab('orders')}
-            className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === 'orders' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:text-white'}`}
-          >
-            Live orders ({orders.length})
-          </button>
-          <button
-            id="tab-metrics"
-            onClick={() => setActiveTab('metrics')}
-            className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === 'metrics' ? 'bg-indigo-600 text-white' : 'text-slate-300 hover:text-white'}`}
-          >
-            Metrics
-          </button>
-          <button
-            id="tab-bot-setup"
-            onClick={() => setActiveTab('bot-setup')}
-            className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === 'bot-setup' ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-300 hover:text-white'}`}
-          >
-            Bot & Ngrok Setup
-          </button>
-        </div>
+        {isUnlocked ? (
+          <div className="flex items-center gap-2.5">
+            <div className="flex gap-1.5 text-xs bg-slate-800 p-1 rounded-lg overflow-x-auto max-w-full">
+              <button
+                id="tab-orders"
+                onClick={() => setActiveTab('orders')}
+                className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === 'orders' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-300 hover:text-white'}`}
+              >
+                Live orders ({orders.length})
+              </button>
+              <button
+                id="tab-metrics"
+                onClick={() => setActiveTab('metrics')}
+                className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === 'metrics' ? 'bg-indigo-600 text-white font-bold' : 'text-slate-300 hover:text-white'}`}
+              >
+                Metrics
+              </button>
+              <button
+                id="tab-bot-setup"
+                onClick={() => setActiveTab('bot-setup')}
+                className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === 'bot-setup' ? 'bg-indigo-600 text-white font-semibold' : 'text-slate-300 hover:text-white'}`}
+              >
+                Bot & Ngrok Setup
+              </button>
+            </div>
+            <button
+              onClick={handleLock}
+              className="p-1.5 bg-slate-800 hover:bg-slate-750 text-rose-450 hover:text-rose-350 border border-slate-700/60 rounded-lg transition-colors cursor-pointer flex items-center gap-1 text-[10px] font-bold px-2 shrink-0 h-[28px]"
+              title="Lock Console"
+            >
+              <Lock className="w-3 h-3 text-rose-500" />
+              <span>Lock</span>
+            </button>
+          </div>
+        ) : (
+          <span className="text-[10px] font-extrabold text-rose-400 uppercase tracking-wider flex items-center gap-1.5 bg-rose-950/40 border border-rose-900/50 px-2.5 py-1.5 rounded-lg h-[28px]">
+            <Lock className="w-3.5 h-3.5 text-rose-500 animate-pulse" /> Restricted
+          </span>
+        )}
       </div>
 
       {/* Main Panel Content Scroll Area */}
-      <div className="flex-1 overflow-y-auto p-5">
-        
-        {/* CATALOG TAB */}
-        {activeTab === 'catalog' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h4 className="font-bold text-slate-900 text-sm">Our Pre-Set Ready Foods</h4>
-                <p className="text-xs text-slate-400">Toggle availability to test how Gemini handles out-of-stock items dynamically.</p>
+      <div className={`flex-1 overflow-y-auto ${isUnlocked ? 'p-5' : 'p-0 bg-slate-50'}`}>
+        {!isUnlocked ? (
+          <div className="h-full flex flex-col items-center justify-center p-6 text-center font-sans">
+            <div className="max-w-xs w-full bg-white border border-slate-205 rounded-2xl p-6 shadow-md space-y-5">
+              <div className="mx-auto w-12 h-12 rounded-full bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 shadow-3xs">
+                <Lock className="w-5 h-5 text-indigo-600" />
               </div>
-              <button
-                onClick={onResetMenu}
-                className="text-xs font-semibold text-indigo-600 hover:text-indigo-805 bg-indigo-50 hover:bg-indigo-100 py-1.5 px-3 rounded-xl transition flex items-center gap-1 cursor-pointer"
-              >
-                <RotateCcw className="w-3.5 h-3.5" /> Restore Defaults
-              </button>
-            </div>
+              <div className="space-y-1">
+                <h4 className="font-extrabold text-sm text-slate-900 tracking-tight text-center">Dispatcher Authorization</h4>
+                <p className="text-[11px] text-slate-400 leading-normal text-center">Please input the secure access code to load current live telemetry, metrics, and orders.</p>
+              </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-              {menuItems.map((item) => (
-                <div key={item.id} className="border border-slate-150 rounded-xl p-3.5 flex flex-col justify-between bg-slate-50/50 hover:bg-slate-50 transition">
-                  <div className="flex justify-between items-start gap-2">
-                    <div>
-                      <span className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider font-mono">{item.category}</span>
-                      <h5 className="font-bold text-xs text-slate-900 mt-0.5">{item.name}</h5>
-                      <p className="text-[11px] text-slate-400 mt-0.5 leading-snug">{item.description}</p>
-                    </div>
-                    {/* Switch availability toggler */}
-                    <button
-                      onClick={() => onUpdateMenu(item.id, item.price, !item.isAvailable)}
-                      className="shrink-0 text-slate-450 hover:text-slate-600 cursor-pointer"
-                      title={item.isAvailable ? "Set unavailable" : "Set available"}
-                    >
-                      {item.isAvailable ? (
-                        <div className="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-full border border-green-200">
-                          <span className="text-[10px] text-green-700 font-bold uppercase">Ready</span>
-                          <ToggleRight className="w-6 h-6 text-green-600" />
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1 bg-rose-50 px-2 py-1 rounded-full border border-rose-200">
-                          <span className="text-[10px] text-rose-700 font-bold uppercase">Sold Out</span>
-                          <ToggleLeft className="w-6 h-6 text-rose-500" />
-                        </div>
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="flex justify-between items-center border-t border-slate-150 pt-2.5 mt-2.5">
-                    <span className="text-xs text-slate-500">Fast prep: <strong className="font-mono text-slate-800">{item.estimatedPrepTime}m</strong></span>
-                    {/* Price editor */}
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-slate-400">Price:</span>
-                      <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-white">
-                        <button
-                          onClick={() => onUpdateMenu(item.id, Math.max(0.50, item.price - 0.50), item.isAvailable)}
-                          className="px-2 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-bold cursor-pointer"
-                        >
-                          -
-                        </button>
-                        <span className="px-2.5 text-xs font-mono font-bold text-slate-800">
-                          {item.price.toFixed(2)} Birr
-                        </span>
-                        <button
-                          onClick={() => onUpdateMenu(item.id, item.price + 0.50, item.isAvailable)}
-                          className="px-2 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-bold cursor-pointer"
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+              <form onSubmit={handleUnlock} className="space-y-3.5 text-left">
+                <div className="space-y-1.5">
+                  <label className="text-[9.5px] font-bold text-slate-500 uppercase tracking-widest pl-0.5">Admin Security PIN</label>
+                  <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={passcode}
+                    onChange={(e) => {
+                      setPasscode(e.target.value);
+                      if (passError) setPassError(null);
+                    }}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono tracking-widest font-bold text-center"
+                    autoFocus
+                  />
+                  {passError && (
+                    <span className="text-[10px] text-rose-600 font-extrabold block mt-1 text-center leading-normal">
+                      ⚠️ {passError}
+                    </span>
+                  )}
                 </div>
-              ))}
+
+                <button
+                  type="submit"
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white font-bold py-2 px-4 rounded-xl text-xs transition shadow-xs hover:shadow flex items-center justify-center gap-1 cursor-pointer font-sans"
+                >
+                  <Unlock className="w-3.5 h-3.5" /> Confirm Access
+                </button>
+              </form>
+
+
             </div>
           </div>
-        )}
+        ) : (
+          <>
+            {/* DEBUG PANEL */}
+            <div id="debug-panel" className="mb-4 p-3 bg-slate-900 border border-slate-800 rounded-xl font-mono text-xs text-slate-300">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-2">
+                <span className="font-extrabold text-indigo-400">🔧 Dispatch Debug Log</span>
+                <span className="bg-indigo-950/60 text-indigo-300 px-2.1 py-0.5 rounded border border-indigo-900/60 font-bold">
+                  Total Orders: {orders.length}
+                </span>
+              </div>
+              {orders.length === 0 ? (
+                <p className="text-slate-500 italic text-[10px]">No orders currently stored in application memory.</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[100px] overflow-y-auto pr-1">
+                  {orders.map(o => (
+                    <div key={o.id} className="bg-slate-950/70 p-2 rounded-lg border border-slate-850 flex flex-col gap-0.5 text-[10.5px]">
+                      <div className="flex justify-between items-center text-slate-450">
+                        <span>Order ID: <span className="text-indigo-300 font-bold font-mono">#{o.id}</span></span>
+                        <span className="text-amber-500 font-extrabold uppercase text-[9.5px]">{o.status}</span>
+                      </div>
+                      <div className="text-slate-400 truncate">
+                        Customer Name: <span className="text-slate-200 font-semibold">{o.customerName || 'N/A'}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-        {/* ORDERS TAB */}
-        {activeTab === 'orders' && (
-          <div className="space-y-4">
+            {/* ORDERS TAB */}
+            {activeTab === 'orders' && (
+          <div className="space-y-6">
             <div>
-              <h4 className="font-bold text-slate-900 text-sm">Real-Time Incoming Bot Orders</h4>
-              <p className="text-xs text-slate-400">Watch orders placed in simulated Telegram translate instantly into kitchen tickets.</p>
+              <h4 className="font-bold text-slate-900 text-sm">Real-Time Kitchen Order Pipeline</h4>
+              <p className="text-xs text-slate-400">Strictly authorized workflow: track deposit receipts, assign drivers, and trigger active tracker maps.</p>
             </div>
 
             {orders.length === 0 ? (
               <div className="border border-dashed border-slate-200 rounded-2xl p-10 flex flex-col items-center justify-center text-center text-slate-400">
                 <ListOrdered className="w-12 h-12 stroke-1 mb-2.5" />
-                <span className="text-xs font-medium">No active kitchen orders received yet.</span>
-                <span className="text-[10px] mt-0.5">Please order and confirm inside the Telegram chat simulator first!</span>
+                <span className="text-xs font-medium">No system orders placed yet.</span>
+                <span className="text-[10px] mt-0.5">Place an order using the Telegram chat simulator to begin.</span>
               </div>
             ) : (
-              <div className="space-y-3">
-                {orders.map((order) => (
-                  <div key={order.id} className="border border-slate-200 rounded-xl p-4 bg-white hover:shadow-sm transition">
-                    <div className="flex flex-wrap justify-between items-center gap-2 border-b border-slate-100 pb-3 mb-3">
-                      <div>
+              <div className="space-y-6">
+                
+                {/* SECTION 1: PENDING PAYMENTS */}
+                {(() => {
+                  const items = orders.filter(o => o.status === 'payment_pending');
+                  return (
+                    <div className="bg-slate-50/75 border border-slate-200 rounded-2xl p-4">
+                      <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
                         <div className="flex items-center gap-2">
-                          <span className="font-bold font-mono text-xs text-slate-800">Order ID: #{order.id}</span>
-                          <span className={`text-[10px] font-bold uppercase py-0.5 px-2.5 rounded-full border ${getStatusColor(order.status)}`}>
-                            {order.status}
-                          </span>
+                          <span className={`w-2.5 h-2.5 rounded-full bg-amber-500 ${items.length > 0 ? 'animate-ping' : ''}`} />
+                          <h5 className="font-bold text-xs text-slate-800 uppercase tracking-wider">1. Pending Payments ({items.length})</h5>
                         </div>
-                        <span className="text-[10px] text-slate-400 block mt-0.5">Placed on: {new Date(order.createdAt).toLocaleTimeString()}</span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-xs font-bold text-slate-900 block">{order.total.toFixed(2)} Birr</span>
-                        <span className="text-[10px] text-slate-400 block">Est: {order.etaMinutes}m ETA</span>
-                      </div>
-                    </div>
-
-                    {/* Left: Raw customer message, Right: Parsed ticket */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Original raw text */}
-                      <div className="bg-slate-50 border border-slate-100 rounded-xl p-3">
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider font-bold block font-mono mb-1">Customer Telegram Message</span>
-                        <p className="text-xs text-slate-700 italic leading-relaxed">&ldquo;{order.rawText}&rdquo;</p>
+                        <span className="text-[10px] bg-amber-55 text-amber-700 font-mono font-bold px-2 py-0.5 rounded border border-amber-200 uppercase">Awaiting Verification</span>
                       </div>
 
-                      {/* Decoded Items */}
-                      <div className="space-y-1.5">
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider font-bold block font-mono">Parsed Kitchen Ticket</span>
-                        {order.items.map((item, idx) => (
-                          <div key={idx} className="flex justify-between items-center text-xs text-slate-800 border-b border-slate-100/50 pb-1 last:border-0">
-                            <div>
-                              <strong className="text-indigo-600 font-bold">{item.quantity}x</strong> {item.name}
-                              {item.customization && <span className="text-[10px] block text-orange-650 ml-1">({item.customization})</span>}
+                      {items.length === 0 ? (
+                        <p className="text-xs text-slate-400 py-2 italic font-sans">No customer receipts are currently awaiting verification.</p>
+                      ) : (
+                        <div className="space-y-3">
+                          {items.map(order => (
+                            <div key={order.id} className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-3xs space-y-3">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <span className="text-xs font-bold text-indigo-700 font-mono block">Order ID: #{order.id}</span>
+                                  <span className="text-[10.5px] text-slate-800 block font-medium mt-1">👤 Customer: <strong>{order.customerName || 'Pending'}</strong> ({order.customerPhone || 'N/A'})</span>
+                                </div>
+                                <div className="text-right">
+                                  <span className="text-xs font-bold font-mono text-amber-600 block">1/3 Hold Dep: {order.paymentDetails?.amount.toFixed(2)} Birr</span>
+                                  <span className="text-[9.5px] text-slate-400 block mt-0.5">Total: {order.total.toFixed(2)} Birr</span>
+                                </div>
+                              </div>
+
+                              <div className="bg-amber-50/50 border border-amber-200/60 p-2.5 rounded-lg space-y-1.5 text-xs">
+                                <div className="flex justify-between text-amber-900 font-sans font-medium">
+                                  <span>Payment Method:</span>
+                                  <span className="font-bold">{order.paymentDetails?.method || 'N/A'}</span>
+                                </div>
+                                <div className="flex justify-between text-amber-900 font-sans">
+                                  <span>Transaction Reference / Slip:</span>
+                                  <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-amber-250/30 text-amber-950">{order.paymentDetails?.reference || 'N/A'}</span>
+                                </div>
+                                <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                                  <span>Submitted Timestamp:</span>
+                                  <span>{order.paymentDetails?.timestamp || 'N/A'}</span>
+                                </div>
+                              </div>
+
+                              {order.paymentDetails?.receiptPhoto && (
+                                <div className="space-y-1 font-sans">
+                                  <span className="text-[10px] font-bold text-indigo-605 uppercase tracking-wider block">📷 Uploaded Proof Receipt (Screenshot):</span>
+                                  <div className="relative border border-slate-200 rounded-xl p-1 bg-slate-50 overflow-hidden max-h-[160px] flex justify-center items-center shadow-inner">
+                                    <img 
+                                      src={order.paymentDetails.receiptPhoto} 
+                                      alt="Payment proof screenshot" 
+                                      className="max-h-[150px] rounded-lg object-contain cursor-zoom-in hover:scale-[1.02] transition"
+                                      referrerPolicy="no-referrer"
+                                    />
+                                  </div>
+                                </div>
+                              )}
+
+                              <div className="grid grid-cols-2 gap-2.5 border-t border-slate-150 pt-3 mt-3">
+                                <button
+                                  onClick={() => onCancelActiveOrder(order.id)}
+                                  className="text-[11px] bg-rose-50 hover:bg-rose-100 active:bg-rose-250 text-rose-700 border border-rose-205 font-bold py-2.5 px-3 rounded-xl shadow-3xs transition-all cursor-pointer flex items-center justify-center gap-1.5 font-sans"
+                                  id={`btn-reject-${order.id}`}
+                                >
+                                  <X className="w-3.5 h-3.5" /> Cancel / Reject Order
+                                </button>
+                                <button
+                                  onClick={() => onVerifyPayment(order.id)}
+                                  className="text-[11px] bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-850 text-white font-bold py-2.5 px-3 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1.5 font-sans"
+                                  id={`btn-approve-${order.id}`}
+                                >
+                                  <Check className="w-3.5 h-3.5 font-bold" /> Approve Order
+                                </button>
+                              </div>
                             </div>
-                            <span className="font-mono text-slate-400">{item.totalPrice.toFixed(2)} Birr</span>
-                          </div>
-                        ))}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
+                  );
+                })()}
 
-                    {/* Action button inside order card */}
-                    {order.status !== 'completed' && order.status !== 'cancelled' && (
-                      <div className="flex justify-end border-t border-slate-100 pt-3 mt-3">
-                        <button
-                          onClick={() => onCancelActiveOrder(order.id)}
-                          className="bg-rose-50 text-rose-700 hover:bg-rose-100 text-[10px] font-bold font-mono py-1.5 px-3 rounded-lg transition shrink-0 cursor-pointer"
-                        >
-                          Cancel order
-                        </button>
+                {/* SECTION 2: DRIVER ASSIGNMENTS */}
+                {(() => {
+                  const items = orders.filter(o => o.status === 'pending' && o.isPaymentVerified);
+                  return (
+                    <div className="bg-slate-50/75 border border-slate-200 rounded-2xl p-4">
+                      <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2.5 h-2.5 rounded-full bg-blue-500 ${items.length > 0 ? 'animate-ping' : ''}`} />
+                          <h5 className="font-bold text-xs text-slate-800 uppercase tracking-wider">2. Driver Assignments ({items.length})</h5>
+                        </div>
+                        <span className="text-[10px] bg-blue-55 text-blue-700 font-mono font-bold px-2 py-0.5 rounded border border-blue-200 uppercase">Rider Assignment</span>
                       </div>
-                    )}
-                  </div>
-                ))}
+
+                      {items.length === 0 ? (
+                        <p className="text-xs text-slate-400 py-2 italic font-sans">No orders currently awaiting driver assignment.</p>
+                      ) : (
+                        <div className="space-y-3">
+                          {items.map(order => {
+                            const assignState = driverAssignments[order.id] || { name: '', id: '', phone: '' };
+                            const canSubmit = assignState.name.trim() !== '' && assignState.id.trim() !== '' && assignState.phone.trim() !== '';
+
+                            return (
+                              <div key={order.id} className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-3xs space-y-3">
+                                <div className="flex justify-between items-start">
+                                  <div>
+                                    <span className="text-xs font-bold text-indigo-700 font-mono">Order ID: #{order.id}</span>
+                                    <p className="text-[10.5px] text-slate-500 mt-0.5">Consignee: <strong>{order.customerName}</strong> • Address: {order.deliveryAddress}</p>
+                                  </div>
+                                  <span className="text-[10px] bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded font-mono">Verified ✅</span>
+                                </div>
+
+                                {/* Parsed Kitchen Ticket */}
+                                <div className="bg-slate-50 p-2.5 rounded-lg text-xs space-y-1 my-1">
+                                  <span className="text-[9px] text-slate-400 font-mono font-bold uppercase tracking-wider block mb-1">Kitchen items ticket</span>
+                                  {order.items.map((it, i) => (
+                                    <div key={i} className="flex justify-between font-medium">
+                                      <span>{it.quantity}x {it.name}</span>
+                                      <span className="text-slate-400 font-mono">{it.totalPrice.toFixed(2)} Br</span>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {/* Form assignment fields */}
+                                {!order.isDriverAssigned ? (
+                                  <div className="border border-slate-150 p-3 rounded-lg space-y-3 bg-slate-50/30">
+                                    <div className="flex justify-between items-center pb-1">
+                                      <span className="text-[10.5px] font-bold text-slate-700 uppercase tracking-wide">Assign Driver:</span>
+                                      
+                                      {/* Fast Presets button */}
+                                      <div className="flex flex-wrap gap-1.5">
+                                        <span className="text-[9px] text-slate-400 self-center font-mono">Presets:</span>
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            setDriverAssignments(prev => ({
+                                              ...prev,
+                                              [order.id]: { name: "Almaz Demeke", id: "TDRV-102", phone: "0912112233" }
+                                            }));
+                                          }}
+                                          className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[9px] font-bold px-2 py-0.5 rounded border border-indigo-200 transition cursor-pointer"
+                                        >
+                                          🚴 Almaz (ID: 102)
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            setDriverAssignments(prev => ({
+                                              ...prev,
+                                              [order.id]: { name: "Bekele Abebe", id: "TDRV-309", phone: "0916454545" }
+                                            }));
+                                          }}
+                                          className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[9px] font-bold px-2 py-0.5 rounded border border-indigo-200 transition cursor-pointer"
+                                        >
+                                          🛵 Bekele (ID: 309)
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                      <div>
+                                        <label className="text-[10px] text-slate-400 font-bold block mb-1">Rider Name</label>
+                                        <input
+                                          type="text"
+                                          placeholder="e.g. Almaz"
+                                          value={assignState.name}
+                                          onChange={e => setDriverAssignments(prev => ({
+                                            ...prev,
+                                            [order.id]: { ...assignState, name: e.target.value }
+                                          }))}
+                                          className="w-full bg-white border border-slate-200 px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded"
+                                        />
+                                      </div>
+                                      <div>
+                                        <label className="text-[10px] text-slate-400 font-bold block mb-1">Rider ID</label>
+                                        <input
+                                          type="text"
+                                          placeholder="e.g. DRV-03"
+                                          value={assignState.id}
+                                          onChange={e => setDriverAssignments(prev => ({
+                                            ...prev,
+                                            [order.id]: { ...assignState, id: e.target.value }
+                                          }))}
+                                          className="w-full bg-white border border-slate-200 px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded font-mono"
+                                        />
+                                      </div>
+                                      <div>
+                                        <label className="text-[10px] text-slate-400 font-bold block mb-1">Rider Phone</label>
+                                        <input
+                                          type="text"
+                                          placeholder="e.g. +251 091..."
+                                          value={assignState.phone}
+                                          onChange={e => setDriverAssignments(prev => ({
+                                            ...prev,
+                                            [order.id]: { ...assignState, phone: e.target.value }
+                                          }))}
+                                          className="w-full bg-white border border-slate-200 px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded font-mono"
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <div className="flex justify-end pt-1">
+                                      <button
+                                        type="button"
+                                        disabled={!canSubmit}
+                                        onClick={() => onAssignDriver(order.id, assignState)}
+                                        className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-200 disabled:text-slate-400 text-white text-[10px] font-bold px-4 py-1.5 rounded transition cursor-pointer"
+                                      >
+                                        🚖 Assign & Notify Driver
+                                      </button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="bg-indigo-50/50 border border-indigo-250/30 rounded-lg p-3 space-y-2 text-xs flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                                    <div>
+                                      <span className="text-[10px] text-indigo-700 block uppercase font-mono font-bold">Assigned delivery partner:</span>
+                                      <span className="text-slate-800 font-bold font-sans text-xs">{order.driverName} (ID: {order.driverId})</span>
+                                      <span className="text-slate-500 block font-mono text-[11px]">{order.driverPhone}</span>
+                                    </div>
+                                    <div className="shrink-0 mt-2 sm:mt-0">
+                                      {!order.isDriverAccepted ? (
+                                        <button
+                                          onClick={() => onDriverAccept(order.id)}
+                                          className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold px-3 py-1.5 rounded transition cursor-pointer flex items-center gap-1 animate-pulse"
+                                        >
+                                          🛵 Simulated Driver: Accept Delivery Ticket
+                                        </button>
+                                      ) : (
+                                        <span className="text-emerald-700 font-bold text-[11px] flex items-center gap-1 font-mono uppercase bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+                                          ● Ticket Accepted
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {/* SECTION 3: ACTIVE DELIVERIES */}
+                {(() => {
+                  const items = orders.filter(o => o.status === 'preparing' || o.status === 'driving');
+                  return (
+                    <div className="bg-slate-50/75 border border-slate-200 rounded-2xl p-4">
+                      <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2.5 h-2.5 rounded-full bg-indigo-600 ${items.length > 0 ? 'animate-ping' : ''}`} />
+                          <h5 className="font-bold text-xs text-slate-800 uppercase tracking-wider">3. Active Deliveries ({items.length})</h5>
+                        </div>
+                        <span className="text-[10px] bg-indigo-55 text-indigo-700 font-mono font-bold px-2 py-0.5 rounded border border-indigo-200 uppercase">GPS Transit</span>
+                      </div>
+
+                      {items.length === 0 ? (
+                        <p className="text-xs text-slate-400 py-2 italic font-sans" id="no-active-deliveries">No coordinates currently in transit on the map.</p>
+                      ) : (
+                        <div className="space-y-3">
+                          {items.map(order => (
+                            <div key={order.id} className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-3xs space-y-2">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <span className="text-xs font-bold text-indigo-700 font-mono">Order ID: #{order.id}</span>
+                                  <p className="text-[10.5px] text-slate-500 mt-0.5">Dest: <strong>{order.deliveryAddress}</strong></p>
+                                </div>
+                                <span className="text-xs font-bold text-slate-800 font-mono">{Math.round(order.progress)}% Progress</span>
+                              </div>
+
+                              {/* Progress bar info */}
+                              <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200">
+                                <div className="bg-indigo-600 h-full transition-all duration-300" style={{ width: `${order.progress}%` }} />
+                              </div>
+
+                              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-xs text-slate-650 pt-1 border-t border-slate-100/50">
+                                <span className="font-sans">Driver: <strong className="text-slate-850 font-bold">{order.driverName}</strong> ({order.driverPhone})</span>
+                                <span className="text-[11px] text-indigo-600 font-bold uppercase tracking-wider font-mono bg-indigo-50 px-2 py-0.5 rounded mt-1 sm:mt-0">{order.status} stage</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {/* SECTION 4: COMPLETED DELIVERIES */}
+                {(() => {
+                  const items = orders.filter(o => o.status === 'completed' || o.status === 'cancelled');
+                  return (
+                    <div className="bg-slate-50/75 border border-slate-200 rounded-2xl p-4">
+                      <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
+                          <h5 className="font-bold text-xs text-slate-800 uppercase tracking-wider">4. Completed / Archived ({items.length})</h5>
+                        </div>
+                        <span className="text-[10px] bg-slate-100 text-slate-600 font-mono font-bold px-2 py-0.5 rounded border border-slate-200 uppercase">Archive Log</span>
+                      </div>
+
+                      {items.length === 0 ? (
+                        <p className="text-xs text-slate-400 py-2 italic font-sans">Kitchen archival log is empty.</p>
+                      ) : (
+                        <div className="space-y-2">
+                          {items.map(order => (
+                            <div key={order.id} className="bg-white border border-slate-150 rounded-xl px-3 py-2 text-xs flex justify-between items-center bg-slate-50/30">
+                              <div>
+                                <span className="font-mono font-bold text-slate-650">#{order.id}</span>
+                                <span className="text-slate-500 font-sans ml-2">{order.customerName}</span>
+                              </div>
+                              <div className="flex items-center gap-2 font-mono">
+                                <span className="text-slate-500">{order.total.toFixed(2)} Br</span>
+                                <span className={`text-[9.5px] font-bold uppercase py-0.5 px-2 rounded-full border ${getStatusColor(order.status)}`}>
+                                  {order.status}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+
               </div>
             )}
           </div>
@@ -681,6 +999,8 @@ export default function AdminDashboard({
               )}
             </div>
           </div>
+        )}
+          </>
         )}
 
       </div>

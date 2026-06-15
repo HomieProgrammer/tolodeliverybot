@@ -22,7 +22,10 @@ import {
   Plus,
   Minus,
   Trash2,
-  Utensils
+  Utensils,
+  Upload,
+  X,
+  Image as ImageIcon
 } from 'lucide-react';
 import { ChatMessage, MenuItem, Order, OrderItem } from '../types';
 
@@ -37,6 +40,11 @@ interface TelegramSimulatorProps {
   customerProfile: { name: string; phone: string; address: string; pickupAddress: string };
   onOpenProfileModal: () => void;
   menuItems: MenuItem[];
+  receiptPhoto?: string;
+  onReceiptPhotoChange?: (photoUrl: string) => void;
+  isAmharic: boolean;
+  onLanguageChange: (val: boolean) => void;
+  orders: Order[];
 }
 
 export default function TelegramSimulator({
@@ -49,7 +57,12 @@ export default function TelegramSimulator({
   activeOrder,
   customerProfile,
   onOpenProfileModal,
-  menuItems
+  menuItems,
+  receiptPhoto,
+  onReceiptPhotoChange,
+  isAmharic,
+  onLanguageChange,
+  orders
 }: TelegramSimulatorProps) {
   const [inputText, setInputText] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -58,17 +71,14 @@ export default function TelegramSimulator({
   const [formError, setFormError] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // List of extra custom items created on-the-fly by the customer
-  const [customEnteredItems, setCustomEnteredItems] = useState<{ id: string; name: string; price: number; category: string; isAvailable: boolean; description: string }[]>([]);
-  const [newFoodName, setNewFoodName] = useState('');
-  const [newFoodPrice, setNewFoodPrice] = useState('8.50');
-
-  // Consolidated client preferences forms
-  const [localName, setLocalName] = useState(customerProfile.name);
-  const [localPhone, setLocalPhone] = useState(customerProfile.phone);
-  const [localAddress, setLocalAddress] = useState(customerProfile.address);
-  const [localPickupAddress, setLocalPickupAddress] = useState(customerProfile.pickupAddress || '');
-  const [isAmharic, setIsAmharic] = useState(false);
+  // Consolidated client preferences forms start completely empty on page load
+  const [localName, setLocalName] = useState('');
+  const [localPhone, setLocalPhone] = useState('');
+  const [localAddress, setLocalAddress] = useState('');
+  const [localPickupAddress, setLocalPickupAddress] = useState('');
+  const [localPackageDetails, setLocalPackageDetails] = useState('');
+  const [localEstimatedPrice, setLocalEstimatedPrice] = useState(150);
+  const [phoneSharedStep, setPhoneSharedStep] = useState<'none' | 'fake' | 'real'>('none');
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -76,13 +86,33 @@ export default function TelegramSimulator({
       setLocalPhone(customerProfile.phone || '');
       setLocalAddress(customerProfile.address || '');
       setLocalPickupAddress(customerProfile.pickupAddress || '');
+      setLocalPackageDetails('');
+      setLocalEstimatedPrice(150);
+      setPhoneSharedStep('none');
       setFormError(null);
     }
   }, [customerProfile, isMenuOpen]);
 
-  // Simulated rapid fill sharing preferences
+  // Simulated rapid fill sharing preferences using telegram authentication permission flow
+  // Shows a fake simulated contact first, and then real profile contact on next click
   const handleShareMobileNumber = () => {
-    setLocalPhone('0911234567');
+    if (phoneSharedStep === 'none') {
+      const fakePhone = "0944112233"; // clearly distinct fake simulator number
+      setLocalPhone(fakePhone);
+      setPhoneSharedStep('fake');
+      setToastMessage(isAmharic 
+        ? `⚠️ አስመስሎ የተሰራ ስልክ ተጋርቷል፦ ${fakePhone}! እውነተኛውን ስልክ ለማጋራት 'ስልክ አጋራ' የሚለውን ቁልፍ እንደገና ይጫኑ።` 
+        : `⚠️ Shared FAKE contact first: ${fakePhone}! Tap "Share number" again to send your real contact.`);
+      setTimeout(() => setToastMessage(null), 4500);
+    } else {
+      const realPhone = "";
+      setLocalPhone(realPhone);
+      setPhoneSharedStep('real');
+      setToastMessage(isAmharic 
+        ? `✓ እውነተኛው ስልክ ተጋርቷል፦ ${realPhone}!` 
+        : `✓ Real contact shared successfully: ${realPhone}!`);
+      setTimeout(() => setToastMessage(null), 3000);
+    }
   };
 
   const handleShareLiveLocation = () => {
@@ -117,16 +147,16 @@ export default function TelegramSimulator({
 
   const handleClearSelection = () => {
     setSelectedItems({});
-    setCustomEnteredItems([]);
   };
 
   const handleSendSelection = () => {
-    const itemsList = Object.entries(selectedItems)
-      .map(([id, qty]) => {
-        const item = menuItems.find(i => i.id === id) || customEnteredItems.find(i => i.id === id);
-        return item ? `${qty} ${item.name} (${item.price.toFixed(2)} Birr)` : null;
-      })
-      .filter(Boolean);
+    const pDetails = localPackageDetails.trim();
+    if (!pDetails) {
+      setFormError(isAmharic 
+        ? "እባክዎን የትዕዛዙን ዝርዝር / ማብራሪያ ያስገቡ።" 
+        : "Please provide a description of the package or dishes you want delivered.");
+      return;
+    }
 
     if (!localName.trim() || !localPhone.trim() || !localAddress.trim() || !localPickupAddress.trim()) {
       setFormError(isAmharic 
@@ -143,34 +173,37 @@ export default function TelegramSimulator({
       return;
     }
 
-    if (itemsList.length === 0) {
+    if (!localAddress.includes("Shared GPS")) {
       setFormError(isAmharic 
-        ? "እባክዎን ለማዘዝ ቢያንስ አንድ ምግብ ይጻፉ/ይጨምሩ!" 
-        : "Please choose or enter at least 1 delicious plate to build your food order!");
+        ? "የመድረሻ አድራሻ በትክክል መጋራት አለበት! እባክዎን 'አድራሻ አጋራ (GPS)' የሚለውን ቁልፍ ይጫኑ።" 
+        : "The drop-off coordinates must be shared! Please click the 'Share Live GPS Drop-off' button above.");
+      return;
+    }
+
+    if (!receiptPhoto) {
+      setFormError(isAmharic 
+        ? "እባክዎን መጀመሪያ የክፍያ ማረጋገጫ ፎቶ ያስገቡ።" 
+        : "Please upload/choose a receipt screenshot file first to authorize payment.");
       return;
     }
 
     setFormError(null);
 
+    const itemsList = [`1 ${pDetails} (${localEstimatedPrice.toFixed(2)} Birr)`];
+
     // Build unified NLP text matching preferences interceptor perfectly including pick-up and drop-off
     const unifiedOrderMessage = `Please organize a ticket for: ${itemsList.join(", ")}.\n\nMy delivery profile parameters:\n👤 Name: ${localName.trim()}\n📞 Phone: ${localPhone.trim()}\n📍 Pick-Up Location: ${localPickupAddress.trim()}\n📍 Drop-Off Address: ${localAddress.trim()}`;
 
     onSendMessage(unifiedOrderMessage);
-    setSelectedItems({});
-    setCustomEnteredItems([]);
     setIsMenuOpen(false);
   };
 
   const getSelectedItemsCount = (): number => {
-    return Object.entries(selectedItems).reduce((sum: number, [_, qty]: [string, number]) => sum + qty, 0);
+    return localPackageDetails.trim() ? 1 : 0;
   };
 
   const getSelectedItemsTotalPrice = (): number => {
-    return Object.entries(selectedItems).reduce((total: number, [id, qty]: [string, number]) => {
-      const item = menuItems.find(i => i.id === id) || customEnteredItems.find(i => i.id === id);
-      const price = item ? item.price : 0;
-      return total + (price * qty);
-    }, 0);
+    return localPackageDetails.trim() ? localEstimatedPrice : 0.00;
   };
 
   const getCategoryEmoji = (category: string) => {
@@ -251,7 +284,7 @@ export default function TelegramSimulator({
           <button
             id="btn-toggle-lang-top"
             type="button"
-            onClick={() => setIsAmharic(!isAmharic)}
+            onClick={() => onLanguageChange(!isAmharic)}
             className={`font-semibold text-[10.5px] rounded-md px-2 py-1 transition cursor-pointer flex items-center gap-0.5 border ${
               isAmharic 
                 ? 'bg-emerald-600 text-white border-emerald-500' 
@@ -279,6 +312,7 @@ export default function TelegramSimulator({
           const isUser = msg.sender === 'user';
           const isBot = msg.sender === 'bot';
           const isSystem = msg.sender === 'system';
+          const linkedOrder = orders?.find(o => o.id === msg.trackingOrderId);
 
           if (isSystem) {
             return (
@@ -390,12 +424,27 @@ export default function TelegramSimulator({
 
                 {/* Dynamic Tracking Link Link inline button bubble */}
                 {msg.type === 'tracking_link' && msg.trackingOrderId && (
-                  <div className="mt-2.5">
+                  <div className="mt-2.5 space-y-2">
+                    {linkedOrder?.paymentDetails?.receiptPhoto && (
+                      <div className="bg-slate-55 border border-slate-200 rounded-xl p-2.5 space-y-1.5 shadow-3xs">
+                        <span className="text-[10px] font-bold text-slate-700 uppercase tracking-wider block font-sans">
+                          {isAmharic ? "📷 የክፍያ ማረጋገጫ (Screenshot)፦" : "📷 Submitted Payment Screenshot:"}
+                        </span>
+                        <div className="relative border border-slate-150 rounded-lg p-1 bg-white overflow-hidden max-h-[140px] flex justify-center items-center">
+                          <img 
+                            src={linkedOrder.paymentDetails.receiptPhoto} 
+                            alt="Payment receipt proof" 
+                            className="max-h-[120px] rounded object-contain"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                      </div>
+                    )}
                     <button
                       onClick={() => onSelectTrackOrder(msg.trackingOrderId || '')}
                       className="w-full bg-[#1e88e5] text-white hover:bg-[#1565c0] rounded-xl py-2 px-3 text-xs font-bold font-mono transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer"
                     >
-                      <Eye className="w-4 h-4" /> Live Tracking Info #{msg.trackingOrderId}
+                      <Eye className="w-4 h-4" /> {isAmharic ? `የቀጥታ መከታተያ #${msg.trackingOrderId}` : `Live Tracking Info #${msg.trackingOrderId}`}
                     </button>
                   </div>
                 )}
@@ -613,7 +662,7 @@ export default function TelegramSimulator({
                               setLocalPhone(e.target.value);
                               setFormError(null);
                             }}
-                            placeholder="e.g. +251 911 234567"
+                            placeholder="e.g. 0911234567"
                             required
                             className={`w-full bg-white border rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 font-mono font-medium ${localPhone.trim() !== '' && localPhone.replace(/[^0-9]/g, '').length !== 10 ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-slate-250'}`}
                           />
@@ -631,16 +680,8 @@ export default function TelegramSimulator({
                       <div>
                         <div className="flex justify-between items-center mb-1">
                           <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-sans">
-                            {isAmharic ? "📍 መነሻ ቦታ (የተረካቢ ሱቅ / Pick-Up Location)" : "📍 Pick-up Location (Store / Address)"}
+                            {isAmharic ? "📍 መነሻ ቦታ (Pick-Up Location)" : "📍 Pick-up Location"}
                           </label>
-                          <button
-                            type="button"
-                            onClick={() => setLocalPickupAddress('Bella Traditional Restaurant, Piazza')}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[9px] px-2 py-0.5 rounded-md transition flex items-center gap-0.5 shadow-xs cursor-pointer active:scale-95"
-                            title="Simulate point selection"
-                          >
-                            📍 {isAmharic ? "መነሻ ምረጥ" : "Select Point"}
-                          </button>
                         </div>
                         <div className="relative">
                           <MapPin className="w-3.5 h-3.5 text-amber-500 absolute left-3 top-2.5" />
@@ -648,7 +689,7 @@ export default function TelegramSimulator({
                             type="text" 
                             value={localPickupAddress}
                             onChange={(e) => setLocalPickupAddress(e.target.value)}
-                            placeholder={isAmharic ? "ምግቡ የሚነሳበትን ሱቅ ወይም ሆቴል ስም ያስገቡ" : "e.g. Bella Traditional Restaurant, Piazza"}
+                            placeholder={isAmharic ? "ትዕዛዙ የሚነሳበትን ቦታ አድራሻ ያስገቡ" : "Enter pick-up restaurant/kitchen location"}
                             required
                             className="w-full bg-white border border-slate-250 rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 font-medium"
                           />
@@ -659,15 +700,15 @@ export default function TelegramSimulator({
                       <div>
                         <div className="flex justify-between items-center mb-1">
                           <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-sans">
-                            {isAmharic ? "📍 መድረሻ አድራሻ (Drop-Off Address)" : "📍 Drop-off Address (Destination)"}
+                            {isAmharic ? "📍 መድረሻ አድራሻ (Drop-Off Address)" : "📍 Drop-off Address"}
                           </label>
                           <button
                             type="button"
                             onClick={handleShareLiveLocation}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[9px] px-2 py-0.5 rounded-md transition flex items-center gap-0.5 shadow-xs cursor-pointer active:scale-95"
+                            className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-[9px] px-2.5 py-1 rounded-lg transition flex items-center gap-1.5 shadow-sm cursor-pointer active:scale-95 animate-pulse"
                             title="Simulate Telegram GPS location share"
                           >
-                            📍 {isAmharic ? "እዚህ አጋራ" : "Share location"}
+                            📍 {isAmharic ? "አድራሻ አጋራ" : "Share Live GPS Drop-off"}
                           </button>
                         </div>
                         <div className="relative">
@@ -675,10 +716,10 @@ export default function TelegramSimulator({
                           <input 
                             type="text" 
                             value={localAddress}
-                            onChange={(e) => setLocalAddress(e.target.value)}
-                            placeholder={isAmharic ? "ምግቡ የሚደርስበትን ትክክለኛ አድራሻ" : "e.g. Bole Medhaniyalem, Block 5B"}
+                            readOnly
+                            placeholder={isAmharic ? "እባክዎን ከላይ ያለውን 'አድራሻ አጋራ' የሚለውን ቁልፍ ይጫኑ" : "⚠️ Click 'Share Live GPS Drop-off' button above"}
                             required
-                            className="w-full bg-white border border-slate-250 rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 font-medium"
+                            className={`w-full border rounded-xl pl-9 pr-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono font-bold ${localAddress ? 'bg-emerald-50/50 border-emerald-300 text-emerald-850' : 'bg-slate-50 border-rose-300 text-rose-800'}`}
                           />
                         </div>
                       </div>
@@ -688,137 +729,168 @@ export default function TelegramSimulator({
 
                 <div className="border-t border-dashed border-slate-200 my-4" />
 
-                {/* 2. CUSTOM ENTRY OF FOODS BY CUSTOMER */}
-                <div className="bg-gradient-to-br from-emerald-50/40 to-slate-50 border border-emerald-200/60 p-4 rounded-2xl font-sans space-y-3 shadow-md">
+                {/* 2. ORDER SUMMARY - CUSTOM DISH & PACKAGE DETAILS */}
+                <div className="bg-white border border-slate-200 p-4 rounded-2xl font-sans space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5 font-mono">
-                      <span>✏️</span>
-                      <span>{isAmharic ? "ማዘዝ የሚፈልጉትን ምግቦች መመዝገቢያ" : "Enter Custom Dishes & Drinks"}</span>
+                    <span className="text-[10px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5 font-mono">
+                      <span>📦</span>
+                      <span>{isAmharic ? "የትዕዛዙ ዝርዝር (Dishes & Courier Package Details)" : "Package / Dish Details (Instructions)"}</span>
                     </span>
-                    <span className="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded border border-emerald-200 uppercase font-mono tracking-wider">
-                      {isAmharic ? "የደንበኛ ግቤት" : "Customer Input"}
+                    <span className="text-[9px] bg-indigo-50 text-indigo-700 font-bold px-1.5 py-0.5 rounded border border-indigo-100 uppercase font-mono tracking-wider">
+                      {isAmharic ? "የቀጥታ ትዕዛዝ" : "Describe Order"}
                     </span>
                   </div>
 
-                  <div className="space-y-2.5">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                      <div className="md:col-span-2">
-                        <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                          {isAmharic ? "የምግቡ/መጠጡ ስም" : "Dish/Drink Name"}
-                        </label>
-                        <input 
-                          type="text" 
-                          value={newFoodName}
-                          onChange={(e) => setNewFoodName(e.target.value)}
-                          placeholder={isAmharic ? "ምሳሌ፦ 2 ዶሮ ወጥ፣ መካከለኛ ስጋ ጥብስ" : "e.g. 2 BBQ Spare Ribs, Sweet Samosas"}
-                          className="w-full bg-white border border-slate-150 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-800 font-medium"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[9px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                          {isAmharic ? "ግምታዊ ዋጋ (በብር)" : "Estimated Price (Birr)"}
-                        </label>
-                        <input 
-                          type="number" 
-                          step="0.10"
-                          value={newFoodPrice}
-                          onChange={(e) => setNewFoodPrice(e.target.value)}
-                          placeholder="8.50"
-                          className="w-full bg-white border border-slate-150 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-850 font-mono font-bold"
-                        />
-                      </div>
+                  <div className="space-y-1">
+                    <label className="text-[9.5px] font-bold text-slate-400 uppercase font-sans">
+                      {isAmharic ? "ማዘዝ የሚፈልጉትን ምግብ፣ መጠጥ ወይም ዕቃ እዚህ ይጻፉ" : "What dishes / drinks or package item should we deliver?"}
+                    </label>
+                    <textarea 
+                      rows={2}
+                      value={localPackageDetails}
+                      onChange={(e) => setLocalPackageDetails(e.target.value)}
+                      placeholder={isAmharic ? "ለምሳሌ፦ 2 በርገር ከሶዳ ጋር፣ ወይም ሰነዶች..." : "e.g., Double cheeseburger with cold soda and french fries"}
+                      className="w-full bg-slate-50/50 border border-slate-200 rounded-xl p-3 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 font-sans font-medium"
+                      required
+                    />
+                  </div>
+
+                  {/* Dynamic Estimated Price Input in Birr */}
+                  <div className="bg-indigo-50/20 p-2.5 rounded-xl border border-indigo-100 space-y-2">
+                    <div className="flex justify-between items-center">
+                      <label className="text-[9.5px] font-extrabold text-indigo-950 uppercase tracking-wider font-sans">
+                        💵 {isAmharic ? "ግምታዊ ዋጋ በብር (Estimated Price in Birr)" : "Estimated Dish Price (Birr)"}
+                      </label>
+                      <span className="font-mono font-extrabold text-indigo-700 text-[11px] bg-white px-2 py-0.5 rounded border border-indigo-150">
+                        {localEstimatedPrice.toFixed(2)} Birr
+                      </span>
+                    </div>
+                    <div className="flex gap-2 items-center">
+                      <input 
+                        type="number"
+                        min="10"
+                        max="5000"
+                        value={localEstimatedPrice}
+                        onChange={(e) => setLocalEstimatedPrice(Math.max(1, parseInt(e.target.value) || 0))}
+                        className="w-24 bg-white border border-slate-250 rounded-lg px-2 py-1 text-xs text-slate-800 font-mono font-bold focus:ring-1 focus:ring-indigo-500 outline-none"
+                      />
+                      <span className="text-[9px] text-slate-450 leading-tight font-sans italic">
+                        {isAmharic ? "ይህ ዋጋ በራስሰር 1/3 ማስያዣውን ለማዘጋጀት ይጠቅማል።" : "Visible price estimate. Your 1/3 payment deposit maps directly to this total."}
+                      </span>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!newFoodName.trim()) {
-                          alert(isAmharic ? "እባክዎን መጀመሪያ የምግቡን ስም ያስገቡ!" : "Please write the customer food item name!");
-                          return;
-                        }
-                        const cleanName = newFoodName.trim();
-                        const parsedPrice = parseFloat(newFoodPrice) || 8.50;
-                        const newId = 'custom_' + Date.now();
-                        
-                        const newItem = {
-                          id: newId,
-                          name: cleanName,
-                          price: parsedPrice,
-                          category: 'Customer Entered Foods',
-                          isAvailable: true,
-                          description: 'Custom entry specified by customer'
-                        };
-
-                        setCustomEnteredItems(prev => [...prev, newItem]);
-                        setSelectedItems(prev => ({ ...prev, [newId]: 1 }));
-                        setNewFoodName('');
-                        setNewFoodPrice('8.50');
-                      }}
-                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2 px-4 rounded-xl transition shadow-xs cursor-pointer active:scale-95 flex items-center justify-center gap-1.5 font-sans"
-                    >
-                      <Plus className="w-3.5 h-3.5" /> {isAmharic ? "አረጋግጥና አክል (Add to List)" : "Confirm & Add Customer Food"}
-                    </button>
+                    {/* Calculated 1/3 Payable Deposit badge */}
+                    <div className="bg-emerald-50 border border-emerald-250/60 rounded-lg p-2.5 flex justify-between items-center text-xs mt-1.5 shadow-3xs">
+                      <span className="text-[10px] font-bold text-emerald-800 uppercase tracking-wider font-sans">
+                        {isAmharic ? "⏳ 1/3 የሚከፈል የመጀመሪያ ማስያዣ (1/3 Deposit)፦" : "⏳ 1/3 Required Deposit Payment:"}
+                      </span>
+                      <span className="font-mono font-extrabold text-emerald-700 text-[11.5px] bg-white px-2 py-0.5 rounded border border-emerald-250">
+                        {(localEstimatedPrice / 3).toFixed(2)} Birr
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {customEnteredItems.length > 0 && (
-                  <div className="bg-emerald-50/20 border border-emerald-150 p-3 rounded-2xl space-y-2 font-sans">
-                    <span className="text-[9px] font-bold text-emerald-800 uppercase tracking-wider block font-mono">
-                      👤 {isAmharic ? `የታዘዙ ምግቦች ዝርዝር (${customEnteredItems.length})` : `Custom Customer Foods Added (${customEnteredItems.length})`}
+                {/* 3. OFFICIAL TOLO PAYMENT DETAILS SECTION */}
+                <div className="bg-gradient-to-br from-indigo-50/40 to-slate-50 border border-indigo-150 p-4 rounded-2xl font-sans space-y-2.5 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-indigo-800 uppercase tracking-widest block font-mono">💳 Tolo Payment Details</span>
+                    <span className="text-[9px] bg-green-50 text-green-700 font-bold px-1.5 py-0.5 rounded border border-green-250 uppercase font-mono tracking-wider">
+                      Official Details
                     </span>
-                    <div className="space-y-1.5">
-                      {customEnteredItems.map(item => {
-                        const qty = selectedItems[item.id] || 0;
-                        if (qty === 0) return null;
-                        return (
-                          <div key={item.id} className="flex justify-between items-center bg-white border border-emerald-100 p-2.5 rounded-xl text-xs leading-none">
-                            <div className="truncate min-w-0 pr-2">
-                              <span className="font-bold text-slate-800">{item.name}</span>
-                              <span className="text-[10px] text-emerald-600 font-bold block mt-1">{item.price.toFixed(2)} Birr each</span>
-                            </div>
-                            <div className="flex items-center gap-1.5 shrink-0">
-                              <button
-                                type="button"
-                                onClick={() => handleModifyQuantity(item.id, -1)}
-                                className="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 flex items-center justify-center font-bold transition cursor-pointer"
-                              >
-                                <Minus className="w-3 h-3" />
-                              </button>
-                              <span className="w-4 text-center font-bold font-mono text-slate-800">{qty}</span>
-                              <button
-                                type="button"
-                                onClick={() => handleModifyQuantity(item.id, 1)}
-                                className="w-6 h-6 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 flex items-center justify-center font-bold transition cursor-pointer"
-                              >
-                                <Plus className="w-3 h-3" />
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setSelectedItems(prev => {
-                                    const copy = { ...prev };
-                                    delete copy[item.id];
-                                    return copy;
-                                  });
-                                  setCustomEnteredItems(prev => prev.filter(x => x.id !== item.id));
-                                }}
-                                className="ml-1 text-rose-500 hover:text-rose-700 p-1 hover:bg-rose-55 rounded-lg transition cursor-pointer"
-                                title="Remove item"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })}
+                  </div>
+
+                  {/* INSERT PICTURE / SCREENSHOT UPLOADER BUTTON */}
+                  <div className="bg-white rounded-xl p-3 border border-slate-150 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-slate-750 uppercase tracking-wide flex items-center gap-1 font-sans">
+                        📷 Attached Receipt Screenshot:
+                      </span>
+                      {receiptPhoto && (
+                        <button 
+                          type="button"
+                          onClick={() => onReceiptPhotoChange?.('')}
+                          className="text-[9.5px] font-bold text-rose-600 hover:text-rose-800 flex items-center gap-0.5 border border-rose-100 rounded bg-rose-50 px-2 py-0.5 cursor-pointer transition hover:bg-rose-100"
+                        >
+                          <X className="w-2.5 h-2.5" /> Remove
+                        </button>
+                      )}
+                    </div>
+
+                    {receiptPhoto ? (
+                      <div className="relative border border-slate-200 bg-slate-50 rounded-lg p-1.5 max-h-[110px] flex items-center justify-center overflow-hidden">
+                        <img 
+                          src={receiptPhoto} 
+                          alt="Uploaded Attachment Preview" 
+                          className="max-h-[90px] rounded-md object-contain"
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+                    ) : (
+                      <div className="space-y-1.5">
+                        {/* Styled custom file upload button */}
+                        <label className="flex items-center justify-center gap-2 w-full bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-xs hover:shadow transition-all py-2.5 px-3.5 rounded-xl text-xs font-bold font-sans cursor-pointer text-center">
+                          <Upload className="w-3.5 h-3.5" />
+                          <span>Choose Receipt Screenshot File</span>
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            className="hidden" 
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                const reader = new FileReader();
+                                reader.onload = (event) => {
+                                  if (event.target?.result) {
+                                    onReceiptPhotoChange?.(event.target.result as string);
+                                  }
+                                };
+                                reader.readAsDataURL(file);
+                              }
+                            }}
+                          />
+                        </label>
+                        <span className="text-[8.5px] text-slate-400 mt-1 block text-center leading-snug">
+                          Upload PNG, JPG, or JPEG snapshot of your mobile money app payment slip
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="bg-white rounded-xl p-3 border border-slate-150 space-y-2 text-xs">
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-slate-600">Telebirr:</span>
+                      <span className="font-mono bg-sky-50 text-sky-800 px-2 py-0.5 rounded font-extrabold select-all">0916031177</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="font-semibold text-slate-600">CBE Birr:</span>
+                      <span className="font-mono bg-amber-50 text-amber-800 px-2 py-0.5 rounded font-extrabold select-all">0916031177</span>
+                    </div>
+                    <div className="flex justify-between items-center border-t border-slate-100 pt-2">
+                      <span className="font-semibold text-slate-600">CBE Bank Account:</span>
+                      <span className="font-mono bg-purple-50 text-purple-900 px-2 py-0.5 rounded font-extrabold select-all text-[11px]">1000100603326</span>
+                    </div>
+                    <div className="flex justify-between items-center border-t border-slate-100 pt-2">
+                      <span className="font-semibold text-slate-600">Support / Admin ID:</span>
+                      <a 
+                        href="https://t.me/Cephasimon" 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="text-[11px] text-indigo-700 font-extrabold hover:underline"
+                      >
+                        t.me/Cephasimon ↗
+                      </a>
                     </div>
                   </div>
-                )}
+                  <p className="text-[9.5px] leading-relaxed text-slate-500 font-sans">
+                    Please submit 1/3 deposit to any official Tolo Delivery account above to initiate instant kitchen prep.
+                  </p>
+                </div>
 
               </div>
 
               {/* Bottom WebApp Submit Cart panel */}
-              {Object.keys(selectedItems).length > 0 ? (
+              {localPackageDetails.trim().length > 0 ? (
                 <div className="p-3 bg-white border-t border-slate-200 shrink-0 space-y-2 select-none">
                   {formError && (
                     <div className="p-2.5 bg-rose-50 border border-rose-250 rounded-xl text-rose-800 font-sans text-xs flex items-start gap-1.5 font-bold">
@@ -828,30 +900,39 @@ export default function TelegramSimulator({
                   )}
                   <div className="flex justify-between items-center text-xs font-sans">
                     <span className="text-slate-505">
-                      {isAmharic ? "የተመረጡ ምግቦች፦ " : "Selected: "}<strong className="font-mono text-slate-850">{getSelectedItemsCount()} {isAmharic ? "ምግቦች" : "plates"}</strong>
+                      {isAmharic ? "ትዕዛዝ፦ " : "Order Description: "}<strong className="font-mono text-slate-850">1 Package Description</strong>
                     </span>
                     <button
                       type="button"
-                      onClick={handleClearSelection}
+                      onClick={() => setLocalPackageDetails('')}
                       className="text-rose-500 font-bold flex items-center gap-1 hover:underline text-[10px] cursor-pointer"
                     >
-                      <Trash2 className="w-3 h-3" /> {isAmharic ? "ሁሉንም አፅዳ" : "Clear Selection"}
+                      <Trash2 className="w-3 h-3" /> {isAmharic ? "አጽዳ" : "Clear"}
                     </button>
                   </div>
                   <button
                     type="button"
                     onClick={handleSendSelection}
-                    className="w-full bg-emerald-600 hover:bg-emerald-750 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-95 shadow-md flex items-center justify-center gap-1.5 cursor-pointer font-sans"
+                    disabled={!receiptPhoto}
+                    className={`w-full font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-1.5 font-sans ${
+                      !receiptPhoto 
+                        ? 'bg-slate-300 text-slate-500 cursor-not-allowed opacity-75' 
+                        : 'bg-emerald-600 hover:bg-emerald-750 active:scale-95 text-white shadow-md cursor-pointer'
+                    }`}
                   >
                     <ShoppingBag className="w-4 h-4" /> 
-                    <span>{isAmharic ? `ምርጫዬን ላክ (${getSelectedItemsTotalPrice().toFixed(2)} ብር)` : `Submit Customer Choices (${getSelectedItemsTotalPrice().toFixed(2)} Birr)`}</span>
+                    <span>
+                      {!receiptPhoto 
+                        ? (isAmharic ? "እባክዎን ፎቶ ያስገቡ (Upload Receipt)" : "Upload Payment Screenshot to Submit") 
+                        : (isAmharic ? `ምርጫዬን ላክ (${getSelectedItemsTotalPrice().toFixed(2)} ብር)` : `Submit Order (${getSelectedItemsTotalPrice().toFixed(2)} Birr)`)}
+                    </span>
                   </button>
                 </div>
               ) : (
                 <div className="p-3.5 bg-slate-50 border-t border-slate-250 text-center shrink-0 text-[10.5px] text-slate-550 font-medium font-sans italic">
                   {isAmharic 
-                    ? "እባክዎን ከላይ ያሉትን የራስዎን ምግቦች አስገብተው 'አረጋግጥና አክል' በማለት ምርጫዎን ይላኩ።" 
-                    : "Enter your custom items above and click \"Confirm & Add\" to build your selection. Press submit to dispatch!"}
+                    ? "እባክዎን ከላይ የትዕዛዙን ዝርዝር አስገብተው ይላኩ።" 
+                    : "Enter what Dishes / Drinks or courier item should be delivered to proceed!"}
                 </div>
               )}
             </motion.div>

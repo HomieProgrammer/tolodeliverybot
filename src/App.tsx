@@ -22,7 +22,9 @@ import {
   ShieldCheck,
   CheckCircle2,
   User,
-  Phone
+  Phone,
+  Upload,
+  Eye
 } from 'lucide-react';
 
 import { MenuItem, Order, OrderItem, ChatMessage, OrderStatus, ParsedResponse } from './types';
@@ -38,13 +40,24 @@ export default function App() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [activeTrackingOrderId, setActiveTrackingOrderId] = useState<string | null>(null);
   
-  // Custom user profile and mini-app checkout state
-  const [customerProfile, setCustomerProfile] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    pickupAddress: ""
+  // Custom user profile and mini-app checkout state starts empty for dynamic entry
+  const [customerProfile, setCustomerProfile] = useState(() => {
+    try {
+      const saved = localStorage.getItem('tolo_customer_profile');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      name: "",
+      phone: "",
+      address: "",
+      pickupAddress: ""
+    };
   });
+
+  useEffect(() => {
+    localStorage.setItem('tolo_customer_profile', JSON.stringify(customerProfile));
+  }, [customerProfile]);
+
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   // Bot configurations for direct Telegram operator alerts
@@ -76,17 +89,37 @@ export default function App() {
 
   // Advance Payment Flow Mini-App State
   const [paymentDraftOrderId, setPaymentDraftOrderId] = useState<string | null>(null);
-  const [paymentStep, setPaymentStep] = useState<'details' | 'waiting' | 'success'>('details');
+  const [paymentStep, setPaymentStep] = useState<'details' | 'waiting' | 'awaiting_admin' | 'success'>('details');
   const [paymentType, setPaymentType] = useState<'telebirr' | 'cbe_birr' | 'cbe_bank'>('telebirr');
   const [bankTxRef, setBankTxRef] = useState('CBE-TX-9281729A');
   const [payerPhone, setPayerPhone] = useState('');
+  const [receiptPhoto, setReceiptPhoto] = useState<string>('');
+  const [isAmharic, setIsAmharic] = useState<boolean>(true);
 
   // Sync payerPhone with profile phone only when opening the modal, and default to blank if it's default dummy phone
   useEffect(() => {
     if (paymentDraftOrderId) {
       setPayerPhone(customerProfile.phone === '0911223344' ? '' : customerProfile.phone);
+      setReceiptPhoto('');
+      setPaymentStep('details');
     }
   }, [paymentDraftOrderId, customerProfile.phone]);
+
+  // Listen for admin verification or changes on the active draft order payment
+  useEffect(() => {
+    if (paymentDraftOrderId && paymentStep === 'awaiting_admin') {
+      const activeOrder = orders.find(o => o.id === paymentDraftOrderId);
+      if (activeOrder) {
+        if (activeOrder.isPaymentVerified) {
+          setPaymentStep('success');
+        } else if (activeOrder.status === 'cancelled') {
+          // If the admin rejected/cancelled it, notify and go back to details
+          alert("The administrator has rejected the receipt screenshot. Please verify your payment reference and upload a valid transaction photo.");
+          setPaymentStep('details');
+        }
+      }
+    }
+  }, [orders, paymentDraftOrderId, paymentStep]);
 
   // View Control: On mobile, users can toggle panes if side-by-side is crowded
   const [currentPane, setCurrentPane] = useState<'consumer' | 'admin' | 'tracking'>('consumer');
@@ -108,24 +141,25 @@ export default function App() {
     loadMenu();
 
     // Welcome messages for Telegram /start onboarding flow
+    const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     setMessages([
       {
         id: 'msg_welcome_1',
         sender: 'bot',
         type: 'start_flow',
-        text: "🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\n\nOrder quickly, track deliveries in real time, and pay securely.",
+        text: "🚀 እንኳን ወደ ቶሎ | Tollo Delivery በሰላም መጡ! 👋\n\nየምግብ፣ የሸቀጣሸቀጥ፣ የዕቃዎችና የፈጣን መልእክት ማድረሻ አገልግሎት።\nበቀላሉ ይዘዙ፣ አስተማማኝ አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ፣ በታማኝነት ይክፈሉ።\n\n-------------------------\n\n🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\nOrder quickly, track deliveries in real time, and pay securely.",
         buttons: [
           {
-            label: "🍔 Open Tollo Delivery",
+            label: "🍔 ቶሎ ማዘዣ ክፈት (Open Tollo App)",
             url: "https://tolodeliverybot-production.up.railway.app",
             actionType: "open_mini_app"
           },
           {
-            label: "📞 Contact Support",
+            label: "📞 እገዛ መጠየቂያ (Contact Support)",
             actionType: "alert_support"
           }
         ],
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        timestamp: timeStr
       }
     ]);
   }, []);
@@ -203,16 +237,16 @@ export default function App() {
           sender: 'bot',
           type: 'start_flow',
           text: isStartCommand
-            ? "🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\n\nOrder quickly, track deliveries in real time, and pay securely."
-            : "🍔 *Tollo Mini App Assistant*\n\nTo place your order, browse our full live menu, track active deliveries, or manage your delivery parameters, please use our secure ቶሎ | Tollo Delivery Mini App directly inside Telegram by clicking the button below!",
+            ? "🚀 እንኳን ወደ ቶሎ | Tollo Delivery በሰላም መጡ! 👋\n\nየምግብ፣ የሸቀጣሸቀጥ፣ የዕቃዎችና የፈጣን መልእክት ማድረሻ አገልግሎት።\nበቀላሉ ይዘዙ፣ አስተማማኝ አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ፣ በታማኝነት ይክፈሉ።\n\n-------------------------\n\n🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\nOrder quickly, track deliveries in real time, and pay securely."
+            : "🍔 *ቶሎ ማዘዣ ረዳት (Tollo Mini App)*\n\nእባክዎን ከታች ያለውን የ 'Open Tollo App' ቁልፍ በመጫን ትዕዛዝዎን ይፈጽሙ፣ የማድረሻ ቦታዎችዎን ያስተካክሉ ወይም አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ!\n\nTo place your order, browse our full live menu, track active deliveries, or manage your delivery parameters, please use our secure ቶሎ | Tollo Delivery Mini App directly inside Telegram by clicking the button below!",
           buttons: [
             {
-              label: "🍔 Open Tollo Delivery",
+              label: "🍔 ቶሎ ማዘዣ ክፈት (Open Tollo App)",
               url: "https://tolodeliverybot-production.up.railway.app",
               actionType: "open_mini_app"
             },
             {
-              label: "📞 Contact Support",
+              label: "📞 እገዛ መጠየቂያ (Contact Support)",
               actionType: "alert_support"
             }
           ],
@@ -363,40 +397,108 @@ export default function App() {
         const orderDraftId = 'draft_' + Math.floor(Math.random() * 100000);
 
         setTimeout(() => {
-          setMessages(prev => [...prev, {
-            id: 'msg_bot_' + Date.now(),
-            sender: 'bot',
-            text: `Awesome choice! Calculated your customer custom food ticket successfully:`,
-            timestamp: botTimestamp,
-            type: 'order_summary',
-            orderSummary: {
+          if (receiptPhoto) {
+            // Immediately register/submit completed payment details with status "payment_pending"
+            const advancePaid = subtotal / 3;
+            const remainingBalance = (subtotal * 2 / 3) + deliveryFee;
+            const txId = `TXN-${Math.floor(100000 + Math.random() * 900000)}`;
+
+            const tempOrder: Order = {
+              id: orderDraftId,
+              rawText: text,
               items: draftItems,
               subtotal,
               deliveryFee,
+              tax: 0,
               total,
-              orderId: orderDraftId
-            }
-          }]);
+              status: 'payment_pending',
+              createdAt: new Date().toISOString(),
+              customerName: activeName,
+              customerPhone: activePhone,
+              deliveryAddress: activeAddress,
+              pickupAddress: activePickupAddress,
+              driverName: '',
+              driverPhone: '',
+              etaMinutes: 24,
+              progress: 5,
+              driverPathIndex: 0,
+              isPaymentVerified: false,
+              isDriverAssigned: false,
+              isDriverAccepted: false,
+              paymentDetails: {
+                amount: advancePaid,
+                method: 'Telebirr / CBE Birr',
+                reference: txId,
+                timestamp: new Date().toLocaleString(),
+                receiptPhoto: receiptPhoto
+              }
+            };
+            setOrders(prev => [...prev, tempOrder]);
 
-          const tempOrder: Order = {
-            id: orderDraftId,
-            rawText: text,
-            items: draftItems,
-            subtotal,
-            deliveryFee,
-            tax: 0,
-            total,
-            status: 'pending',
-            createdAt: new Date().toISOString(),
-            customerName: activeName,
-            deliveryAddress: activeAddress,
-            driverName: 'Maxim (Speedy Scott)',
-            driverPhone: '+1 (555) 304-SCOOT',
-            etaMinutes: 24,
-            progress: 5,
-            driverPathIndex: 0
-          };
-          setOrders(prev => [...prev, tempOrder]);
+            // Add payment submitted messages to Telegram simulator stream immediately
+            setMessages(prev => [
+              ...prev,
+              {
+                id: 'msg_bot_paid_receipt_' + Date.now(),
+                sender: 'bot',
+                text: isAmharic 
+                  ? `💳 *የቶሎ ማድረሻ ክፍያ ማረጋገጫ ተልኳል ለ #${orderDraftId}* ✅\n\n👤 *ደንበኛ:* ${activeName}\n📞 *ስልክ:* ${activePhone}\n📍 *መነሻ ቦታ:* ${activePickupAddress || "(ከተዘጋጀው የቶሎ ማእድ ቤት)"}\n📍 *መድረሻ ቦታ:* ${activeAddress}\n\n*የቅድሚያ ክፍያ (1/3):* ${advancePaid.toFixed(2)} Birr\n*ቀሪ እዳ (በማድረሻ ወቅት የሚከፈል):* ${remainingBalance.toFixed(2)} Birr\n*የክፍያ መንገድ:* Mobile Wallet / CBE Bank\n*መለያ ቁጥር (Ref ID):* ${txId}\n\n📷 *የማረጋገጫ ፎቶ ለባለቤቱ ተልኳል:* [https://t.me/${operatorUsername || 'Cephasimon'}]\n\n⚠️ *የማረጋገጫ ሂደት በመጠባበቅ ላይ:* የእርስዎ የክፍያ ማረጋገጫ ፎቶ ለባለቤቱ (https://t.me/${operatorUsername || 'Cephasimon'}) በአስተማማኝ ሁኔታ ተልኳል። ባለቤቱ ልክ ክፍያውን ሲያረጋግጥ አሽከርካሪ ይመደባል እንዲሁም የቀጥታ መከታተያ ካርታ (Live GPS) ይጀምራል!`
+                  : `💳 *TOLO DELIVERY PAYMENT SUBMITTED for #${orderDraftId}* ✅\n\n👤 *Customer:* ${activeName}\n📞 *Contact Phone:* ${activePhone}\n📍 *Pick-Up From:* ${activePickupAddress || "(Ready from ToLo Kitchen)"}\n📍 *Drop-Off To:* ${activeAddress}\n\n*Advance Payment (1/3 of cost):* ${advancePaid.toFixed(2)} Birr\n*Remaining Balance (Due After Delivery):* ${remainingBalance.toFixed(2)} Birr\n*Method:* Mobile Wallet / CBE Bank\n*Receipt Reference:* ${txId}\n\n📷 *Confirmation Photo Sent To Owner:* [https://t.me/${operatorUsername || 'Cephasimon'}]\n\n⚠️ *Verification Required:* Your receipt photo has been securely sent to the owner (https://t.me/${operatorUsername || 'Cephasimon'}) for approval. Once he approves, a driver will be assigned immediately and live GPS tracking will begin!`,
+                timestamp: botTimestamp,
+                type: 'tracking_link',
+                trackingOrderId: orderDraftId
+              },
+              {
+                id: 'msg_sys_alert_' + Date.now(),
+                sender: 'system',
+                text: isAmharic
+                  ? `📢 *አስተዳዳሪው ተረድቷል:* የክፍያ ቼክ ማስያዣ ለትዕዛዝ #${orderDraftId} ይጠበቃል። የማረጋገጫ ፎቶው በአስተማማኝ ሁኔታ ተሰቅሏል ለ https://t.me/${operatorUsername || 'Cephasimon'}`
+                  : `📢 *ADMIN NOTIFIED:* Light payment check required for Order #${orderDraftId}. Receipt confirmation photo has been uploaded for https://t.me/${operatorUsername || 'Cephasimon'}!`,
+                timestamp: botTimestamp
+              }
+            ]);
+
+            setReceiptPhoto(''); // Reset the state screenshot so subsequent custom orders don't bleed-over
+          } else {
+            // Fallback draft mode
+            setMessages(prev => [...prev, {
+              id: 'msg_bot_' + Date.now(),
+              sender: 'bot',
+              text: `Awesome choice! Calculated your customer custom food ticket successfully:`,
+              timestamp: botTimestamp,
+              type: 'order_summary',
+              orderSummary: {
+                items: draftItems,
+                subtotal,
+                deliveryFee,
+                total,
+                orderId: orderDraftId
+              }
+            }]);
+
+            const tempOrder: Order = {
+              id: orderDraftId,
+              rawText: text,
+              items: draftItems,
+              subtotal,
+              deliveryFee,
+              tax: 0,
+              total,
+              status: 'pending',
+              createdAt: new Date().toISOString(),
+              customerName: activeName,
+              customerPhone: activePhone,
+              deliveryAddress: activeAddress,
+              pickupAddress: activePickupAddress,
+              driverName: '',
+              driverPhone: '',
+              etaMinutes: 24,
+              progress: 0,
+              driverPathIndex: 0
+            };
+            console.log("CREATING ORDER", tempOrder);
+            setOrders(prev => [...prev, tempOrder]);
+          }
           setIsParsing(false);
         }, 800);
 
@@ -480,11 +582,13 @@ export default function App() {
               status: 'pending',
               createdAt: new Date().toISOString(),
               customerName: activeName,
+              customerPhone: activePhone,
               deliveryAddress: activeAddress,
-              driverName: 'Maxim (Speedy Scott)',
-              driverPhone: '+1 (555) 304-SCOOT',
+              pickupAddress: activePickupAddress,
+              driverName: '',
+              driverPhone: '',
               etaMinutes: 24,
-              progress: 5,
+              progress: 0,
               driverPathIndex: 0
             };
             setOrders(prev => [...prev, tempOrder]);
@@ -530,43 +634,78 @@ export default function App() {
     setPaymentStep('details');
   };
 
-  // Once Advance Payment clears, update the order status
+  // Once Advance Payment is submitted, set status to payment_pending
   const handleCompleteAdvancePayment = (draftId: string) => {
     const timestampStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-    // Bind the final profile details exactly to this active order
-    setOrders(prev => prev.map(o => {
-      if (o.id === draftId) {
-        return { 
-          ...o, 
-          status: 'preparing' as OrderStatus, 
-          progress: 15,
-          customerName: customerProfile.name,
-          deliveryAddress: customerProfile.address,
-          pickupAddress: customerProfile.pickupAddress
-        };
-      }
-      return o;
-    }));
-
-    // Post bot-chat payment receipt
-    const txId = `TXN-${Math.floor(100000 + Math.random() * 900000)}`;
-    const methodLabel = paymentType === 'telebirr' ? 'Telebirr Wallet' : paymentType === 'cbe_birr' ? 'CBE Birr Wallet' : 'Commercial Bank of Ethiopia (CBE) Direct';
     
     const targetOrder = orders.find(o => o.id === draftId);
     const orderSubtotal = targetOrder ? targetOrder.subtotal : 0;
     const advancePaid = orderSubtotal / 3;
     const orderDeliveryFee = targetOrder ? targetOrder.deliveryFee : 2.50;
     const remainingBalance = (orderSubtotal * 2 / 3) + orderDeliveryFee;
+    
+    const txId = paymentType === 'cbe_bank' ? bankTxRef : `TXN-${Math.floor(100000 + Math.random() * 900000)}`;
+    const destinationDetail = paymentType === 'telebirr' 
+      ? 'Official Telebirr Account (0916031177)' 
+      : paymentType === 'cbe_birr' 
+        ? 'Official CBE Birr Account (0916031177)' 
+        : 'Official CBE Bank Account (1000100603326)';
+        
+    const methodLabel = paymentType === 'telebirr' 
+      ? `Telebirr Wallet [To: ${destinationDetail}]` 
+      : paymentType === 'cbe_birr' 
+        ? `CBE Birr Wallet [To: ${destinationDetail}]` 
+        : `Commercial Bank of Ethiopia (CBE) [To: ${destinationDetail}]`;
 
-    setMessages(prev => [...prev, {
-      id: 'msg_bot_paid_receipt_' + Date.now(),
-      sender: 'bot',
-      text: `💳 *TOLO SPEEDY PAYMENT VERIFIED* ✅\n\n👤 *Customer:* ${customerProfile.name}\n📞 *Contact Phone:* ${customerProfile.phone}\n📍 *Pick-Up From:* ${customerProfile.pickupAddress || "(Ready from Tolo Kitchen Hub)"}\n📍 *Drop-Off To:* ${customerProfile.address}\n\n*Advance Payment Made (1/3 of food):* ${advancePaid.toFixed(2)} Birr\n*Remaining Balance (Due After Delivery):* ${remainingBalance.toFixed(2)} Birr (inc. ${orderDeliveryFee.toFixed(2)} Birr delivery fee payable after delivery)\n*Method:* ${methodLabel}\n*Receipt ID:* ${txId}\n\nOur kitchen has queued your order as CONFIRMED. Your 1/3 deposit is secured. The delivery fee is payable after the item is delivered. Live GPS tracking is now active!`,
-      timestamp: timestampStr,
-      type: 'tracking_link',
-      trackingOrderId: draftId
-    }]);
+    // Bind the final profile details exactly to this active order and mark status as "Payment Pending Verification"
+    setOrders(prev => prev.map(o => {
+      if (o.id === draftId) {
+        return { 
+          ...o, 
+          status: 'payment_pending' as OrderStatus, 
+          progress: 5,
+          customerName: customerProfile.name,
+          customerPhone: customerProfile.phone,
+          deliveryAddress: customerProfile.address,
+          pickupAddress: customerProfile.pickupAddress,
+          isPaymentVerified: false,
+          isDriverAssigned: false,
+          isDriverAccepted: false,
+          driverName: '',
+          driverPhone: '',
+          paymentDetails: {
+            amount: advancePaid,
+            method: paymentType === 'telebirr' ? 'Telebirr' : paymentType === 'cbe_birr' ? 'CBE Birr' : 'CBE Bank Account',
+            reference: txId,
+            timestamp: new Date().toLocaleString(),
+            receiptPhoto: receiptPhoto || 'https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=500&auto=format&fit=crop&q=60'
+          }
+        };
+      }
+      return o;
+    }));
+
+    setMessages(prev => [
+      ...prev, 
+      {
+        id: 'msg_bot_paid_receipt_' + Date.now(),
+        sender: 'bot',
+        text: isAmharic 
+          ? `💳 *የቶሎ ማድረሻ ክፍያ ማረጋገጫ ተልኳል ለ #${draftId}* ✅\n\n👤 *ደንበኛ:* ${customerProfile.name}\n📞 *ስልክ:* ${customerProfile.phone}\n📍 *መነሻ ቦታ:* ${customerProfile.pickupAddress || "(ከተዘጋጀው የቶሎ ማእድ ቤት)"}\n📍 *መድረሻ ቦታ:* ${customerProfile.address}\n\n*የቅድሚያ ክፍያ (1/3):* ${advancePaid.toFixed(2)} Birr\n*ቀሪ እዳ (በማድረሻ ወቅት የሚከፈል):* ${remainingBalance.toFixed(2)} Birr\n*የክፍያ መንገድ:* ${methodLabel}\n*መለያ ቁጥር (Ref ID):* ${txId}\n\n📷 *የማረጋገጫ ፎቶ ለባለቤቱ ተልኳል:* [https://t.me/${operatorUsername || 'Cephasimon'}]\n\n⚠️ *የማረጋገጫ ሂደት በመጠባበቅ ላይ:* የእርስዎ የክፍያ ማረጋገጫ ፎቶ ለባለቤቱ (https://t.me/${operatorUsername || 'Cephasimon'}) በአስተማማኝ ሁኔታ ተልኳል። ባለቤቱ ልክ ክፍያውን ሲያረጋግጥ አሽከርካሪ ይመደባል እንዲሁም የቀጥታ መከታተያ ካርታ (Live GPS) ይጀምራል!`
+          : `💳 *TOLO DELIVERY PAYMENT SUBMITTED for #${draftId}* ✅\n\n👤 *Customer:* ${customerProfile.name}\n📞 *Contact Phone:* ${customerProfile.phone}\n📍 *Pick-Up From:* ${customerProfile.pickupAddress || "(Ready from Tolo Kitchen)"}\n📍 *Drop-Off To:* ${customerProfile.address}\n\n*Advance Payment (1/3 of cost):* ${advancePaid.toFixed(2)} Birr\n*Remaining Balance (Due After Delivery):* ${remainingBalance.toFixed(2)} Birr\n*Method:* ${methodLabel}\n*Receipt Reference:* ${txId}\n\n📷 *Confirmation Photo Sent To Owner:* [https://t.me/${operatorUsername || 'Cephasimon'}]\n\n⚠️ *Verification Required:* Your receipt photo has been securely sent to the owner (https://t.me/${operatorUsername || 'Cephasimon'}) for approval. Once he approves, a driver will be assigned immediately and live GPS tracking will begin!`,
+        timestamp: timestampStr,
+        type: 'tracking_link',
+        trackingOrderId: draftId
+      },
+      {
+        id: 'msg_sys_alert_' + Date.now(),
+        sender: 'system',
+        text: isAmharic
+          ? `📢 *አስተዳዳሪው ተረድቷል:* የክፍያ ቼክ ማስያዣ ለትዕዛዝ #${draftId} ይጠበቃል። የማረጋገጫ ፎቶው በአስተማማኝ ሁኔታ ተሰቅሏል ለ https://t.me/${operatorUsername || 'Cephasimon'}`
+          : `📢 *ADMIN NOTIFIED:* Light payment check required for Order #${draftId}. Receipt confirmation photo has been uploaded for https://t.me/${operatorUsername || 'Cephasimon'}!`,
+        timestamp: timestampStr
+      }
+    ]);
 
     // Dispatch real-time Telegram alert message to operator
     if (botToken && botToken !== "8139963672:AAEl_yourTokenHere" && operatorChatId) {
@@ -575,19 +714,16 @@ export default function App() {
         : '';
         
       const trackingUrl = `${window.location.origin}/?order=${draftId}`;
-      const alertPayload = `🔔 *Tolo Delivery Service alert!* 🔔\n` +
-        `👨‍🍳 *New Order Confirmed & Deposit Paid!*\n\n` +
-        `👤 *Customer:* ${customerProfile.name}\n` +
-        `📞 *Phone:* ${customerProfile.phone}\n` +
-        `📍 *Pick-Up:* ${customerProfile.pickupAddress || "Tolo Kitchen Hub"}\n` +
-        `📍 *Drop-Off Address:* ${customerProfile.address}\n\n` +
-        `🍔 *Items:* \n${itemsListText}\n\n` +
-        `🏢 *Total Food Cost:* ${orderSubtotal.toFixed(2)} Birr\n` +
-        `💳 *Deposit Paid (1/3):* ${advancePaid.toFixed(2)} Birr ✅\n` +
-        `💵 *Remaining Balance (Paid after delivery):* ${remainingBalance.toFixed(2)} Birr\n` +
-        `🎯 *Method:* ${methodLabel}\n` +
-        `🧾 *Receipt ID:* ${txId}\n\n` +
-        `👉 *Open Dispatch & Tracking Screen:* ${trackingUrl}`;
+      const alertPayload = `🔔 *Tolo Delivery (Payment Pending)* 🔔\n\n` +
+        `👤 *Customer Name:* ${customerProfile.name}\n` +
+        `📞 *Phone Number:* ${customerProfile.phone}\n` +
+        `📍 *Pickup Location:* ${customerProfile.pickupAddress || "Tolo Store"}\n` +
+        `📍 *Delivery Address:* ${customerProfile.address}\n\n` +
+        `💳 *Amount Sent:* ${advancePaid.toFixed(2)} Birr\n` +
+        `💵 *Method:* ${methodLabel}\n` +
+        `🧾 *Reference ID:* ${txId}\n` +
+        `🆔 *Order ID:* #${draftId}\n\n` +
+        `⚠️ *Action:* Please log in to your Kitchen Dashboard to verify payment and assign a driver.`;
 
       fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
@@ -653,6 +789,116 @@ export default function App() {
       }
       return o;
     }));
+  };
+
+  // Administrative verification of the user's 1/3 deposit
+  const handleVerifyPayment = (orderId: string) => {
+    const timestampStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    setOrders(prev => prev.map(o => {
+      if (o.id === orderId) {
+        return {
+          ...o,
+          status: 'pending' as OrderStatus, // Go back to pending state for driver assignment!
+          isPaymentVerified: true,
+          driverId: '',
+          driverName: '',
+          driverPhone: '',
+          isDriverAssigned: false,
+          isDriverAccepted: false,
+          progress: 15
+        };
+      }
+      return o;
+    }));
+
+    setMessages(prev => [...prev, {
+      id: 'msg_sys_verify_' + Date.now(),
+      sender: 'bot',
+      text: `💳 *TOLO ADVANCE DEPOSIT APPROVED* ✅\n\nYour 1/3 advance payment confirmation screenshot or picture for Order *#${orderId}* has been successfully approved by the owner (https://t.me/Cephasimon).\n\n🛵 *NEXT STEP:* The administrator is currently assigning a specialized rider to dispatch your order immediately. Live GPS tracking will activate as soon as the rider accepts the delivery ticket!`,
+      timestamp: timestampStr
+    }]);
+  };
+
+  // Assign a driver and collect Driver Name, ID, Phone Number
+  const handleAssignDriver = (orderId: string, driver: { name: string; id: string; phone: string }) => {
+    const timestampStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const targetOrder = orders.find(o => o.id === orderId);
+
+    setOrders(prev => prev.map(o => {
+      if (o.id === orderId) {
+        return {
+          ...o,
+          driverId: driver.id,
+          driverName: driver.name,
+          driverPhone: driver.phone,
+          isDriverAssigned: true,
+          progress: 20
+        };
+      }
+      return o;
+    }));
+
+    // Post to bot system logs
+    setMessages(prev => [...prev, {
+      id: 'msg_sys_assign_' + Date.now(),
+      sender: 'bot',
+      text: `🚖 *DRIVER ASSIGNED to Order #${orderId}*\n\nOur dispatcher assigned delivery partner *${driver.name}* (ID: ${driver.id}) to transport your items.\n📞 *Driver Contact:* ${driver.phone}\n\n*Awaiting driver confirmation...*`,
+      timestamp: timestampStr
+    }]);
+
+    // Send driver notifications (Requirement 5)
+    // When an order is placed and approved, notify the assigned driver
+    const itemsListText = targetOrder
+      ? targetOrder.items.map(it => `• ${it.quantity}x ${it.name}`).join('\n')
+      : '';
+    const driverPayload = `🔔 *NEW DELIVERY TICKET ASSIGNED!* 🔔\n` +
+      `🆔 *Order ID:* #${orderId}\n` +
+      `👤 *Customer:* ${targetOrder?.customerName || 'Tollo Client'}\n` +
+      `📞 *Customer Phone:* ${targetOrder?.customerPhone || 'N/A'}\n` +
+      `📍 *Pickup:* ${targetOrder?.pickupAddress || 'Tolo Kitchen Hub'}\n` +
+      `📍 *Delivery Address:* ${targetOrder?.deliveryAddress || 'N/A'}\n` +
+      `🍔 *Items:* \n${itemsListText}\n\n` +
+      `👉 Please accept this ticket on your device to begin GPS routing.`;
+
+    if (botToken && botToken !== "8139963672:AAEl_yourTokenHere" && operatorChatId) {
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: operatorChatId,
+          text: `🚖 *DRIVER TERMINAL NOTIFICATION* 📢\n\n${driverPayload}`,
+          parse_mode: "Markdown"
+        })
+      }).catch(err => console.error("Error dispatching to driver chat:", err));
+    }
+  };
+
+  // Driver accepts the delivery ticket (Requirement 6)
+  const handleDriverAccept = (orderId: string) => {
+    const timestampStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const targetOrder = orders.find(o => o.id === orderId);
+
+    setOrders(prev => prev.map(o => {
+      if (o.id === orderId) {
+        return {
+          ...o,
+          status: 'preparing' as OrderStatus,
+          isDriverAccepted: true,
+          progress: 30
+        };
+      }
+      return o;
+    }));
+
+    setMessages(prev => [...prev, {
+      id: 'msg_sys_accept_' + Date.now(),
+      sender: 'bot',
+      text: `🛵 *RIDER ON WAY!* ✅\n\nYour driver *${targetOrder?.driverName || "Tollo Rider"}* has ACCEPTED the ticket and is currently at the partner store picking up your warm meals. Kitchen status: Preparing! Live GPS tracking is now online!`,
+      timestamp: timestampStr,
+      type: 'tracking_link',
+      trackingOrderId: orderId
+    }]);
   };
 
   const activeTrackingOrderDetails = orders.find(o => o.id === activeTrackingOrderId) || null;
@@ -733,6 +979,11 @@ export default function App() {
               customerProfile={customerProfile}
               onOpenProfileModal={() => setIsProfileModalOpen(true)}
               menuItems={menuItems}
+              receiptPhoto={receiptPhoto}
+              onReceiptPhotoChange={setReceiptPhoto}
+              isAmharic={isAmharic}
+              onLanguageChange={setIsAmharic}
+              orders={orders}
             />
           </div>
 
@@ -740,7 +991,7 @@ export default function App() {
           <div className={`col-span-1 lg:col-span-12 lg:col-span-7 ${currentPane !== 'consumer' ? 'block' : 'hidden lg:block'}`}>
             
             {/* If tracking is primary or user confirmed order */}
-            {currentPane === 'tracking' || (currentPane !== 'consumer' && !activeTrackingOrderId && orders.length > 0) ? (
+            {currentPane === 'tracking' || (currentPane !== 'admin' && orders.length > 0) ? (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">Live Drone/Scooter Tracking Canvas</span>
@@ -772,6 +1023,9 @@ export default function App() {
                 onResetMenu={handleResetMenu}
                 orders={orders}
                 onCancelActiveOrder={handleCancelActiveOrder}
+                onVerifyPayment={handleVerifyPayment}
+                onAssignDriver={handleAssignDriver}
+                onDriverAccept={handleDriverAccept}
                 botToken={botToken}
                 setBotToken={setBotToken}
                 operatorChatId={operatorChatId}
@@ -841,6 +1095,20 @@ export default function App() {
                         value={customerProfile.phone}
                         onChange={(e) => setCustomerProfile(prev => ({ ...prev, phone: e.target.value }))}
                         placeholder="e.g. 0911234567"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium font-sans"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Default Pickup Location</label>
+                    <div className="relative">
+                      <MapPin className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
+                      <input 
+                        type="text" 
+                        value={customerProfile.pickupAddress || ''}
+                        onChange={(e) => setCustomerProfile(prev => ({ ...prev, pickupAddress: e.target.value }))}
+                        placeholder="e.g. Tolo Kitchen Hub"
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium font-sans"
                       />
                     </div>
@@ -922,7 +1190,7 @@ export default function App() {
               {paymentStep === 'details' && (() => {
                 const cleanPhone = customerProfile.phone.trim().replace(/[^0-9]/g, '');
                 const isPhoneInvalid = cleanPhone.length !== 10;
-                const isProfileIncomplete = !customerProfile.name.trim() || !customerProfile.phone.trim() || !customerProfile.address.trim() || isPhoneInvalid;
+                const isProfileIncomplete = !customerProfile.name.trim() || !customerProfile.phone.trim() || !customerProfile.pickupAddress.trim() || !customerProfile.address.trim() || isPhoneInvalid;
                 return (
                   <div className="p-5 space-y-4 overflow-y-auto flex-1 min-h-0">
                     <div className="bg-slate-50 border border-slate-150 p-3.5 rounded-xl font-sans space-y-3">
@@ -969,6 +1237,21 @@ export default function App() {
                               ⚠️ Phone must have exactly 10 digits (e.g., 0911234567).
                             </p>
                           )}
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Pick-up Location</label>
+                          <div className="relative">
+                            <MapPin className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
+                            <input 
+                              type="text" 
+                              value={customerProfile.pickupAddress}
+                              onChange={(e) => setCustomerProfile(prev => ({ ...prev, pickupAddress: e.target.value }))}
+                              placeholder="Enter restaurant or kitchen hub location"
+                              className="w-full bg-white border border-slate-200 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-805 font-sans focus:outline-none focus:ring-2 focus:ring-indigo-500 font-medium"
+                              required
+                            />
+                          </div>
                         </div>
 
                         <div>
@@ -1046,47 +1329,60 @@ export default function App() {
                     {/* Simulated Fields */}
                     <div className="bg-slate-50 p-3 rounded-xl border border-slate-150 space-y-3">
                       {/* Owner Account Details Announcement */}
-                      <div className="bg-indigo-50/70 border border-indigo-150 rounded-xl p-3 font-sans">
-                        <span className="block text-[10.5px] font-extrabold text-indigo-900 mb-1.5 uppercase tracking-wider flex items-center gap-1.5">
-                          👑 Verified Merchant (Corporate Account) Destination:
+                      <div className="bg-gradient-to-br from-indigo-50 to-slate-50 border border-indigo-150 rounded-xl p-3.5 font-sans shadow-xs">
+                        <span className="block text-[10.5px] font-extrabold text-indigo-900 mb-2 uppercase tracking-wider flex items-center gap-1.5">
+                          👑 Official Tolo Delivery Payment Details:
                         </span>
-                        <div className="space-y-1 font-sans text-xs">
+                        <div className="space-y-2 font-sans text-xs">
                           {paymentType === 'telebirr' && (
-                            <div className="space-y-1">
+                            <div className="space-y-1.5 bg-white p-2.5 rounded-lg border border-indigo-100 shadow-3xs">
                               <div className="flex items-center justify-between text-indigo-950 font-medium">
                                 <span>Account Name:</span>
-                                <span className="font-bold text-indigo-900">Tolo Delivery Service plc</span>
+                                <span className="font-bold text-indigo-900">Tolo Delivery</span>
                               </div>
                               <div className="flex items-center justify-between text-indigo-950 font-medium">
-                                <span>Telebirr Till No:</span>
-                                <span className="font-mono bg-white border border-indigo-150 text-indigo-800 px-2 py-0.5 rounded font-bold text-[12px] select-all">890412</span>
+                                <span className="text-sky-700 font-bold">Telebirr Number:</span>
+                                <span className="font-mono bg-sky-50 border border-sky-200 text-sky-850 px-2 py-0.5 rounded font-extrabold text-[12px] select-all tracking-wider">0916031177</span>
                               </div>
                             </div>
                           )}
                           {paymentType === 'cbe_birr' && (
-                            <div className="space-y-1">
+                            <div className="space-y-1.5 bg-white p-2.5 rounded-lg border border-indigo-100 shadow-3xs">
                               <div className="flex items-center justify-between text-indigo-950 font-medium">
                                 <span>Account Name:</span>
-                                <span className="font-bold text-indigo-900">Tolo Delivery Service plc</span>
+                                <span className="font-bold text-indigo-900">Tolo Delivery</span>
                               </div>
                               <div className="flex items-center justify-between text-indigo-950 font-medium">
-                                <span>CBE Birr Till Code:</span>
-                                <span className="font-mono bg-white border border-indigo-150 text-indigo-800 px-2 py-0.5 rounded font-bold text-[12px] select-all">110928</span>
+                                <span className="text-amber-705 font-bold">CBE Birr Number:</span>
+                                <span className="font-mono bg-amber-50 border border-amber-200 text-amber-900 px-2 py-0.5 rounded font-extrabold text-[12px] select-all tracking-wider">0916031177</span>
                               </div>
                             </div>
                           )}
                           {paymentType === 'cbe_bank' && (
-                            <div className="text-indigo-950 space-y-1 pt-0.5">
-                              <div className="flex items-center justify-between font-medium">
+                            <div className="space-y-1.5 bg-white p-2.5 rounded-lg border border-indigo-100 shadow-3xs">
+                              <div className="flex items-center justify-between text-indigo-950 font-medium">
                                 <span>CBE Account Name:</span>
-                                <span className="font-bold text-indigo-900">Tolo Delivery Corporate Group</span>
+                                <span className="font-bold text-indigo-900">Tolo Delivery</span>
                               </div>
-                              <div className="flex items-center justify-between font-medium">
-                                <span>CBE Account No:</span>
-                                <span className="font-mono bg-white border border-indigo-150 text-indigo-800 px-2 py-0.5 rounded font-bold text-[11px] select-all">1000293817162</span>
+                              <div className="flex items-center justify-between text-indigo-950 font-medium">
+                                <span className="text-purple-700 font-bold">CBE Account No:</span>
+                                <span className="font-mono bg-purple-50 border border-purple-200 text-purple-900 px-2 py-0.5 rounded font-extrabold text-[11.5px] select-all tracking-normal">1000100603326</span>
                               </div>
                             </div>
                           )}
+                        </div>
+                        
+                        {/* Custom Owner Telegram Support ID requested */}
+                        <div className="mt-3 pt-2.5 border-t border-indigo-150 flex items-center justify-between text-[11.5px] font-sans bg-white/60 p-2 rounded-lg border border-indigo-50">
+                          <span className="font-extrabold text-indigo-950">Telegram Payment Support:</span>
+                          <a 
+                            href="https://t.me/Cephasimon" 
+                            target="_blank" 
+                            rel="noreferrer" 
+                            className="text-indigo-700 font-extrabold hover:underline flex items-center gap-1 text-[11.5px]"
+                          >
+                            <span>t.me/Cephasimon ↗</span>
+                          </a>
                         </div>
                       </div>
 
@@ -1130,6 +1426,90 @@ export default function App() {
                           <p className="text-[9.5px] text-purple-650 font-sans">Once you transfer money to our official Bank Account above, enter the reference code here to verify.</p>
                         </div>
                       )}
+
+                      {/* Unified Photo Screenshot Uploader Section */}
+                      <div className="bg-slate-100 border border-slate-250 p-3.5 rounded-xl space-y-3 font-sans">
+                        <div className="flex justify-between items-center">
+                          <label className="text-[10px] font-bold text-indigo-700 uppercase tracking-wider block">
+                            📷 Insert Payment Picture Mode
+                          </label>
+                          <span className="text-[8.5px] font-extrabold bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded uppercase tracking-wider border border-indigo-200 animate-pulse">
+                            SCREENSHOT REQUIRED
+                          </span>
+                        </div>
+                        <p className="text-[9.5px] text-slate-500 leading-snug">
+                          Please attach/insert an image of your payment confirmation (Telebirr slip or CBE bank screenshot) to initiate kitchen prep.
+                        </p>
+                        
+                        {receiptPhoto ? (
+                          <div className="space-y-2">
+                            <div className="relative border border-slate-200 bg-white rounded-xl p-1.5 max-h-[140px] flex items-center justify-center overflow-hidden shadow-xs">
+                              <img 
+                                src={receiptPhoto} 
+                                alt="Payment Receipt" 
+                                className="max-h-[120px] rounded-lg object-contain"
+                                referrerPolicy="no-referrer"
+                              />
+                              <button 
+                                type="button" 
+                                onClick={() => setReceiptPhoto('')}
+                                className="absolute top-1.5 right-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full p-1 shadow transition cursor-pointer"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                            <span className="text-[10.5px] font-bold text-emerald-700 flex items-center gap-1">
+                              ✓ Receipt screenshot attached successfully!
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="space-y-2.5">
+                            <label className="flex flex-col items-center justify-center border-2 border-dashed border-slate-300 hover:border-indigo-500 bg-white rounded-xl p-4 text-center cursor-pointer transition hover:bg-slate-50/50">
+                              <Upload className="w-5 h-5 text-indigo-500 mb-1" />
+                              <span className="text-[11px] font-bold text-slate-800">Choose custom screenshot image</span>
+                              <span className="text-[9px] text-slate-450 mt-0.5">Supports PNG, JPG, JPEG</span>
+                              <input 
+                                type="file" 
+                                accept="image/*" 
+                                className="hidden" 
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) {
+                                    const reader = new FileReader();
+                                    reader.onload = (event) => {
+                                      if (event.target?.result) {
+                                        setReceiptPhoto(event.target.result as string);
+                                      }
+                                    };
+                                    reader.readAsDataURL(file);
+                                  }
+                                }}
+                              />
+                            </label>
+
+                            <div className="space-y-1">
+                              <span className="text-[9px] font-bold text-slate-500 block uppercase tracking-wider">Or simulation samples:</span>
+                              <div className="grid grid-cols-2 gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => setReceiptPhoto('https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=500&auto=format&fit=crop&q=60')}
+                                  className="text-[9.5px] bg-slate-50 hover:bg-white text-slate-800 font-bold border border-slate-205 px-2 py-1.5 rounded-lg text-center truncate cursor-pointer transition shadow-3xs"
+                                >
+                                  💳 Telebirr Slip Info
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setReceiptPhoto('https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=500&auto=format&fit=crop&q=60')}
+                                  className="text-[9.5px] bg-slate-50 hover:bg-white text-slate-800 font-bold border border-slate-205 px-2 py-1.5 rounded-lg text-center truncate cursor-pointer transition shadow-3xs"
+                                >
+                                  🧾 CBE Wallet Slip Info
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
                       <p className="text-[10px] text-slate-450 leading-relaxed font-light font-sans">Your transaction details are securely processed directly to Tolo Delivery's brand merchant platform.</p>
                     </div>
 
@@ -1177,22 +1557,35 @@ export default function App() {
                         {!customerProfile.name.trim() && <span className="block">• Recipient Full Name is required.</span>}
                         {!customerProfile.phone.trim() && <span className="block">• Phone Contact Number is required.</span>}
                         {isPhoneInvalid && customerProfile.phone.trim() !== '' && <span className="block font-bold text-rose-700 font-sans">• Phone contact number must have exactly 10 digits (e.g., 0911234567).</span>}
+                        {!customerProfile.pickupAddress.trim() && <span className="block">• Pick-up Location is required.</span>}
                         {!customerProfile.address.trim() && <span className="block">• Drop-off Location Address is required.</span>}
                       </div>
                     )}
 
+                    {isProfileIncomplete ? null : !receiptPhoto ? (
+                      <div className="p-3.5 bg-rose-50 border border-rose-250 text-rose-800 text-xs rounded-xl font-sans font-bold flex items-center gap-2">
+                        <span>⚠️</span>
+                        <span>Please upload/insert a payment receipt picture, or select a simulation preset above to trigger verification.</span>
+                      </div>
+                    ) : null}
+
                     <button
                       onClick={() => {
-                        if (isProfileIncomplete) return;
+                        if (isProfileIncomplete || !receiptPhoto) return;
+                        
+                        // Immediately register/submit payment details to orders array with status "payment_pending"
+                        handleCompleteAdvancePayment(paymentDraftOrderId!);
+                        
                         setPaymentStep('waiting');
                         setTimeout(() => {
-                          setPaymentStep('success');
-                        }, 2000);
+                          setPaymentStep('awaiting_admin');
+                        }, 1500);
                       }}
-                      className={`w-full text-xs font-bold py-3 rounded-xl transition shadow hover:shadow-md flex items-center justify-center gap-1.5 cursor-pointer font-sans ${isProfileIncomplete ? 'bg-rose-600 hover:bg-rose-700 text-white' : 'bg-slate-900 hover:bg-black text-white'}`}
+                      disabled={isProfileIncomplete || !receiptPhoto}
+                      className={`w-full text-xs font-bold py-3.5 rounded-xl transition shadow hover:shadow-md flex items-center justify-center gap-1.5 cursor-pointer font-sans ${(isProfileIncomplete || !receiptPhoto) ? 'bg-slate-300 text-slate-600 cursor-not-allowed opacity-80' : 'bg-emerald-600 hover:bg-emerald-700 text-white animate-pulse'}`}
                     >
                       <Lock className="w-3.5 h-3.5" /> 
-                      {isProfileIncomplete ? "Resolve Form Errors to Authorize" : "Authorize 1/3 Advance Payment"}
+                      {isProfileIncomplete ? "Resolve Profile Errors to Authorize" : !receiptPhoto ? "Insert Receipt Photo to submit" : "Send Screenshot to Owner (https://t.me/Cephasimon)"}
                     </button>
                   </div>
                 );
@@ -1205,78 +1598,178 @@ export default function App() {
                     <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
                   </div>
                   <div className="font-sans">
-                    <h4 className="font-bold text-sm text-slate-800 animate-pulse">Verifying Cashless Advance Hold</h4>
-                    <p className="text-[11px] text-slate-500 mt-1 max-w-xs mx-auto">Connecting to Delivra instant settlement gate... checking balance clearance to launch kitchen priority ticket.</p>
+                    <h4 className="font-bold text-sm text-slate-800 animate-pulse">Hashing Cashless Advance Proof</h4>
+                    <p className="text-[11px] text-slate-500 mt-1 max-w-xs mx-auto">Digitizing receipt metadata coordinates... uploading file elements to Tolo central store to prompt administrative check.</p>
                   </div>
                   <div className="text-[10px] text-slate-400 font-mono">
-                    [ AWAITING INSTANT LEDGER ACCEPT... ]
+                    [ TRANSMITTING PHOTO PROOF TO OWNER... ]
                   </div>
                 </div>
               )}
 
-              {/* STEP 3: TRANSACTION COMPLETE RECEIPT SUCCESS */}
+              {/* STEP 3: AWAITING ADMIN APPROVAL SCREEN */}
+              {paymentStep === 'awaiting_admin' && (
+                <div className="p-5 text-center space-y-4 font-sans overflow-y-auto flex-1 flex flex-col justify-between min-h-0">
+                  <div className="space-y-3 shrink-0">
+                    <div className="flex justify-center">
+                      <div className="relative">
+                        <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 border border-amber-300 animate-pulse">
+                          <Eye className="w-6 h-6" />
+                        </div>
+                        <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-indigo-500"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="font-sans">
+                      <h4 className="font-bold text-slate-850 text-sm">Awaiting Owner Verification...</h4>
+                      <p className="text-[11px] text-amber-700 font-bold bg-amber-50 rounded-lg p-2 border border-amber-200 mt-1 max-w-sm mx-auto leading-relaxed">
+                        ⏳ Status: Pending Admin Approval
+                      </p>
+                      <p className="text-[11.5px] text-slate-500 mt-2 max-w-xs mx-auto leading-relaxed">
+                        Your payment photo screenshot has been submitted and shared with the owner. 
+                        <strong>Only the administrator</strong> can review and approve it from the <strong>Kitchen Console</strong> dashboard.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Thumbnail display of what they uploaded */}
+                  <div className="bg-slate-50 border border-slate-200 py-2.5 px-3 rounded-xl space-y-1.5 text-center my-1.5 shrink-0">
+                    <span className="text-[9.5px] font-bold text-slate-500 uppercase tracking-wider block">Attached Payment Picture:</span>
+                    <div className="relative border border-slate-150 bg-white rounded-lg p-1 max-h-[85px] max-w-[140px] mx-auto flex items-center justify-center overflow-hidden shadow-2xs">
+                      {receiptPhoto ? (
+                        <img 
+                          src={receiptPhoto} 
+                          alt="Submitted Receipt Thumbnail" 
+                          className="max-h-[75px] rounded object-contain"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <span className="text-[10px] text-slate-400 italic">No image attached</span>
+                      )}
+                    </div>
+                    <span className="text-[10px] text-slate-600 block leading-tight mt-1.5 font-bold">
+                      Reference Code: <span className="font-mono text-indigo-700 font-extrabold bg-indigo-50 border border-indigo-100 px-1.5 rounded">{bankTxRef || "TXN-AUTO"}</span>
+                    </span>
+                  </div>
+
+                  {/* Direct Simulator Action Buttons (Replaces kitchen console simulation guidance text) */}
+                  <div className="p-3 bg-slate-50 border border-slate-205 rounded-xl space-y-2.5 mt-1 shrink-0 font-sans">
+                    <span className="text-[9.5px] font-extrabold text-indigo-700 uppercase tracking-wider block text-center">
+                      ⚡ Immediate Sandbox Decision Control
+                    </span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (paymentDraftOrderId) {
+                            handleCancelActiveOrder(paymentDraftOrderId);
+                          }
+                        }}
+                        className="bg-rose-50 hover:bg-rose-100 active:bg-rose-200 text-rose-700 border border-rose-205 text-[11px] font-bold py-2.5 px-3 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1 font-sans"
+                        id="sandbox-btn-cancel"
+                      >
+                        ❌ Cancel Order
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (paymentDraftOrderId) {
+                            handleVerifyPayment(paymentDraftOrderId);
+                          }
+                        }}
+                        className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-[11px] font-bold py-2.5 px-3 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1 font-sans"
+                        id="sandbox-btn-approve"
+                      >
+                        ✅ Approve Order
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Action or Loader */}
+                  <div className="pt-2 shrink-0">
+                    <div className="flex items-center justify-center gap-1.5 text-slate-400 font-mono text-[9px] uppercase tracking-wider animate-pulse">
+                      <Loader2 className="w-3 h-3 animate-spin text-indigo-550" />
+                      <span>Polling for administrator signature...</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 4: TRANSACTION VERIFIED BY ADMIN SUCCESS */}
               {paymentStep === 'success' && (
-                <div className="p-6 text-center space-y-4 font-sans overflow-y-auto flex-1">
-                  <div className="flex justify-center">
-                    <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600">
-                      <CheckCircle2 className="w-8 h-8" />
+                <div className="p-6 text-center space-y-4 font-sans overflow-y-auto flex-1 flex flex-col justify-between min-h-0">
+                  <div className="space-y-4 shrink-0">
+                    <div className="flex justify-center">
+                      <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-600 border border-emerald-300 shadow-xs animate-bounce">
+                        <CheckCircle2 className="w-8 h-8" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="font-sans">
-                    <h4 className="font-bold text-emerald-900 text-sm">Advance Payment Settled!</h4>
-                    <p className="text-xs text-slate-500 mt-1.5 max-w-sm">
-                      Thank you! Payment cleared. This order has been dispatched to the cooking queue and is bound to delivery coordinates.
-                    </p>
-                  </div>
+                    <div className="font-sans">
+                      <h4 className="font-bold text-emerald-905 text-sm">Deposit Approved by Admin! 🎉</h4>
+                      <p className="text-xs text-slate-500 mt-1.5 max-w-sm leading-relaxed">
+                        Your 1/3 advance payment screenshot has been verified and approved by the owner! Your order is being cooked inside the kitchen.
+                      </p>
+                    </div>
 
-                  <div className="bg-slate-50 border border-slate-150 p-3 rounded-xl text-xs text-left text-slate-605 space-y-1.5 font-mono">
-                    <div className="flex justify-between border-b border-dashed border-slate-150 pb-1">
-                      <span>Receipt Status:</span>
-                      <span className="font-bold text-emerald-700">1/3 DEPOSIT CONFIRMED</span>
-                    </div>
-                    <div className="flex justify-between text-[11px]">
-                      <span>Consignee Name:</span>
-                      <span>{customerProfile.name}</span>
-                    </div>
-                    <div className="flex justify-between text-[11px]">
-                      <span>Delivery Coords:</span>
-                      <span className="truncate max-w-[170px]">{customerProfile.address}</span>
-                    </div>
-                    {(() => {
-                      const currentOrder = orders.find(o => o.id === paymentDraftOrderId);
-                      const mealPrice = currentOrder ? currentOrder.subtotal : 0;
-                      const advancePrice = mealPrice / 3;
-                      const deliveryFeeVal = currentOrder ? currentOrder.deliveryFee : 2.5;
-                      const payableOnDelivery = (mealPrice * 2 / 3) + deliveryFeeVal;
+                    <div className="bg-slate-50 border border-slate-150 p-3 rounded-xl text-xs text-left text-slate-605 space-y-1.5 font-mono">
+                      <div className="flex justify-between border-b border-dashed border-slate-150 pb-1">
+                        <span>Verification Status:</span>
+                        <span className="font-bold text-emerald-700">VERIFIED & APPROVED ✅</span>
+                      </div>
+                      <div className="flex justify-between text-[11px]">
+                        <span>Consignee Name:</span>
+                        <span>{customerProfile.name}</span>
+                      </div>
+                      <div className="flex justify-between text-[11px]">
+                        <span>Delivery Coords:</span>
+                        <span className="truncate max-w-[170px]">{customerProfile.address}</span>
+                      </div>
+                      {(() => {
+                        const currentOrder = orders.find(o => o.id === paymentDraftOrderId);
+                        const mealPrice = currentOrder ? currentOrder.subtotal : 0;
+                        const advancePrice = mealPrice / 3;
+                        const deliveryFeeVal = currentOrder ? currentOrder.deliveryFee : 2.5;
+                        const payableOnDelivery = (mealPrice * 2 / 3) + deliveryFeeVal;
 
-                      return (
-                        <>
-                          <div className="flex justify-between text-emerald-700 font-bold border-t border-dashed border-slate-150 pt-1">
-                            <span>Advance Deposit paid:</span>
-                            <span>{advancePrice.toFixed(2)} Birr</span>
-                          </div>
-                          <div className="flex justify-between text-slate-550 text-[10.5px]">
-                            <span>Delivery Fee (Pay After):</span>
-                            <span>{deliveryFeeVal.toFixed(2)} Birr</span>
-                          </div>
-                          <div className="flex justify-between text-slate-550 text-[10.5px]">
-                            <span>Remaining meal price:</span>
-                            <span>{(mealPrice * 2 / 3).toFixed(2)} Birr</span>
-                          </div>
-                          <div className="flex justify-between text-slate-800 font-bold border-t border-slate-200 pt-1">
-                            <span>Pending Balance Due Upon Delivery:</span>
-                            <span>{payableOnDelivery.toFixed(2)} Birr</span>
-                          </div>
-                        </>
-                      );
-                    })()}
+                        return (
+                          <>
+                            <div className="flex justify-between text-emerald-700 font-bold border-t border-dashed border-slate-150 pt-1">
+                              <span>Advance Deposit paid:</span>
+                              <span>{advancePrice.toFixed(2)} Birr</span>
+                            </div>
+                            <div className="flex justify-between text-slate-550 text-[10.5px]">
+                              <span>Delivery Fee (Pay After):</span>
+                              <span>{deliveryFeeVal.toFixed(2)} Birr</span>
+                            </div>
+                            <div className="flex justify-between text-slate-550 text-[10.5px]">
+                              <span>Remaining meal price:</span>
+                              <span>{(mealPrice * 2 / 3).toFixed(2)} Birr</span>
+                            </div>
+                            <div className="flex justify-between text-slate-800 font-bold border-t border-slate-200 pt-1">
+                              <span>Pending Balance Due Upon Delivery:</span>
+                              <span>{payableOnDelivery.toFixed(2)} Birr</span>
+                            </div>
+                          </>
+                        );
+                      })()}
+                    </div>
                   </div>
 
                   <button
-                    onClick={() => handleCompleteAdvancePayment(paymentDraftOrderId)}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 rounded-xl transition cursor-pointer font-sans"
+                    onClick={() => {
+                      // Close modal and take user directly to Live Tracker
+                      const trackingId = paymentDraftOrderId;
+                      setPaymentDraftOrderId(null);
+                      if (trackingId) {
+                        setActiveTrackingOrderId(trackingId);
+                        setCurrentPane('tracking');
+                      }
+                    }}
+                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-3 rounded-xl transition shadow hover:shadow-md cursor-pointer font-sans shrink-0"
                   >
-                    🚚 Track Kitchen & Driver Route
+                    🛵 Open Live GPS & Rider Tracker
                   </button>
                 </div>
               )}

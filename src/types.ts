@@ -17,7 +17,7 @@ export interface OrderItem {
   customization?: string; // e.g. "no onion", "extra sauce"
 }
 
-export type OrderStatus = 'pending' | 'preparing' | 'driving' | 'completed' | 'cancelled';
+export type OrderStatus = 'pending' | 'payment_pending' | 'preparing' | 'driving' | 'completed' | 'cancelled';
 
 export interface Order {
   id: string;
@@ -30,10 +30,22 @@ export interface Order {
   status: OrderStatus;
   createdAt: string;
   customerName: string;
+  customerPhone?: string;
   deliveryAddress: string;
   pickupAddress?: string;
+  driverId?: string;
   driverName: string;
   driverPhone: string;
+  isPaymentVerified?: boolean;
+  isDriverAssigned?: boolean;
+  isDriverAccepted?: boolean;
+  paymentDetails?: {
+    amount: number;
+    method: string;
+    reference: string;
+    timestamp: string;
+    receiptPhoto?: string;
+  };
   etaMinutes: number; // dynamically changing
   progress: number; // 0 to 100
   driverPathIndex: number; // for tracking animated map path

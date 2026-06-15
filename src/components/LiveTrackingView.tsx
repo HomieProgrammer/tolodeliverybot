@@ -229,8 +229,10 @@ export default function LiveTrackingView({ order, onStatusChange }: LiveTracking
           <div className="flex-1 min-w-0">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block font-mono">Current Activity</span>
             <p className="text-sm font-semibold text-slate-800 truncate">
-              {order.status === 'preparing' ? "Chef is handcrafting your meal inside ready-kitchen..." :
-               order.status === 'driving' ? `Driver ${order.driverName} picked up and navigating Broad Street...` :
+              {order.status === 'payment_pending' ? "Waiting for administrative payment verification..." :
+               order.status === 'pending' ? "Payment verified! Awaiting driver assignment..." :
+               order.status === 'preparing' ? "Chef is handcrafting your meal inside ready-kitchen..." :
+               order.status === 'driving' ? `Driver ${order.driverName || 'Rider'} picked up and navigating Broad Street...` :
                order.status === 'completed' ? "Dispatched scooter arrived outside your door! Enjoy!" :
                "Order received and waiting restaurant acceptance."}
             </p>
@@ -246,12 +248,12 @@ export default function LiveTrackingView({ order, onStatusChange }: LiveTracking
       <div className="bg-slate-50 border-t border-slate-100 p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-150">
           <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold">
-            {order.driverName.charAt(0)}
+            {order.driverName ? order.driverName.charAt(0) : '?'}
           </div>
           <div>
             <span className="text-[10px] text-slate-400 block font-mono uppercase font-bold">Assigned Rider</span>
-            <span className="text-sm font-bold text-slate-800 block">{order.driverName}</span>
-            <span className="text-xs text-slate-500 font-mono italic">{order.driverPhone}</span>
+            <span className="text-sm font-bold text-slate-800 block">{order.driverName || "No driver assigned yet"}</span>
+            <span className="text-xs text-slate-500 font-mono italic">{order.driverPhone || "Awaiting administrative dispatch"}</span>
           </div>
         </div>
 
