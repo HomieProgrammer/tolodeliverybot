@@ -150,6 +150,7 @@ export default function TelegramSimulator({
   };
 
   const handleSendSelection = () => {
+    console.log("SUBMIT BUTTON CLICKED");
     const pDetails = localPackageDetails.trim();
     if (!pDetails) {
       setFormError(isAmharic 
@@ -193,7 +194,7 @@ export default function TelegramSimulator({
 
     // Build unified NLP text matching preferences interceptor perfectly including pick-up and drop-off
     const unifiedOrderMessage = `Please organize a ticket for: ${itemsList.join(", ")}.\n\nMy delivery profile parameters:\n👤 Name: ${localName.trim()}\n📞 Phone: ${localPhone.trim()}\n📍 Pick-Up Location: ${localPickupAddress.trim()}\n📍 Drop-Off Address: ${localAddress.trim()}`;
-
+console.log("SENDING MESSAGE", unifiedOrderMessage);
     onSendMessage(unifiedOrderMessage);
     setIsMenuOpen(false);
   };
@@ -339,6 +340,11 @@ export default function TelegramSimulator({
                   ? 'bg-[#effdde] text-slate-950 rounded-br-none border border-[#e2f1cd]' 
                   : 'bg-white text-slate-950 rounded-bl-none border border-slate-100'
               }`}>
+                {msg.senderName && (
+                  <div className="text-[10px] font-bold text-indigo-700 mb-1 pb-1 border-b border-indigo-100 flex items-center gap-1 font-sans">
+                    <span>👤</span> {msg.senderName}
+                  </div>
+                )}
                 {/* Content text */}
                 <div className="whitespace-pre-line text-[13.5px] leading-relaxed text-slate-900 pr-4">
                   {msg.text}
@@ -768,11 +774,11 @@ export default function TelegramSimulator({
                     <div className="flex gap-2 items-center">
                       <input 
                         type="number"
-                        min="10"
+                        min="0"
                         max="5000"
-                        value={localEstimatedPrice}
-                        onChange={(e) => setLocalEstimatedPrice(Math.max(1, parseInt(e.target.value) || 0))}
-                        className="w-24 bg-white border border-slate-250 rounded-lg px-2 py-1 text-xs text-slate-800 font-mono font-bold focus:ring-1 focus:ring-indigo-500 outline-none"
+                        value={localEstimatedPrice === 0 ? '' : localEstimatedPrice}
+                        onChange={(e) => setLocalEstimatedPrice(Math.max(0, parseInt(e.target.value) || 0))}
+                        className="w-24 bg-white border border-slate-250 rounded-lg px-2 py-1 text-xs text-slate-800 font-mono font-bold focus:ring-1 focus:ring-indigo-500 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       />
                       <span className="text-[9px] text-slate-450 leading-tight font-sans italic">
                         {isAmharic ? "ይህ ዋጋ በራስሰር 1/3 ማስያዣውን ለማዘጋጀት ይጠቅማል።" : "Visible price estimate. Your 1/3 payment deposit maps directly to this total."}

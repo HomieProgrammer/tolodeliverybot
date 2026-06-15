@@ -47,21 +47,14 @@ export default function AdminDashboard({
 }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<'orders' | 'metrics' | 'bot-setup'>('orders');
   const [passcode, setPasscode] = useState('');
-  const [isUnlocked, setIsUnlocked] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('tolo_admin_unlocked') === 'true';
-    }
-    return false;
-  });
+  const [isUnlocked, setIsUnlocked] = useState(false);
   const [passError, setPassError] = useState<string | null>(null);
 
   const handleUnlock = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (passcode.trim() === 'Dag0916031177?') {
       setIsUnlocked(true);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('tolo_admin_unlocked', 'true');
-      }
+      setPasscode('');
       setPassError(null);
     } else {
       setPassError('Incorrect secure passcode! Please try again.');
@@ -70,9 +63,6 @@ export default function AdminDashboard({
 
   const handleLock = () => {
     setIsUnlocked(false);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('tolo_admin_unlocked');
-    }
     setPasscode('');
     setPassError(null);
   };
@@ -410,7 +400,7 @@ export default function AdminDashboard({
                         <div className="space-y-3">
                           {items.map(order => {
                             const assignState = driverAssignments[order.id] || { name: '', id: '', phone: '' };
-                            const canSubmit = assignState.name.trim() !== '' && assignState.id.trim() !== '' && assignState.phone.trim() !== '';
+                            const canSubmit = assignState.name.trim() !== '' && assignState.phone.trim() !== '';
 
                             return (
                               <div key={order.id} className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-3xs space-y-3">
@@ -447,29 +437,29 @@ export default function AdminDashboard({
                                           onClick={() => {
                                             setDriverAssignments(prev => ({
                                               ...prev,
-                                              [order.id]: { name: "Almaz Demeke", id: "TDRV-102", phone: "0912112233" }
+                                              [order.id]: { name: "Almaz Demeke", id: "", phone: "0912112233" }
                                             }));
                                           }}
                                           className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[9px] font-bold px-2 py-0.5 rounded border border-indigo-200 transition cursor-pointer"
                                         >
-                                          🚴 Almaz (ID: 102)
+                                          🚴 Almaz
                                         </button>
                                         <button
                                           type="button"
                                           onClick={() => {
                                             setDriverAssignments(prev => ({
                                               ...prev,
-                                              [order.id]: { name: "Bekele Abebe", id: "TDRV-309", phone: "0916454545" }
+                                              [order.id]: { name: "Bekele Abebe", id: "", phone: "0916454545" }
                                             }));
                                           }}
                                           className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-[9px] font-bold px-2 py-0.5 rounded border border-indigo-200 transition cursor-pointer"
                                         >
-                                          🛵 Bekele (ID: 309)
+                                          🛵 Bekele
                                         </button>
                                       </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                       <div>
                                         <label className="text-[10px] text-slate-400 font-bold block mb-1">Rider Name</label>
                                         <input
@@ -481,19 +471,6 @@ export default function AdminDashboard({
                                             [order.id]: { ...assignState, name: e.target.value }
                                           }))}
                                           className="w-full bg-white border border-slate-200 px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded"
-                                        />
-                                      </div>
-                                      <div>
-                                        <label className="text-[10px] text-slate-400 font-bold block mb-1">Rider ID</label>
-                                        <input
-                                          type="text"
-                                          placeholder="e.g. DRV-03"
-                                          value={assignState.id}
-                                          onChange={e => setDriverAssignments(prev => ({
-                                            ...prev,
-                                            [order.id]: { ...assignState, id: e.target.value }
-                                          }))}
-                                          className="w-full bg-white border border-slate-200 px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 rounded font-mono"
                                         />
                                       </div>
                                       <div>
@@ -526,7 +503,7 @@ export default function AdminDashboard({
                                   <div className="bg-indigo-50/50 border border-indigo-250/30 rounded-lg p-3 space-y-2 text-xs flex flex-col sm:flex-row justify-between items-start sm:items-center">
                                     <div>
                                       <span className="text-[10px] text-indigo-700 block uppercase font-mono font-bold">Assigned delivery partner:</span>
-                                      <span className="text-slate-800 font-bold font-sans text-xs">{order.driverName} (ID: {order.driverId})</span>
+                                      <span className="text-slate-800 font-bold font-sans text-xs">{order.driverName}{order.driverId ? ` (ID: ${order.driverId})` : ''}</span>
                                       <span className="text-slate-500 block font-mono text-[11px]">{order.driverPhone}</span>
                                     </div>
                                     <div className="shrink-0 mt-2 sm:mt-0">

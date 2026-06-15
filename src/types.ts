@@ -54,6 +54,7 @@ export interface Order {
 export interface ChatMessage {
   id: string;
   sender: 'user' | 'bot' | 'system';
+  senderName?: string;
   text: string;
   timestamp: string;
   type?: 'text' | 'order_summary' | 'tracking_link' | 'start_flow';

@@ -61,7 +61,13 @@ export default function App() {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   // Bot configurations for direct Telegram operator alerts
-  const [botToken, setBotToken] = useState(() => localStorage.getItem('tolo_bot_token') || '8139963672:AAEl_yourTokenHere');
+  const [botToken, setBotToken] = useState(() => {
+    const saved = localStorage.getItem('tolo_bot_token');
+    if (!saved || saved === '8139963672:AAEl_yourTokenHere') {
+      return '8473700859:AAHsKy9mDLPIh5bR-8mO33tpO1530YkJqEk';
+    }
+    return saved;
+  });
   const [operatorChatId, setOperatorChatId] = useState(() => localStorage.getItem('tolo_operator_chat_id') || '7596617846');
   const [operatorUsername, setOperatorUsername] = useState(() => localStorage.getItem('tolo_operator_username') || 'Cephasimon');
   const [customTunnelUrl, setCustomTunnelUrl] = useState(() => localStorage.getItem('tolo_custom_tunnel_url') || '');
@@ -86,6 +92,47 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('tolo_tunnel_type', tunnelType);
   }, [tunnelType]);
+
+  // Send Telegram admin notification on new order submission (Requirement)
+ const sendNewOrderTelegramNotification = (order: Order) => {
+  console.log("TELEGRAM FUNCTION CALLED", order);
+
+  if (!botToken || botToken.includes('yourTokenHere') || !operatorChatId) {
+    console.warn(
+      "Telegram alert botToken or operatorChatId is not fully configured, skipped sending."
+    );
+    return;
+  }
+
+    const messageText = `🔔 NEW ORDER RECEIVED\n\n` +
+      `👤 Customer: ${order.customerName}\n` +
+      `📞 Phone: ${order.customerPhone || 'N/A'}\n` +
+      `🆔 Order ID: ${order.id}\n` +
+      `💰 Total: ${order.total.toFixed(2)} Birr\n` +
+      `📍 Delivery Address: ${order.deliveryAddress}\n\n` +
+      `Status: Awaiting Payment Verification`;
+
+    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: operatorChatId,
+        text: messageText,
+        parse_mode: 'Markdown'
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.ok) {
+        console.log(`Telegram admin notification successfully sent for Order #${order.id}`);
+      } else {
+        console.error("Telegram API returned error delivering admin notification:", data);
+      }
+    })
+    .catch(err => {
+      console.error("Failed to transmit new order Telegram notification:", err);
+    });
+  };
 
   // Advance Payment Flow Mini-App State
   const [paymentDraftOrderId, setPaymentDraftOrderId] = useState<string | null>(null);
@@ -194,6 +241,7 @@ export default function App() {
 
   // Process user typing or tapping a sample order
   const handleSendMessage = async (text: string) => {
+    console.log("HANDLE SEND MESSAGE", text);
     const timestampStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const userMsgId = 'msg_user_' + Date.now();
 
@@ -209,7 +257,7 @@ export default function App() {
 
     // 1.5 Support and Mini App Onboarding Interceptor (Requirement 5 & 6)
     const normalizedText = text.toLowerCase().trim();
-    
+    console.log("STEP 1");
     if (text === "CONTACT_SUPPORT_TRIGGERED_ACTION") {
       setTimeout(() => {
         setMessages(prev => [...prev, {
@@ -228,7 +276,8 @@ export default function App() {
       "order food", "delivery", "menu", "start order", "track order",
       "order", "track", "food", "burger", "pizza", "wrap", "waffle", "drink"
     ];
-    const triggersMiniAppGuide = miniAppKeywords.some(keyword => normalizedText.includes(keyword)) || isStartCommand;
+    const isTicketSubmission = text.trim().startsWith("Please organize a ticket for:");
+    const triggersMiniAppGuide = !isTicketSubmission && (miniAppKeywords.some(keyword => normalizedText.includes(keyword)) || isStartCommand);
 
     if (triggersMiniAppGuide) {
       setTimeout(() => {
@@ -347,12 +396,26 @@ export default function App() {
     }
 
     // TICKET SUBMISSION PRE-PARSER (Recognizes custom customer-entered foods with prices effortlessly)
-    if (text.startsWith("Please organize a ticket for:")) {
-      const botTimestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    console.log("RAW TEXT:", JSON.stringify(text));
+
+    if (text.trim().startsWith("Please organize a ticket for:")) {
+      console.log("STEP 2 - ORDER INTERCEPTOR HIT");
+
+      const botTimestamp = new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
       const firstLine = text.split('\n')[0];
-      const itemsText = firstLine.replace("Please organize a ticket for:", "").trim();
-      
-      const itemsListStr = itemsText.split(',').map(s => s.trim()).filter(Boolean);
+      const itemsText = firstLine
+        .replace("Please organize a ticket for:", "")
+        .trim();
+
+      const itemsListStr = itemsText
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
       const draftItems: OrderItem[] = [];
 
       itemsListStr.forEach((itemStr, index) => {
@@ -433,11 +496,28 @@ export default function App() {
                 receiptPhoto: receiptPhoto
               }
             };
-            setOrders(prev => [...prev, tempOrder]);
+            
+            console.log("CREATING ORDER", tempOrder);
+
+            setOrders(prev => {
+              const updated = [...prev, tempOrder];
+              console.log("UPDATED ORDERS", updated);
+              return updated;
+            });
+            sendNewOrderTelegramNotification(tempOrder);
 
             // Add payment submitted messages to Telegram simulator stream immediately
             setMessages(prev => [
               ...prev,
+              {
+                id: 'msg_user_submit_form_' + Date.now(),
+                sender: 'user',
+                senderName: activeName,
+                text: isAmharic
+                  ? `👤 *ከደንበኛ የተላከ፦* ${activeName}\n📞 *ስልክ፦* ${activePhone}\n📍 *መነሻ፦* ${activePickupAddress || "የቶሎ ማእድ ቤት"}\n📍 *መድረሻ፦* ${activeAddress}\n\nየክፍያ ማረጋገጫ (Screenshot) ለትዕዛዝ #${orderDraftId} ልኬያለሁ። እባክዎን ያረጋግጡልኝ! (${advancePaid.toFixed(2)} Birr)`
+                  : `👤 *Submitted by:* ${activeName}\n📞 *Phone:* ${activePhone}\n📍 *Pickup:* ${activePickupAddress || "Tolo Main Kitchen"}\n📍 *Drop-off:* ${activeAddress}\n\nI have sent my payment verification screenshot for Order #${orderDraftId}. Please verify and approve my receipt! (${advancePaid.toFixed(2)} Birr)`,
+                timestamp: botTimestamp
+              },
               {
                 id: 'msg_bot_paid_receipt_' + Date.now(),
                 sender: 'bot',
@@ -457,6 +537,36 @@ export default function App() {
                 timestamp: botTimestamp
               }
             ]);
+
+            // Dispatch real-time Telegram alert message to operator
+            if (botToken && !botToken.includes('yourTokenHere') && operatorChatId) {
+              const trackingUrl = `${window.location.origin}/?order=${orderDraftId}`;
+              const itemsText = draftItems.map(it => `• ${it.quantity}x ${it.name} (${it.totalPrice.toFixed(2)} Birr)`).join('\n');
+              const alertPayload = `🔔 *Tolo Delivery (Payment Pending)* 🔔\n\n` +
+                `👤 *Customer Name:* ${activeName}\n` +
+                `📞 *Phone Number:* ${activePhone}\n` +
+                `📍 *Pickup Location:* ${activePickupAddress || "Tolo Kitchen"}\n` +
+                `📍 *Delivery Address:* ${activeAddress}\n\n` +
+                `🍔 *Ordered Items:* \n${itemsText}\n\n` +
+                `💳 *Amount Sent:* ${advancePaid.toFixed(2)} Birr\n` +
+                `💵 *Method:* Mobile Wallet / CBE Bank\n` +
+                `🧾 *Reference ID:* ${txId}\n` +
+                `🆔 *Order ID:* #${orderDraftId}\n\n` +
+                `⚠️ *Action:* Please log in to your Kitchen Dashboard to verify payment and assign a driver.`;
+
+              fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  chat_id: operatorChatId,
+                  text: alertPayload,
+                  parse_mode: "Markdown"
+                })
+              })
+              .catch(netErr => {
+                console.error("Failed to post custom order notification to Telegram Bot API:", netErr);
+              });
+            }
 
             setReceiptPhoto(''); // Reset the state screenshot so subsequent custom orders don't bleed-over
           } else {
@@ -498,6 +608,7 @@ export default function App() {
             };
             console.log("CREATING ORDER", tempOrder);
             setOrders(prev => [...prev, tempOrder]);
+            sendNewOrderTelegramNotification(tempOrder);
           }
           setIsParsing(false);
         }, 800);
@@ -592,6 +703,7 @@ export default function App() {
               driverPathIndex: 0
             };
             setOrders(prev => [...prev, tempOrder]);
+            sendNewOrderTelegramNotification(tempOrder);
 
             if (unavailableItems.length > 0) {
               setMessages(prev => [...prev, {
@@ -688,6 +800,15 @@ export default function App() {
     setMessages(prev => [
       ...prev, 
       {
+        id: 'msg_user_submit_payment_' + Date.now(),
+        sender: 'user',
+        senderName: customerProfile.name,
+        text: isAmharic
+          ? `👤 *ከደንበኛ የተላከ፦* ${customerProfile.name}\n📞 *ስልክ፦* ${customerProfile.phone}\n📍 *መነሻ፦* ${customerProfile.pickupAddress || "የቶሎ ማእድ ቤት"}\n📍 *መድረሻ፦* ${customerProfile.address}\n\nየክፍያ ማረጋገጫ (Screenshot) አስገብቻለሁ። እባክዎን አረጋግጠው ይላኩልኝ! (${advancePaid.toFixed(2)} Birr)`
+          : `👤 *Submitted by:* ${customerProfile.name}\n📞 *Phone:* ${customerProfile.phone}\n📍 *Pickup:* ${customerProfile.pickupAddress || "Tolo Main Kitchen"}\n📍 *Drop-off:* ${customerProfile.address}\n\nI have sent my payment verification screenshot for Order #${draftId}. Please verify and approve my receipt! (${advancePaid.toFixed(2)} Birr)`,
+        timestamp: timestampStr
+      },
+      {
         id: 'msg_bot_paid_receipt_' + Date.now(),
         sender: 'bot',
         text: isAmharic 
@@ -708,7 +829,7 @@ export default function App() {
     ]);
 
     // Dispatch real-time Telegram alert message to operator
-    if (botToken && botToken !== "8139963672:AAEl_yourTokenHere" && operatorChatId) {
+    if (botToken && !botToken.includes('yourTokenHere') && operatorChatId) {
       const itemsListText = targetOrder
         ? targetOrder.items.map(it => `• ${it.quantity}x ${it.name} (${it.totalPrice.toFixed(2)} Birr)`).join('\n')
         : '';
@@ -861,7 +982,7 @@ export default function App() {
       `🍔 *Items:* \n${itemsListText}\n\n` +
       `👉 Please accept this ticket on your device to begin GPS routing.`;
 
-    if (botToken && botToken !== "8139963672:AAEl_yourTokenHere" && operatorChatId) {
+    if (botToken && !botToken.includes('yourTokenHere') && operatorChatId) {
       fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
