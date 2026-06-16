@@ -15,7 +15,7 @@ export default function ExplanationAlert({ onAutoPlaceOrder }: ExplanationAlertP
   return (
     <div id="explanation-card" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-6">
       <div className="flex items-start gap-3">
-        <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+        <div className="p-2 bg-orange-50 text-[#E0560B] rounded-lg">
           <Lightbulb className="w-6 h-6" />
         </div>
         <div>
@@ -28,7 +28,7 @@ export default function ExplanationAlert({ onAutoPlaceOrder }: ExplanationAlertP
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
         <div className="flex items-start gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
-          <MessageSquareCode className="w-5 h-5 text-indigo-500 mt-0.5 shrink-0" />
+          <MessageSquareCode className="w-5 h-5 text-[#E0560B] mt-0.5 shrink-0" />
           <div>
             <span className="font-semibold text-xs text-slate-700 block">1. Natural Order Processing</span>
             <span className="text-xs text-slate-500 leading-snug">Gemini reads raw text (e.g., typos, quantities, minus items) and outputs JSON.</span>
