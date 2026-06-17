@@ -55,15 +55,15 @@ interface TelegramSimulatorProps {
 export const STORE_PAGES = [
   // Page 1
   [
-    "Mountain cafe",
-    "H-Town Burger",
-    "Sunny burger",
-    "Rome 1960 Cafe",
     "Aroma cafe",
     "Chanoly Noodles",
-    "Neba Cafe",
-    "Mountain Hotel",
+    "H-Town Burger",
     "Marti kitchen",
+    "Mountain cafe",
+    "Mountain Hotel",
+    "Neba Cafe",
+    "Rome 1960 Cafe",
+    "Sunny burger",
     "YOM BURGERIZZA",
     "Barcon Migb Bet",
     "liyu taim migb bet",
@@ -135,6 +135,60 @@ export const STORE_PAGES = [
 ];
 
 export const getStoreMeta = (storeName: string) => {
+  if (storeName === "Rome 1960 Cafe" || storeName.toLowerCase().includes("rome")) {
+    return {
+      rating: "4.8",
+      deliveryTime: "15-25 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  if (storeName === "Aroma cafe" || storeName.toLowerCase().includes("aroma")) {
+    return {
+      rating: "4.7",
+      deliveryTime: "15-30 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  if (storeName === "Chanoly Noodles" || storeName.toLowerCase().includes("chanoly")) {
+    return {
+      rating: "4.9",
+      deliveryTime: "15-30 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  if (storeName === "Neba Cafe" || storeName.toLowerCase().includes("neba")) {
+    return {
+      rating: "4.8",
+      deliveryTime: "15-30 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  if (storeName === "Marti kitchen" || storeName === "Marti Kitchen" || storeName.toLowerCase().includes("marti")) {
+    return {
+      rating: "4.8",
+      deliveryTime: "15-30 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  if (storeName === "YOM BURGERIZZA" || storeName.toLowerCase().includes("yom") || storeName.toLowerCase().includes("burgerizza")) {
+    return {
+      rating: "4.8",
+      deliveryTime: "15-30 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
   let hash = 0;
   for (let i = 0; i < storeName.length; i++) {
     hash = storeName.charCodeAt(i) + ((hash << 5) - hash);
@@ -431,6 +485,318 @@ export const SUNNY_BURGER_MENU: Record<string, MountainItem[]> = {
   ],
 };
 
+export const ROME_1960_MENU: Record<string, MountainItem[]> = {
+  Noodles: [
+    { name: "Special Combo Noodles", price: 870.0 },
+    { name: "Vegetable noodle", price: 620.0 },
+    { name: "Fish Noodles", price: 720.0 },
+    { name: "Chicken Noodles", price: 820.0 },
+    { name: "Beef Noodles", price: 820.0 },
+    { name: "Vegetable Noodles", price: 620.0 },
+    { name: "Fasting salad", price: 470.0 },
+    { name: "Beef sizzling", price: 970.0 },
+  ],
+  Pizza: [
+    { name: "Special Pizza", price: 780.0 },
+    { name: "Vegetable Pizza", price: 480.0 },
+    { name: "Normal Pizza", price: 680.0 },
+    { name: "Chicken pizza", price: 880.0 },
+    { name: "Tuna Pizza", price: 550.0 },
+    { name: "Beef Pizza", price: 680.0 },
+    { name: "Tuna With Cheese Pizza", price: 660.0 },
+  ],
+  Burger: [
+    { name: "Special Burger", price: 570.0 },
+    { name: "Chicken Burger", price: 770.0 },
+    { name: "Beef Burger", price: 470.0 },
+    { name: "Cheese Burger", price: 520.0 },
+    { name: "Fasting Burger", price: 420.0 },
+    { name: "Burgerizza", price: 880.0 },
+  ],
+  Juice: [
+    { name: "Mango Juice", price: 290.0 },
+    { name: "Chocolate Shake", price: 360.0 },
+    { name: "Special Juice", price: 340.0 },
+    { name: "Avocado Juice", price: 290.0 },
+    { name: "Strawberry shake", price: 360.0 },
+  ],
+  Sandwich: [
+    { name: "Special Club Sandwich", price: 570.0 },
+    { name: "Club Sandwich", price: 470.0 },
+    { name: "Rome chips", price: 280.0 },
+    { name: "Chicken Friend Rice", price: 720.0 },
+    { name: "Egg Sandwich", price: 320.0 },
+    { name: "Egg Club Sandwich", price: 420.0 },
+    { name: "Tuna Sandwich", price: 470.0 },
+  ],
+  Shawarma: [
+    { name: "Special Burrito", price: 720.0 },
+    { name: "Special Shawarma", price: 670.0 },
+    { name: "Chicken Burrito", price: 670.0 },
+    { name: "Fish Burrito", price: 520.0 },
+    { name: "Beef Burrito", price: 620.0 },
+    { name: "Beef Roll", price: 490.0 },
+    { name: "Beef Shawarma", price: 620.0 },
+    { name: "Chicken Shawarma", price: 620.0 },
+    { name: "Tuna Burrito", price: 720.0 },
+  ],
+  Chicken: [
+    { name: "Chicken Combo", price: 870.0 },
+    { name: "Chicken Lollipop", price: 1070.0 },
+    { name: "Nugget Combo", price: 1070.0 },
+    { name: "Sizzling Chicken", price: 1170.0 },
+  ],
+  Breakfast: [
+    { name: "Beef fried rice", price: 720.0 },
+    { name: "Beef Soup", price: 420.0 },
+    { name: "Special Chips", price: 370.0 },
+    { name: "Special Salad", price: 570.0 },
+    { name: "Fasting Rize", price: 470.0 },
+    { name: "Egg Rize", price: 490.0 },
+  ],
+};
+
+export const AROMA_CAFE_MENU: Record<string, MountainItem[]> = {
+  Breakfast: [
+    { name: "Loaded Fries", price: 480.0 },
+    { name: "Loaded fries የጾም", price: 410.0 },
+    { name: "Chips", price: 240.0 },
+    { name: "Normal Fries", price: 240.0 },
+    { name: "Beef Shakshuka", price: 410.0 },
+    { name: "Shakshuka", price: 410.0 },
+  ],
+  Shawarma: [
+    { name: "Burrito", price: 620.0 },
+    { name: "Burrito Half", price: 420.0 },
+    { name: "የጾም Burrito", price: 460.0 },
+    { name: "Tuna Wrap", price: 440.0 },
+    { name: "Fasting Half Burrito", price: 300.0 },
+  ],
+  Burger: [
+    { name: "Double Special Burger", price: 580.0 },
+    { name: "Triple Burger", price: 660.0 },
+    { name: "Double Cheese Burger", price: 580.0 },
+    { name: "Cheese Burger", price: 490.0 },
+  ],
+  Sandwich: [
+    { name: "Club Sandwich", price: 530.0 },
+    { name: "የጾም club Sandwich", price: 410.0 },
+    { name: "Half Club sandwich", price: 460.0 },
+    { name: "Special Sandwich", price: 410.0 },
+    { name: "Egg Sandwich", price: 320.0 },
+    { name: "Fasting Sandwich", price: 280.0 },
+  ],
+};
+
+export const CHANOLY_NOODLES_MENU: Record<string, MountainItem[]> = {
+  Noodles: [
+    { name: "Special Chanoly Noodle", price: 935.0 },
+    { name: "Stir Fry Vegetable Noodle", price: 735.0 },
+    { name: "Chicken Noodles", price: 945.0 },
+    { name: "Combo Salad Half", price: 775.0 },
+    { name: "Stir Fry Beef Noodle", price: 905.0 },
+    { name: "Combo Full Salad", price: 915.0 },
+    { name: "Beef Fried Rize", price: 805.0 },
+    { name: "Stif fry Fish Noodle", price: 805.0 },
+    { name: "Vegetable salad Full", price: 795.0 },
+    { name: "Vegetable salad Half", price: 615.0 },
+    { name: "Vegetable Rize", price: 685.0 },
+    { name: "Chicken Salad Half", price: 755.0 },
+    { name: "Beef sizzling", price: 1185.0 },
+    { name: "Fish Fried Rize", price: 755.0 },
+    { name: "Beef broccoli", price: 1015.0 },
+    { name: "Vegetable tofu", price: 595.0 },
+  ],
+  Breakfast: [
+    { name: "Combo rize", price: 815.0 },
+    { name: "Chicken Salad Full", price: 915.0 },
+  ],
+  Chicken: [
+    { name: "Chicken lollipop", price: 1215.0 },
+    { name: "Chicken sizzling", price: 1355.0 },
+    { name: "Chicken fried rize", price: 825.0 },
+    { name: "Peanut Chicken", price: 1355.0 },
+  ],
+  Fish: [
+    { name: "Fish Salad Full", price: 825.0 },
+    { name: "Half Fish Salad", price: 685.0 },
+  ],
+  Juice: [
+    { name: "Chanoly best smoothie", price: 300.0 },
+    { name: "Chocolate peanut butter smoothie", price: 300.0 },
+    { name: "Avocado smoothie", price: 300.0 },
+    { name: "Cinnamon mojito", price: 250.0 },
+    { name: "Avocado juice", price: 300.0 },
+    { name: "Ginger mojito", price: 250.0 },
+    { name: "Strawberry mojito", price: 290.0 },
+    { name: "Lemon Mojito", price: 290.0 },
+  ],
+};
+
+export const NEBA_CAFE_MENU: Record<string, MountainItem[]> = {
+  Sandwich: [
+    { name: "Club Sandwich", price: 650.0 },
+    { name: "Half Clubsandwich", price: 500.0 },
+  ],
+  Shawarma: [
+    { name: "Special Chicken Shawarma", price: 750.0 },
+    { name: "Chicken Rap", price: 650.0 },
+  ],
+  Cake: [
+    { name: "baklaba", price: 170.0 },
+  ],
+  Breakfast: [
+    { name: "Loaded Fries", price: 650.0 },
+    { name: "chips", price: 300.0 },
+    { name: "Cheese Chips", price: 450.0 },
+  ],
+  Burger: [
+    { name: "Special burger", price: 740.0 },
+    { name: "Mini Burger", price: 500.0 },
+    { name: "Single Burger ?", price: 500.0 },
+    { name: "Neba Tower Burger", price: 1350.0 },
+    { name: "Fried Chicken Burger", price: 650.0 },
+    { name: "Pepperoni Pizza", price: 550.0 },
+    { name: "Double Cheese Burger", price: 650.0 },
+    { name: "የጾም በርገር", price: 400.0 },
+    { name: "Cheese burger", price: 550.0 },
+    { name: "Fasting Burger", price: 450.0 },
+    { name: "Beef With Cheese Burger", price: 550.0 },
+  ],
+  Chicken: [
+    { name: "Chicken Loaded Fries", price: 650.0 },
+    { name: "Chicken Load Fries", price: 650.0 },
+    { name: "chicken wings", price: 700.0 },
+    { name: "Chicken Combo", price: 1850.0 },
+    { name: "Chicken Nugget", price: 600.0 },
+  ],
+  Juice: [
+    { name: "special juice", price: 220.0 },
+    { name: "Mango Juice", price: 220.0 },
+  ],
+  Pizza: [
+    { name: "Special Pizza", price: 750.0 },
+    { name: "Quatro Pizza", price: 600.0 },
+    { name: "Quattro Pizza", price: 600.0 },
+    { name: "Fasting Pizza", price: 450.0 },
+    { name: "Margarita Pizza", price: 500.0 },
+  ],
+};
+
+export const MARTI_KITCHEN_MENU: Record<string, MountainItem[]> = {
+  Habeshan: [
+    { name: "የፍስክ እጨብጭቡለት", price: 1260.0 },
+    { name: "ማርቲ ኮምቦ(ማርቲ ስፔሻል)", price: 1260.0 },
+    { name: "ድርቆሽ ፍርፍር", price: 410.0 },
+    { name: "Beyeaynet(በየአይነት)", price: 410.0 },
+    { name: "Teferisho", price: 760.0 },
+    { name: "የጾም እጨብጭቡለት ሙሉ", price: 760.0 },
+    { name: "ዱለት Dulet", price: 410.0 },
+    { name: "ቋንጣ ፍርፍር kuanta firfr", price: 960.0 },
+    { name: "Kitfo(ክትፎ)", price: 1060.0 },
+    { name: "Tibs (ጥብስ)", price: 960.0 },
+    { name: "ዶሮ ወጥ", price: 1060.0 },
+    { name: "Special ክትፎ", price: 1260.0 },
+    { name: "ስፔሻል በየአይነት", price: 860.0 },
+    { name: "Shiro(ሽሮ)", price: 410.0 },
+    { name: "ፓስታ በአትክልት", price: 410.0 },
+    { name: "ለሁለት ሰው የሚበቃ ዶሮ", price: 1260.0 },
+    { name: "ከበቡሽ", price: 1860.0 },
+    { name: "Ayib And Gomen(አይብ በጎመን)", price: 360.0 },
+    { name: "Tegabino", price: 560.0 },
+  ],
+  Injera: [
+    { name: "half የጾም አገልግሎት", price: 660.0 },
+    { name: "ጥብስ", price: 960.0 },
+    { name: "በወዙ", price: 960.0 },
+    { name: "የጭቅና ጥብስ", price: 960.0 },
+    { name: "ደርቅ ጥብስ", price: 960.0 },
+  ],
+  Breakfast: [
+    { name: "Rice And Meat(ሩዝ በስጋ)", price: 560.0 },
+    { name: "Chechbsa (ጨጨብሳ)", price: 410.0 },
+    { name: "Enkulal Firfir (እንቁላል ፍርፍር)", price: 360.0 },
+    { name: "Rice And Egg(ሩዝ በእንቁላል)", price: 560.0 },
+  ],
+  "Soft Drink": [
+    { name: "Marti Tela", price: 300.0 },
+  ],
+  Sandwich: [
+    { name: "Egg Sandwich", price: 360.0 },
+  ],
+};
+
+export const YOM_BURGERIZZA_MENU: Record<string, MountainItem[]> = {
+  Burger: [
+    { name: "YOM Burgerizza", price: 960.0 },
+    { name: "Special Burger", price: 750.0 },
+    { name: "Chicken Burger", price: 760.0 },
+    { name: "Double Burger", price: 730.0 },
+    { name: "Cheese Burger", price: 650.0 },
+    { name: "Beef Burger", price: 600.0 },
+    { name: "የየም በረገር", price: 450.0 },
+    { name: "Fasting Burger", price: 350.0 },
+    { name: "Margarita Pizza", price: 690.0 },
+  ],
+  Pizza: [
+    { name: "YOM Special Pizza", price: 820.0 },
+    { name: "Chicken Pizza", price: 820.0 },
+    { name: "Meat Lover's Pizza", price: 810.0 },
+    { name: "Calzone Pizza", price: 810.0 },
+    { name: "Stromboli Pizza", price: 810.0 },
+    { name: "Tuna With Cheese Pizza", price: 800.0 },
+    { name: "Beef Pizza", price: 750.0 },
+    { name: "Peperoni Pizza", price: 720.0 },
+    { name: "Mini Special Fasting Pizza", price: 650.0 },
+    { name: "Fasting Special Pizza", price: 610.0 },
+    { name: "Mini Pizza", price: 580.0 },
+  ],
+  Shawarma: [
+    { name: "Chicken Burrito", price: 790.0 },
+    { name: "Chicken Burrito", price: 810.0 },
+    { name: "YOM Shawarma", price: 750.0 },
+    { name: "Chicken Shawarma", price: 720.0 },
+    { name: "Beef Shawarma", price: 680.0 },
+    { name: "Fasting Shawarma", price: 590.0 },
+    { name: "Vegetable Shawarma", price: 590.0 },
+  ],
+  Chicken: [
+    { name: "Chicken Waffel", price: 1250.0 },
+    { name: "Chicken Wings", price: 850.0 },
+    { name: "Boneless Wing", price: 850.0 },
+    { name: "Chicken Nugget", price: 760.0 },
+  ],
+  Breakfast: [
+    { name: "Georgian Khachapuri", price: 750.0 },
+    { name: "Special Fetira", price: 420.0 },
+    { name: "Special Chips", price: 410.0 },
+    { name: "Normal Fetira", price: 360.0 },
+  ],
+  Sandwich: [
+    { name: "Chicken Club Sandwich", price: 680.0 },
+    { name: "Full Club Sandwich", price: 650.0 },
+    { name: "Tuna Sandwich", price: 640.0 },
+    { name: "Egg Club Sandwich", price: 490.0 },
+    { name: "Egg Sandwich", price: 490.0 },
+    { name: "Half Club Sandwich", price: 490.0 },
+    { name: "Hash Brown", price: 430.0 },
+    { name: "French Toast", price: 400.0 },
+    { name: "French Fries", price: 360.0 },
+  ],
+  Juice: [
+    { name: "Strawberry Shake", price: 300.0 },
+    { name: "Special Juice", price: 280.0 },
+    { name: "Papaya Juice", price: 280.0 },
+    { name: "Mango Juice", price: 280.0 },
+    { name: "Avocado Juice", price: 280.0 },
+  ],
+  Habeshan: [
+    { name: "Grilled Goat Tibs", price: 950.0 },
+    { name: "Tibs", price: 860.0 },
+    { name: "በዘነ ሽሮ", price: 590.0 },
+  ],
+};
+
 export default function TelegramSimulator({
   messages,
   isParsing,
@@ -465,6 +831,12 @@ export default function TelegramSimulator({
     | "mountain_hotel_menu"
     | "htown_menu"
     | "sunny_menu"
+    | "rome_menu"
+    | "aroma_menu"
+    | "chanoly_menu"
+    | "neba_menu"
+    | "marti_menu"
+    | "yom_menu"
   >("main");
   const [webAppKeyboard, setWebAppKeyboard] = useState<
     | "main"
@@ -475,6 +847,12 @@ export default function TelegramSimulator({
     | "mountain_hotel_menu"
     | "htown_menu"
     | "sunny_menu"
+    | "rome_menu"
+    | "aroma_menu"
+    | "chanoly_menu"
+    | "neba_menu"
+    | "marti_menu"
+    | "yom_menu"
   >("main");
   const [mountainCategory, setMountainCategory] = useState<string>("Juice");
   const [mountainSelected, setMountainSelected] = useState<
@@ -531,6 +909,36 @@ export default function TelegramSimulator({
             setMountainCategory("Burger");
             setMenuPage(0);
             setToastMessage(`☀️ Welcome to Sunny Burger Premium Menu!`);
+          } else if (arg === "Rome 1960 Cafe" || arg.toLowerCase().includes("rome")) {
+            setTgKeyboard("rome_menu");
+            setMountainCategory("Pizza");
+            setMenuPage(0);
+            setToastMessage(`🇮🇹 Welcome to Rome 1960 Cafe Premium Menu!`);
+          } else if (arg === "Aroma cafe" || arg.toLowerCase().includes("aroma")) {
+            setTgKeyboard("aroma_menu");
+            setMountainCategory("Breakfast");
+            setMenuPage(0);
+            setToastMessage(`☕ Welcome to Aroma Cafe Premium Menu!`);
+          } else if (arg === "Chanoly Noodles" || arg.toLowerCase().includes("chanoly")) {
+            setTgKeyboard("chanoly_menu");
+            setMountainCategory("Noodles");
+            setMenuPage(0);
+            setToastMessage(`🍜 Welcome to Chanoly Noodles Premium Menu!`);
+          } else if (arg === "Neba Cafe" || arg.toLowerCase().includes("neba")) {
+            setTgKeyboard("neba_menu");
+            setMountainCategory("Burger");
+            setMenuPage(0);
+            setToastMessage(`🍔 Welcome to Neba Cafe Premium Menu!`);
+          } else if (arg === "Marti kitchen" || arg.toLowerCase().includes("marti")) {
+            setTgKeyboard("marti_menu");
+            setMountainCategory("Habeshan");
+            setMenuPage(0);
+            setToastMessage(`🥘 Welcome to Marti Kitchen Premium Menu!`);
+          } else if (arg === "YOM BURGERIZZA" || arg.toLowerCase().includes("yom") || arg.toLowerCase().includes("burgerizza")) {
+            setTgKeyboard("yom_menu");
+            setMountainCategory("Burger");
+            setMenuPage(0);
+            setToastMessage(`🍔 Welcome to YOM Burgerizza Premium Menu!`);
           } else {
             setIsMenuOpen(true);
             setToastMessage(`🏪 Selected: ${arg}! Set as pick-up location.`);
@@ -697,29 +1105,69 @@ export default function TelegramSimulator({
 
   const renderInteractiveMenu = (
     isInsideWebApp: boolean,
-    menuType: "mountain" | "htown" | "sunny",
+    menuType: "mountain" | "htown" | "sunny" | "rome" | "aroma" | "chanoly" | "neba" | "marti" | "yom",
   ) => {
-    const categories = [
-      "All",
-      "Burger",
-      "Pizza",
-      "Juice",
-      "Sandwich",
-      "Chicken",
-      "Shawarma",
-      "Soft Drink",
-      "Breakfast",
-      "Cake",
-    ];
     const menuData =
       menuType === "mountain"
         ? MOUNTAIN_HOTEL_MENU
         : menuType === "htown"
           ? HTOWN_MENU
-          : SUNNY_BURGER_MENU;
+          : menuType === "sunny"
+            ? SUNNY_BURGER_MENU
+            : menuType === "rome"
+              ? ROME_1960_MENU
+              : menuType === "aroma"
+                ? AROMA_CAFE_MENU
+                : menuType === "chanoly"
+                  ? CHANOLY_NOODLES_MENU
+                  : menuType === "neba"
+                    ? NEBA_CAFE_MENU
+                    : menuType === "marti"
+                      ? MARTI_KITCHEN_MENU
+                      : YOM_BURGERIZZA_MENU;
 
-    // Choose theme properties for a polished professional aesthetic
-    // Use H-Town Burger's dark translucent color style for ALL menus as requested, but preserve proper titles/descriptions.
+    const rawCategories = menuType === "yom"
+      ? [
+          "All",
+          "Burger",
+          "Pizza",
+          "Shawarma",
+          "Chicken",
+          "Breakfast",
+          "Sandwich",
+          "Juice",
+          "Habeshan",
+        ]
+      : menuType === "marti"
+        ? [
+            "All",
+            "Habeshan",
+            "Injera",
+            "Breakfast",
+            "Soft Drink",
+            "Sandwich",
+          ]
+        : [
+            "All",
+            "Noodles",
+            "Pizza",
+            "Burger",
+            "Juice",
+            "Sandwich",
+            "Shawarma",
+            "Chicken",
+            "Breakfast",
+            "Coffee",
+            "Pasta",
+            "Soft Drink",
+            "Cake",
+            "Pastry",
+          ];
+
+    const categories = rawCategories.filter(
+      (cat) => cat === "All" || (menuData && menuData[cat] && menuData[cat].length > 0)
+    );
+
     const getStoreDetails = () => {
       switch (menuType) {
         case "mountain":
@@ -737,12 +1185,54 @@ export default function TelegramSimulator({
               : "Select from H-Town Burger's signature recipes (10 per page):",
           };
         case "sunny":
-        default:
           return {
             title: "🍔 Sunny Burger Premium Menu",
             desc: isAmharic
-              ? "ከሳኒ በርገር ሲግኔቸር ምርጫዎች ይምረጡ (በገጽ 10 እቃዎች)፦"
+              ? "ከአሮማ ካፌ ምርጥ ምርጫዎች ይምረጡ (በገጽ 10 እቃዎች)፦"
               : "Select from Sunny Burger's signature recipes (10 per page):",
+          };
+        case "rome":
+          return {
+            title: "🇮🇹 Rome 1960 Cafe Premium Menu",
+            desc: isAmharic
+              ? "ከሮም 1960 ምርጥ የጣሊያን ምርጫዎች ይምረጡ (በገጽ 10 እቃዎች)፦"
+              : "Select from Rome 1960's fine Italian selections (10 per page):",
+          };
+        case "aroma":
+          return {
+            title: "☕ Aroma Cafe Premium Menu",
+            desc: isAmharic
+              ? "ከአሮማ ካፌ ምርጥ ምርጫዎች ይምረጡ (በገጽ 10 እቃዎች)፦"
+              : "Select from Aroma Cafe's finest selections (10 per page):",
+          };
+        case "chanoly":
+          return {
+            title: "🍜 Chanoly Noodles Premium Menu",
+            desc: isAmharic
+              ? "ከቻኖሊ ኑድል ምርጥ ምርጫዎች ይምረጡ (በገጽ 10 እቃዎች)፦"
+              : "Select from Chanoly Noodles' high-quality selections (10 per page):",
+          };
+        case "neba":
+          return {
+            title: "🍔 Neba Cafe Premium Menu",
+            desc: isAmharic
+              ? "ከነባ ካፌ ምርጥ ምርጫዎች ይምረጡ (በገጽ 10 እቃዎች)፦"
+              : "Select from Neba Cafe's finest selections (10 per page):",
+          };
+        case "yom":
+          return {
+            title: "🍔 YOM Burgerizza Premium Menu",
+            desc: isAmharic
+              ? "ከየም በርገሪዛ ምርጥ ምርጫዎች ይምረጡ (በገጽ 10 እቃዎች)፦"
+              : "Select from YOM Burgerizza's finest selections (10 per page):",
+          };
+        case "marti":
+        default:
+          return {
+            title: "🥘 Marti Kitchen Premium Menu",
+            desc: isAmharic
+              ? "ከማርት ኪችን ምርጥ ምርጫዎች ይምረጡ (በገጽ 10 እቃዎች)፦"
+              : "Select from Marti Kitchen's premium local & international dishes (10 per page):",
           };
       }
     };
@@ -754,26 +1244,243 @@ export default function TelegramSimulator({
         ? "Mountain Hotel"
         : menuType === "htown"
           ? "H-Town Burger"
-          : "Sunny Burger"
+          : menuType === "sunny"
+            ? "Sunny Burger"
+            : menuType === "rome"
+              ? "Rome 1960 Cafe"
+              : menuType === "aroma"
+                ? "Aroma cafe"
+                : menuType === "chanoly"
+                  ? "Chanoly Noodles"
+                  : menuType === "neba"
+                    ? "Neba Cafe"
+                    : menuType === "marti"
+                      ? "Marti kitchen"
+                      : "YOM BURGERIZZA"
     );
+
+    const getThemeColors = () => {
+      switch (menuType) {
+        case "mountain":
+          return {
+            primary: "#059669",
+            primaryHover: "#047857",
+            primaryBg: "bg-emerald-50",
+            primaryBorder: "border-emerald-100",
+            primaryText: "text-emerald-600",
+            textAccent: "text-emerald-600",
+            itemCardBorderHover: "hover:border-emerald-250",
+            cartGradient: "from-emerald-700 to-emerald-600",
+            headerBg: "bg-white text-slate-800 border-b border-emerald-100",
+            headerTag: "bg-emerald-50 text-emerald-600 border-emerald-100",
+            catButtonSelected: "bg-emerald-600 text-white border-emerald-600 shadow-sm",
+            btnSubmit: "bg-emerald-600 hover:bg-emerald-700 border-emerald-600 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
+            badgeColor: "text-emerald-600 bg-emerald-50 border-emerald-100",
+            itemCardBg: "bg-white border border-slate-200/85 hover:border-emerald-250 hover:-translate-y-0.5 shadow-3xs",
+            qtyCircleBg: "bg-emerald-600",
+            textPrice: "text-emerald-600",
+            textGroupHover: "group-hover:text-emerald-600",
+            btnHoverText: "hover:text-emerald-600 border-slate-250",
+            buttonMainBg: "bg-emerald-600 hover:bg-emerald-700",
+          };
+        case "sunny":
+          return {
+            primary: "#d97706",
+            primaryHover: "#b45309",
+            primaryBg: "bg-amber-50",
+            primaryBorder: "border-amber-100",
+            primaryText: "text-amber-600",
+            textAccent: "text-amber-600",
+            itemCardBorderHover: "hover:border-amber-250",
+            cartGradient: "from-amber-750 to-amber-600",
+            headerBg: "bg-white text-slate-800 border-b border-amber-100",
+            headerTag: "bg-amber-50 text-amber-600 border-amber-100",
+            catButtonSelected: "bg-amber-650 text-white border-amber-655 shadow-sm",
+            btnSubmit: "bg-amber-600 hover:bg-amber-700 border-amber-600 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
+            badgeColor: "text-amber-600 bg-amber-50 border-amber-100",
+            itemCardBg: "bg-white border border-slate-200/85 hover:border-amber-250 hover:-translate-y-0.5 shadow-3xs",
+            qtyCircleBg: "bg-amber-650",
+            textPrice: "text-amber-650",
+            textGroupHover: "group-hover:text-amber-655",
+            btnHoverText: "hover:text-amber-650 border-slate-250",
+            buttonMainBg: "bg-amber-600 hover:bg-amber-700",
+          };
+        case "htown":
+          return {
+            primary: "#E0560B",
+            primaryHover: "#C24103",
+            primaryBg: "bg-orange-50",
+            primaryBorder: "border-orange-100",
+            primaryText: "text-[#E0560B]",
+            textAccent: "text-[#E0560B]",
+            itemCardBorderHover: "hover:border-orange-255",
+            cartGradient: "from-orange-600 to-[#E0560B]",
+            headerBg: "bg-white text-slate-800 border-b border-rose-100",
+            headerTag: "bg-orange-50 text-[#E0560B] border-orange-100",
+            catButtonSelected: "bg-[#E0560B] text-white border-[#E0560B] shadow-sm",
+            btnSubmit: "bg-[#E0560B] hover:bg-[#C24103] border-[#E0560B] text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
+            badgeColor: "text-[#E0560B] bg-orange-50 border-orange-100",
+            itemCardBg: "bg-white border border-slate-200/85 hover:border-orange-250 hover:-translate-y-0.5 shadow-3xs",
+            qtyCircleBg: "bg-[#E0560B]",
+            textPrice: "text-[#E0560B]",
+            textGroupHover: "group-hover:text-[#E0560B]",
+            btnHoverText: "hover:text-[#E0560B] border-slate-250",
+            buttonMainBg: "bg-[#E0560B] hover:bg-[#C24103]",
+          };
+        case "rome":
+          return {
+            primary: "#991b1b",
+            primaryHover: "#7f1d1d",
+            primaryBg: "bg-red-50",
+            primaryBorder: "border-red-100",
+            primaryText: "text-red-700",
+            textAccent: "text-red-700",
+            itemCardBorderHover: "hover:border-red-250",
+            cartGradient: "from-red-700 to-red-600",
+            headerBg: "bg-white text-slate-800 border-b border-red-100",
+            headerTag: "bg-red-50 text-red-700 border-red-100",
+            catButtonSelected: "bg-red-700 text-white border-red-700 shadow-sm",
+            btnSubmit: "bg-red-750 hover:bg-red-800 border-red-750 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
+            badgeColor: "text-red-700 bg-red-50 border-red-100",
+            itemCardBg: "bg-white border border-slate-200/85 hover:border-red-250 hover:-translate-y-0.5 shadow-3xs",
+            qtyCircleBg: "bg-red-700",
+            textPrice: "text-red-700",
+            textGroupHover: "group-hover:text-red-700",
+            btnHoverText: "hover:text-red-700 border-slate-250",
+            buttonMainBg: "bg-red-700 hover:bg-red-800",
+          };
+        case "chanoly":
+          return {
+            primary: "#ea580c",
+            primaryHover: "#c2410c",
+            primaryBg: "bg-orange-50/50",
+            primaryBorder: "border-orange-100/80",
+            primaryText: "text-orange-900 border-orange-200/55",
+            textAccent: "text-orange-900",
+            itemCardBorderHover: "hover:border-orange-400",
+            cartGradient: "from-orange-900 to-orange-850",
+            headerBg: "bg-white text-orange-950 border-b border-orange-100",
+            headerTag: "bg-orange-50 text-orange-900 border-orange-100",
+            catButtonSelected: "bg-orange-900 text-white border-orange-900 shadow-sm",
+            btnSubmit: "bg-orange-900 hover:bg-orange-950 border-orange-900 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
+            badgeColor: "text-orange-900 bg-orange-50 border-orange-100",
+            itemCardBg: "bg-white border border-slate-200/85 hover:border-orange-300 hover:-translate-y-0.5 shadow-3xs",
+            qtyCircleBg: "bg-orange-900",
+            textPrice: "text-orange-950",
+            textGroupHover: "group-hover:text-orange-900",
+            btnHoverText: "hover:text-orange-900 border-slate-250",
+            buttonMainBg: "bg-orange-900 hover:bg-orange-950",
+          };
+        case "neba":
+          return {
+            primary: "#0891b2",
+            primaryHover: "#0e7490",
+            primaryBg: "bg-cyan-50/50",
+            primaryBorder: "border-cyan-100/80",
+            primaryText: "text-cyan-900 border-cyan-200/55",
+            textAccent: "text-cyan-900",
+            itemCardBorderHover: "hover:border-cyan-400",
+            cartGradient: "from-cyan-900 to-cyan-850",
+            headerBg: "bg-white text-cyan-950 border-b border-cyan-100",
+            headerTag: "bg-cyan-50 text-cyan-900 border-cyan-100",
+            catButtonSelected: "bg-cyan-900 text-white border-cyan-900 shadow-sm",
+            btnSubmit: "bg-cyan-900 hover:bg-cyan-950 border-cyan-900 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
+            badgeColor: "text-cyan-900 bg-cyan-50 border-cyan-100",
+            itemCardBg: "bg-white border border-slate-200/85 hover:border-cyan-300 hover:-translate-y-0.5 shadow-3xs",
+            qtyCircleBg: "bg-cyan-900",
+            textPrice: "text-cyan-950",
+            textGroupHover: "group-hover:text-cyan-900",
+            btnHoverText: "hover:text-cyan-900 border-slate-250",
+            buttonMainBg: "bg-cyan-900 hover:bg-cyan-950",
+          };
+        case "marti":
+          return {
+            primary: "#c2410c",
+            primaryHover: "#9a3412",
+            primaryBg: "bg-orange-50/40",
+            primaryBorder: "border-orange-100/70",
+            primaryText: "text-orange-900 border-orange-200/55",
+            textAccent: "text-orange-900",
+            itemCardBorderHover: "hover:border-orange-400",
+            cartGradient: "from-orange-800 to-orange-700",
+            headerBg: "bg-white text-orange-950 border-b border-orange-100",
+            headerTag: "bg-orange-50 text-orange-900 border-orange-100",
+            catButtonSelected: "bg-orange-800 text-white border-orange-850 shadow-sm",
+            btnSubmit: "bg-orange-800 hover:bg-orange-900 border-orange-800 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
+            badgeColor: "text-orange-900 bg-orange-50 border-orange-100",
+            itemCardBg: "bg-white border border-slate-200/85 hover:border-orange-300 hover:-translate-y-0.5 shadow-3xs",
+            qtyCircleBg: "bg-orange-800",
+            textPrice: "text-orange-950",
+            textGroupHover: "group-hover:text-orange-900",
+            btnHoverText: "hover:text-orange-900 p border-slate-250",
+            buttonMainBg: "bg-orange-800 hover:bg-orange-900",
+          };
+        case "yom":
+          return {
+            primary: "#1b5e20",
+            primaryHover: "#2e7d32",
+            primaryBg: "bg-emerald-50/45",
+            primaryBorder: "border-emerald-150/70",
+            primaryText: "text-emerald-900 border-emerald-250/55",
+            textAccent: "text-emerald-900",
+            itemCardBorderHover: "hover:border-emerald-450",
+            cartGradient: "from-emerald-800 to-emerald-700",
+            headerBg: "bg-white text-emerald-950 border-b border-emerald-100",
+            headerTag: "bg-emerald-50 text-emerald-900 border-emerald-100",
+            catButtonSelected: "bg-emerald-800 text-white border-emerald-850 shadow-sm",
+            btnSubmit: "bg-emerald-800 hover:bg-emerald-900 border-emerald-800 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
+            badgeColor: "text-emerald-900 bg-emerald-50 border-emerald-100",
+            itemCardBg: "bg-white border border-slate-200/85 hover:border-emerald-300 hover:-translate-y-0.5 shadow-3xs",
+            qtyCircleBg: "bg-emerald-800",
+            textPrice: "text-emerald-950",
+            textGroupHover: "group-hover:text-emerald-900",
+            btnHoverText: "hover:text-emerald-900 border-slate-250",
+            buttonMainBg: "bg-emerald-800 hover:bg-emerald-900",
+          };
+        case "aroma":
+        default:
+          return {
+            primary: "#7c2d12",
+            primaryHover: "#451a03",
+            primaryBg: "bg-amber-50/50",
+            primaryBorder: "border-amber-100/80",
+            primaryText: "text-amber-900 border-amber-200/55",
+            textAccent: "text-amber-900",
+            itemCardBorderHover: "hover:border-amber-400",
+            cartGradient: "from-amber-900 to-amber-800",
+            headerBg: "bg-white text-amber-950 border-b border-amber-100",
+            headerTag: "bg-amber-50 text-amber-900 border-amber-100",
+            catButtonSelected: "bg-amber-900 text-white border-amber-900 shadow-sm",
+            btnSubmit: "bg-amber-900 hover:bg-amber-950 border-amber-900 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
+            badgeColor: "text-amber-900 bg-amber-50 border-amber-100",
+            itemCardBg: "bg-white border border-slate-200/85 hover:border-amber-300 hover:-translate-y-0.5 shadow-3xs",
+            qtyCircleBg: "bg-amber-900",
+            textPrice: "text-amber-900",
+            textGroupHover: "group-hover:text-amber-900",
+            btnHoverText: "hover:text-amber-900 border-slate-250",
+            buttonMainBg: "bg-amber-900 hover:bg-amber-950",
+          };
+      }
+    };
+    const colors = getThemeColors();
 
     const theme = {
       title: details.title,
       desc: details.desc,
-      headerBg: "bg-white text-slate-800 border-b border-rose-100",
-      headerTag: "bg-orange-50 text-[#E0560B] border-orange-100",
+      headerBg: colors.headerBg,
+      headerTag: colors.headerTag,
       catContainer: "bg-white border border-slate-100 shadow-2xs",
-      catButtonSelected: "bg-[#E0560B] text-white border-[#E0560B] shadow-sm",
+      catButtonSelected: colors.catButtonSelected,
       catButtonInactive: "bg-white hover:bg-slate-50 text-slate-600 border-slate-200",
-      itemCardBg: "bg-white border border-slate-200 hover:border-orange-200 hover:-translate-y-1 shadow-sm hover:shadow-md",
-      badgeColor: "text-[#E0560B] bg-orange-50 border-orange-100",
-      cartSummaryBg: "bg-gradient-to-r from-orange-600 to-[#E0560B] text-white border-none shadow-md",
+      itemCardBg: colors.itemCardBg,
+      badgeColor: colors.badgeColor,
+      cartSummaryBg: `bg-gradient-to-r ${colors.cartGradient} text-white border-none shadow-md`,
       qtyActionsBg: "bg-slate-50 border border-slate-200",
       btnBack: "bg-white hover:bg-slate-50 border-slate-200 text-slate-700 shadow-2xs hover:-translate-y-0.5",
       btnCancel: "bg-slate-100 hover:bg-slate-250 border-slate-200 text-slate-700 shadow-2xs hover:-translate-y-0.5",
-      btnSubmit: "bg-[#E0560B] hover:bg-[#C24103] border-[#E0560B] text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
+      btnSubmit: colors.btnSubmit,
       itemNameText: "text-slate-900 font-bold",
-      itemPriceText: "text-[#E0560B] font-extrabold",
+      itemPriceText: `${colors.primaryText} font-extrabold`,
       btnActiveBg: "hover:bg-slate-50",
       itemQtyText: "text-slate-900 font-extrabold",
       scrollbarColor: "scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-200",
@@ -870,7 +1577,23 @@ export default function TelegramSimulator({
       const dropAddress =
         customerProfile.address || localAddress || "Default Delivery Area";
       const pickupAddress =
-        menuType === "mountain" ? "Mountain Hotel" : "H-Town Burger";
+        menuType === "mountain"
+          ? "Mountain Hotel"
+          : menuType === "htown"
+            ? "H-Town Burger"
+            : menuType === "sunny"
+              ? "Sunny Burger"
+              : menuType === "rome"
+                ? "Rome 1960 Cafe"
+                : menuType === "aroma"
+                  ? "Aroma cafe"
+                  : menuType === "chanoly"
+                    ? "Chanoly Noodles"
+                    : menuType === "neba"
+                      ? "Neba Cafe"
+                      : menuType === "marti"
+                        ? "Marti kitchen"
+                        : "YOM BURGERIZZA";
 
       const finalMsg = `Please organize a ticket for: ${itemsList.join(", ")}.\n\nMy delivery profile parameters:\n👤 Name: ${nameText}\n📞 Phone: ${phoneText}\n📍 Pick-Up Location: ${pickupAddress}\n📍 Drop-Off Address: ${dropAddress}`;
 
@@ -920,8 +1643,6 @@ export default function TelegramSimulator({
               <span>⭐ {storeMeta.rating}</span>
               <span className="text-white/40">•</span>
               <span>⏱️ {storeMeta.deliveryTime}</span>
-              <span className="text-white/40">•</span>
-              <span>🛵 {storeMeta.deliveryFee}</span>
             </div>
           </div>
 
@@ -947,7 +1668,7 @@ export default function TelegramSimulator({
                   setMenuPage(0);
                 }}
                 className={`text-[10.5px] font-bold py-1.5 px-3.5 rounded-full text-center flex items-center justify-center transition cursor-pointer shrink-0 border duration-150 whitespace-nowrap ${
-                  isSelected ? "bg-[#E0560B] text-white border-[#E0560B] shadow-sm transform scale-102" : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:-translate-y-0.5 shadow-2xs"
+                  isSelected ? `${colors.catButtonSelected} transform scale-102` : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:-translate-y-0.5 shadow-2xs"
                 }`}
               >
                 {cat}
@@ -965,10 +1686,10 @@ export default function TelegramSimulator({
             return (
               <div
                 key={itemIdx}
-                className="flex flex-col bg-white border border-slate-200/85 rounded-2xl p-3.5 transition-all duration-300 hover:shadow-md hover:border-orange-250 hover:-translate-y-0.5 relative group justify-between min-h-[142px] shadow-3xs"
+                className={`flex flex-col bg-white border border-slate-200/85 rounded-2xl p-3.5 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 relative group justify-between min-h-[142px] shadow-3xs ${colors.itemCardBorderHover}`}
               >
                 {qty > 0 && (
-                  <div className="absolute top-2.5 right-2.5 bg-[#E0560B] text-white text-[10px] font-black w-5.5 h-5.5 rounded-full flex items-center justify-center shadow-sm z-10 animate-pulse-subtle">
+                  <div className={`absolute top-2.5 right-2.5 text-white text-[10px] font-black w-5.5 h-5.5 rounded-full flex items-center justify-center shadow-sm z-10 animate-pulse-subtle ${colors.qtyCircleBg}`}>
                     {qty}
                   </div>
                 )}
@@ -976,7 +1697,7 @@ export default function TelegramSimulator({
                 <div className="flex flex-col gap-1.5 flex-1 justify-between">
                   <div className="space-y-1 min-w-0">
                     <span
-                      className="text-[12px] font-extrabold text-slate-800 leading-tight block truncate group-hover:text-[#E0560B] transition-colors"
+                      className={`text-[12px] font-extrabold text-slate-800 leading-tight block truncate transition-colors ${colors.textGroupHover}`}
                       title={item.name}
                     >
                       {item.name}
@@ -986,17 +1707,33 @@ export default function TelegramSimulator({
                         ? "Flame-grilled juicy patty with premium fresh toppings" 
                         : item.name.toLowerCase().includes("pizza") 
                           ? "Freshly baked dough with classic savory cheeses" 
-                          : item.name.toLowerCase().includes("juice")
-                            ? "Pure, freshly-squeezed organic raw seasonal fruits"
-                            : item.name.toLowerCase().includes("sandwich")
-                              ? "Warm toasted bread with gourmet fillings and house sauce"
-                              : "Expertly prepared specialty dish, served warm and fresh"}
+                          : item.name.toLowerCase().includes("juice") || item.name.toLowerCase().includes("smoothie") || item.name.toLowerCase().includes("mojito") || item.name.toLowerCase().includes("shake")
+                            ? "Pure, freshly-squeezed organic raw seasonal fruits, shakes, and mojitos"
+                            : item.name.toLowerCase().includes("sandwich") || item.name.toLowerCase().includes("chips")
+                              ? "Warm toasted bread with gourmet fillings or fine potato fries"
+                              : item.name.toLowerCase().includes("shawarma") || item.name.toLowerCase().includes("burrito") || item.name.toLowerCase().includes("roll")
+                                ? "Savory fillings wrapped or rolled in a warm toasted flatbread"
+                                : item.name.toLowerCase().includes("noodle")
+                                  ? "Wok-tossed noodles with garden vegetables and proteins"
+                                  : item.name.toLowerCase().includes("chicken")
+                                    ? "Gourmet seasoned chicken, crispy golden-fried or sizzling"
+                                    : item.name.toLowerCase().includes("rize") || item.name.toLowerCase().includes("rice")
+                                      ? "Savory cooked rice wok-tossed with delicious seasonings"
+                                      : item.name.toLowerCase().includes("soup")
+                                        ? "Warm, comforting savory broth, simmered with aromatic spices"
+                                        : item.name.toLowerCase().includes("coffee")
+                                          ? "Authentic Italian roasted beans handcrafted to perfection"
+                                          : item.name.toLowerCase().includes("pasta")
+                                            ? "Artisanal freshly rolled pasta in gourmet slow-cooked sauces"
+                                            : item.name.toLowerCase().includes("pastry")
+                                              ? "Classic European delicate pastries and sweet oven treats"
+                                              : "Expertly prepared specialty dish, served warm and fresh"}
                     </span>
                   </div>
 
                   <div className="space-y-1.5 mt-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-[12.5px] font-black text-[#E0560B]">
+                      <span className={`text-[12.5px] font-black ${colors.primaryText}`}>
                         {item.price.toFixed(2)} Br
                       </span>
                     </div>
@@ -1006,7 +1743,7 @@ export default function TelegramSimulator({
                         <button
                           type="button"
                           onClick={() => handleDecrementItem(item)}
-                          className="text-slate-600 hover:text-[#E0560B] font-extrabold text-[12px] bg-white rounded shadow-2xs border border-slate-250 w-5.5 h-5.5 flex items-center justify-center hover:bg-rose-50 transition cursor-pointer"
+                          className={`text-slate-600 font-extrabold text-[12px] bg-white rounded shadow-2xs border border-slate-250 w-5.5 h-5.5 flex items-center justify-center hover:bg-rose-50 transition cursor-pointer ${colors.btnHoverText}`}
                         >
                           -
                         </button>
@@ -1016,7 +1753,7 @@ export default function TelegramSimulator({
                         <button
                           type="button"
                           onClick={() => handleToggleItem(item)}
-                          className="text-slate-600 hover:text-[#E0560B] font-extrabold text-[12px] bg-white rounded shadow-2xs border border-slate-250 w-5.5 h-5.5 flex items-center justify-center hover:bg-orange-50 transition cursor-pointer"
+                          className={`text-slate-600 font-extrabold text-[12px] bg-white rounded shadow-2xs border border-slate-250 w-5.5 h-5.5 flex items-center justify-center hover:bg-orange-50 transition cursor-pointer ${colors.btnHoverText}`}
                         >
                           +
                         </button>
@@ -1025,7 +1762,7 @@ export default function TelegramSimulator({
                       <button
                         type="button"
                         onClick={() => handleToggleItem(item)}
-                        className="w-full bg-[#E0560B] hover:bg-[#C24103] active:scale-95 text-white text-[10px] font-black py-1.5 px-2 rounded-lg text-center transition cursor-pointer"
+                        className={`w-full active:scale-95 text-white text-[10px] font-black py-1.5 px-2 rounded-lg text-center transition cursor-pointer ${colors.buttonMainBg}`}
                       >
                         + Add to Cart
                       </button>
@@ -1135,8 +1872,57 @@ export default function TelegramSimulator({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputText.trim() || isParsing) return;
-    onSendMessage(inputText.trim());
+    const txt = inputText.trim();
+    if (!txt || isParsing) return;
+
+    const normalized = txt.toLowerCase();
+    if (normalized.includes("mountain hotel menu") || normalized.includes("mountain hotel") || normalized === "mountain menu") {
+      handleKeyboardAction("select_store", "Mountain Hotel");
+      setInputText("");
+      return;
+    }
+    if (normalized.includes("neba cafe menu") || normalized.includes("neba cafe") || normalized === "neba menu") {
+      handleKeyboardAction("select_store", "Neba Cafe");
+      setInputText("");
+      return;
+    }
+    if (normalized.includes("chanoly noodles menu") || normalized.includes("chanoly noodles") || normalized === "chanoly menu") {
+      handleKeyboardAction("select_store", "Chanoly Noodles");
+      setInputText("");
+      return;
+    }
+    if (normalized.includes("h-town burger menu") || normalized.includes("h-town") || normalized.includes("htown")) {
+      handleKeyboardAction("select_store", "H-Town Burger");
+      setInputText("");
+      return;
+    }
+    if (normalized.includes("sunny burger menu") || normalized.includes("sunny burger")) {
+      handleKeyboardAction("select_store", "Sunny burger");
+      setInputText("");
+      return;
+    }
+    if (normalized.includes("rome 1960 cafe menu") || normalized.includes("rome cafe") || normalized.includes("rome 1960")) {
+      handleKeyboardAction("select_store", "Rome 1960 Cafe");
+      setInputText("");
+      return;
+    }
+    if (normalized.includes("aroma cafe menu") || normalized.includes("aroma cafe")) {
+      handleKeyboardAction("select_store", "Aroma cafe");
+      setInputText("");
+      return;
+    }
+    if (normalized.includes("marti kitchen menu") || normalized.includes("marti kitchen") || normalized.includes("marti kichen") || normalized === "marti menu") {
+      handleKeyboardAction("select_store", "Marti kitchen");
+      setInputText("");
+      return;
+    }
+    if (normalized.includes("yom burgerizza menu") || normalized.includes("yom burgeritza") || normalized.includes("yom menu") || normalized === "yom burger menu" || normalized === "yom") {
+      handleKeyboardAction("select_store", "YOM BURGERIZZA");
+      setInputText("");
+      return;
+    }
+
+    onSendMessage(txt);
     setInputText("");
   };
 
@@ -1520,39 +2306,84 @@ export default function TelegramSimulator({
         )}
 
         {/* Render the Custom Telegram Bot Menu Keyboard */}
-        <div className="mt-4 p-3 bg-orange-50/40 border border-orange-100/90 rounded-2xl space-y-3.5 select-none shadow-3xs">
+        <div className={`mt-4 p-3 rounded-2xl space-y-3.5 select-none shadow-3xs border transition-all duration-300 ${
+          tgKeyboard === "mountain_hotel_menu"
+            ? "bg-emerald-800/5 border-emerald-500/10"
+            : tgKeyboard === "htown_menu"
+              ? "bg-[#E0560B]/5 border-[#E0560B]/10"
+              : tgKeyboard === "sunny_menu"
+                ? "bg-amber-500/5 border-amber-500/10"
+                : tgKeyboard === "rome_menu"
+                  ? "bg-red-800/5 border-red-500/10"
+                  : tgKeyboard === "aroma_menu"
+                    ? "bg-amber-800/5 border-amber-550/10"
+                    : tgKeyboard === "chanoly_menu"
+                      ? "bg-orange-850/5 border-orange-500/10"
+                      : tgKeyboard === "neba_menu"
+                        ? "bg-cyan-800/5 border-cyan-500/10"
+                        : tgKeyboard === "marti_menu"
+                          ? "bg-orange-800/5 border-orange-500/10"
+                          : tgKeyboard === "yom_menu"
+                            ? "bg-emerald-800/5 border-emerald-500/10"
+                            : "bg-orange-50/40 border-orange-100/90"
+        }`}>
           {tgKeyboard === "mountain_hotel_menu" ||
           tgKeyboard === "htown_menu" ||
-          tgKeyboard === "sunny_menu" ? (
+          tgKeyboard === "sunny_menu" ||
+          tgKeyboard === "rome_menu" ||
+          tgKeyboard === "aroma_menu" ||
+          tgKeyboard === "chanoly_menu" ||
+          tgKeyboard === "neba_menu" ||
+          tgKeyboard === "marti_menu" ||
+          tgKeyboard === "yom_menu" ? (
             renderInteractiveMenu(
               false,
               tgKeyboard === "mountain_hotel_menu"
                 ? "mountain"
                 : tgKeyboard === "htown_menu"
                   ? "htown"
-                  : "sunny",
+                  : tgKeyboard === "sunny_menu"
+                    ? "sunny"
+                    : tgKeyboard === "rome_menu"
+                      ? "rome"
+                      : tgKeyboard === "aroma_menu"
+                        ? "aroma"
+                        : tgKeyboard === "chanoly_menu"
+                          ? "chanoly"
+                          : tgKeyboard === "neba_menu"
+                            ? "neba"
+                            : tgKeyboard === "marti_menu"
+                              ? "marti"
+                              : "yom",
             )
           ) : (
             <>
               {/* Chat bubble title or header just like in the screenshots */}
               <div className="bg-white text-slate-800 rounded-2xl rounded-bl-none px-3.5 py-2.5 border border-slate-100 shadow-sm text-xs md:text-sm max-w-[85%] self-start flex flex-col gap-1 font-sans">
-                <span className="font-bold text-slate-900 leading-relaxed">
-                  {tgKeyboard === "main"
-                    ? isAmharic
-                      ? `እንኳን በደህና መጡ ${customerProfile.name || "Cepha"}! ዛሬ ምን ማዘዝ ይፈልጋሉ?`
-                      : `Welcome ${customerProfile.name || "Cepha"}! What would you like to order today?`
-                    : isAmharic
+                {tgKeyboard === "main" ? (
+                  isAmharic ? (
+                    <div className="whitespace-pre-line leading-relaxed text-slate-800 text-[12px] font-medium">
+                      እገዛ ይፈልጋሉ?
+                      እባክዎን <span className="text-emerald-700 font-bold">@Yegnadeliverysupport</span> ን ያግኙ እና እንረዳዎታለን።
+
+                      ከታች ያሉትን ቁልፎች ይጠቀሙ።
+                    </div>
+                  ) : (
+                    <div className="whitespace-pre-line leading-relaxed text-slate-805 text-[12.5px] font-semibold">
+                      Need help?
+                      Please contact <span className="text-sky-600 font-bold">@Yegnadeliverysupport</span> and we will assist you.
+
+                      Use the buttons below.
+                    </div>
+                  )
+                ) : (
+                  <span className="font-bold text-slate-900 leading-relaxed text-[12.5px]">
+                    {isAmharic
                       ? "እባክዎን ሱቅ (ካፌ) ይምረጡ፦"
                       : "Select a store (cafe):"}
-                </span>
-                {tgKeyboard === "main" && (
-                  <span className="text-slate-500 text-[11px] font-medium leading-normal">
-                    {isAmharic
-                      ? "እባክዎን ከታች ካሉት አማራጮች ውስጥ አንዱን ይምረጡ።"
-                      : "Please select an option from the list below."}
                   </span>
                 )}
-                <div className="text-[9px] text-slate-450 text-right mt-1 font-mono">
+                <div className="text-[9px] text-slate-400 text-right mt-1 font-mono">
                   {new Date().toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -1560,7 +2391,7 @@ export default function TelegramSimulator({
                 </div>
               </div>
 
-              {/* The Orange Action Button Grid */}
+              {/* Outside action menu buttons */}
               <div className="mt-2 text-xs">
                 {tgKeyboard === "main" ? (
                   <div className="w-full flex flex-col gap-1.5 font-sans">
@@ -1568,9 +2399,9 @@ export default function TelegramSimulator({
                     <button
                       type="button"
                       onClick={() => handleKeyboardAction("new_order")}
-                      className="w-full bg-[#E0560B] hover:bg-[#C24103] text-white font-extrabold text-[12.5px] py-3 px-4 rounded-xl text-center flex items-center justify-center transition cursor-pointer shadow-xs border border-orange-700/10 active:scale-98 tracking-wide uppercase font-bold"
+                      className="w-full bg-[#538761] hover:bg-[#437251] text-white font-extrabold text-[12.5px] py-2.5 px-4 rounded-lg text-center flex items-center justify-center transition cursor-pointer shadow-xs border border-emerald-700/10 active:scale-98 tracking-wide font-bold"
                     >
-                      🍔 {isAmharic ? "አዲስ ትዕዛዝ (New Order)" : "New Order"}
+                      {isAmharic ? "አዲስ ትዕዛዝ" : "New Order"}
                     </button>
 
                     {/* Row 2: Change Language, Help */}
@@ -1578,16 +2409,16 @@ export default function TelegramSimulator({
                       <button
                         type="button"
                         onClick={() => handleKeyboardAction("change_language")}
-                        className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-[12px] py-3 px-3 rounded-xl text-center flex items-center justify-center transition cursor-pointer shadow-2xs active:scale-98 leading-tight font-bold"
+                        className="bg-[#538761] hover:bg-[#437251] text-white font-semibold text-[12px] py-2.5 px-3 rounded-lg text-center flex items-center justify-center transition cursor-pointer shadow-xs border border-emerald-700/10 active:scale-98 leading-tight font-bold"
                       >
-                        🌐 {isAmharic ? "ቋንቋ ቀይር" : "Change Language"}
+                        {isAmharic ? "ቋንቋ ቀይር" : "Change Language"}
                       </button>
                       <button
                         type="button"
                         onClick={() => handleKeyboardAction("help")}
-                        className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-[12px] py-3 px-3 rounded-xl text-center flex items-center justify-center transition cursor-pointer shadow-2xs active:scale-98 leading-tight font-bold"
+                        className="bg-[#538761] hover:bg-[#437251] text-white font-semibold text-[12px] py-2.5 px-3 rounded-lg text-center flex items-center justify-center transition cursor-pointer shadow-xs border border-emerald-700/10 active:scale-98 leading-tight font-bold"
                       >
-                        💡 {isAmharic ? "እገዛ (Help)" : "Help"}
+                        {isAmharic ? "እገዛ" : "Help"}
                       </button>
                     </div>
 
@@ -1595,11 +2426,10 @@ export default function TelegramSimulator({
                     <button
                       type="button"
                       onClick={() => handleKeyboardAction("recent_orders")}
-                      className="w-full bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-[12.5px] py-2.5 px-4 rounded-xl text-center flex items-center justify-center transition cursor-pointer shadow-2xs active:scale-98 font-bold"
+                      className="w-full bg-[#538761] hover:bg-[#437251] text-white font-semibold text-[12.5px] py-2.5 px-4 rounded-lg text-center flex items-center justify-center transition cursor-pointer shadow-xs border border-emerald-700/10 active:scale-98 font-bold"
                     >
-                      📋{" "}
                       {isAmharic
-                        ? "የቅርብ ጊዜ ትዕዛዞች (Recent Orders)"
+                        ? "የቅርብ ጊዜ ትዕዛዞች"
                         : "Recent Orders"}
                     </button>
 
@@ -1608,16 +2438,16 @@ export default function TelegramSimulator({
                       <button
                         type="button"
                         onClick={() => handleKeyboardAction("discounts")}
-                        className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-[12px] py-3 px-3 rounded-xl text-center flex items-center justify-center transition cursor-pointer shadow-2xs active:scale-98 leading-tight font-bold"
+                        className="bg-[#538761] hover:bg-[#437251] text-white font-semibold text-[12px] py-2.5 px-3 rounded-lg text-center flex items-center justify-center transition cursor-pointer shadow-xs border border-emerald-700/10 active:scale-98 leading-tight font-bold"
                       >
-                        🎁 {isAmharic ? "ቅናሾች (Discounts)" : "Discounts"}
+                        {isAmharic ? "ቅናሾች" : "Discounts"}
                       </button>
                       <button
                         type="button"
                         onClick={() => handleKeyboardAction("download_app")}
-                        className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-[12px] py-3 px-3 rounded-xl text-center flex items-center justify-center transition cursor-pointer shadow-2xs active:scale-98 leading-tight font-bold"
+                        className="bg-[#538761] hover:bg-[#437251] text-white font-semibold text-[12px] py-2.5 px-3 rounded-lg text-center flex items-center justify-center transition cursor-pointer shadow-xs border border-emerald-700/10 active:scale-98 leading-tight font-bold"
                       >
-                        📲 {isAmharic ? "መተግበሪያ አውርድ" : "Download Our App"}
+                        {isAmharic ? "መተግበሪያ አውርድ" : "Download Our App"}
                       </button>
                     </div>
                   </div>
@@ -1648,11 +2478,28 @@ export default function TelegramSimulator({
                             onClick={() =>
                               handleKeyboardAction("select_store", store)
                             }
-                            className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 text-[11px] py-2 px-1.5 rounded-xl flex flex-col gap-1 items-center justify-center transition-all cursor-pointer shadow-2xs hover:shadow-sm hover:-translate-y-0.5 active:scale-98 font-bold w-full"
+                            className="bg-white hover:bg-slate-50 border border-slate-200/85 text-slate-800 rounded-xl overflow-hidden flex flex-col transition-all cursor-pointer shadow-3xs hover:shadow-2xs hover:-translate-y-0.5 active:scale-98 font-sans w-full text-left"
                             title={store}
                           >
-                            <span className="truncate w-full text-center tracking-tight text-slate-850 block">🔧 {store}</span>
-                            <span className="text-[9px] text-[#E0560B] font-mono leading-none block">⭐ {meta.rating} ({meta.deliveryTime})</span>
+                            <div className="w-full h-15 bg-slate-100 relative">
+                              <img
+                                src={meta.image}
+                                alt={store}
+                                referrerPolicy="no-referrer"
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute top-1 right-1 bg-white/95 backdrop-blur-3xs text-slate-800 text-[8.5px] font-black px-1.5 py-0.2 rounded-full shadow-3xs">
+                                ⭐ {meta.rating}
+                              </div>
+                            </div>
+                            <div className="p-1.5 flex flex-col min-w-0">
+                              <span className="text-[9.5px] font-extrabold text-slate-800 truncate block leading-tight tracking-tight uppercase">
+                                {store}
+                              </span>
+                              <span className="text-[8.5px] text-slate-400 font-bold leading-normal">
+                                ⏱️ {meta.deliveryTime}
+                              </span>
+                            </div>
                           </button>
                         );
                       })}
@@ -1917,14 +2764,32 @@ export default function TelegramSimulator({
                   <div className="p-3 bg-white border border-slate-200/85 rounded-2xl space-y-3 select-none shadow-2xs">
                     {webAppKeyboard === "mountain_hotel_menu" ||
                     webAppKeyboard === "htown_menu" ||
-                    webAppKeyboard === "sunny_menu" ? (
+                    webAppKeyboard === "sunny_menu" ||
+                    webAppKeyboard === "rome_menu" ||
+                    webAppKeyboard === "aroma_menu" ||
+                    webAppKeyboard === "chanoly_menu" ||
+                    webAppKeyboard === "neba_menu" ||
+                    webAppKeyboard === "marti_menu" ||
+                    webAppKeyboard === "yom_menu" ? (
                       renderInteractiveMenu(
                         true,
                         webAppKeyboard === "mountain_hotel_menu"
                           ? "mountain"
                           : webAppKeyboard === "htown_menu"
                             ? "htown"
-                            : "sunny",
+                            : webAppKeyboard === "sunny_menu"
+                              ? "sunny"
+                              : webAppKeyboard === "rome_menu"
+                                ? "rome"
+                                : webAppKeyboard === "aroma_menu"
+                                  ? "aroma"
+                                  : webAppKeyboard === "chanoly_menu"
+                                    ? "chanoly"
+                                    : webAppKeyboard === "neba_menu"
+                                      ? "neba"
+                                      : webAppKeyboard === "marti_menu"
+                                        ? "marti"
+                                        : "yom",
                       )
                     ) : (
                       <>
@@ -2111,6 +2976,36 @@ export default function TelegramSimulator({
                                           setMountainCategory("Burger");
                                           setMenuPage(0);
                                           setToastMessage("☀️ Opening Sunny Burger Premium Menu!");
+                                        } else if (store === "Rome 1960 Cafe" || store.toLowerCase().includes("rome")) {
+                                          setWebAppKeyboard("rome_menu");
+                                          setMountainCategory("Pizza");
+                                          setMenuPage(0);
+                                          setToastMessage("🇮🇹 Opening Rome 1960 Cafe Premium Menu!");
+                                        } else if (store === "Aroma cafe" || store.toLowerCase().includes("aroma")) {
+                                          setWebAppKeyboard("aroma_menu");
+                                          setMountainCategory("Breakfast");
+                                          setMenuPage(0);
+                                          setToastMessage("☕ Opening Aroma Cafe Premium Menu!");
+                                         } else if (store === "Chanoly Noodles" || store.toLowerCase().includes("chanoly")) {
+                                           setWebAppKeyboard("chanoly_menu");
+                                           setMountainCategory("Noodles");
+                                           setMenuPage(0);
+                                           setToastMessage("🍜 Opening Chanoly Noodles Premium Menu!");
+                                         } else if (store === "Marti kitchen" || store.toLowerCase().includes("marti")) {
+                                           setWebAppKeyboard("marti_menu");
+                                           setMountainCategory("Habeshan");
+                                           setMenuPage(0);
+                                           setToastMessage("🥘 Opening Marti Kitchen Premium Menu!");
+                                         } else if (store === "Neba Cafe" || store.toLowerCase().includes("neba")) {
+                                            setWebAppKeyboard("neba_menu");
+                                            setMountainCategory("Burger");
+                                            setMenuPage(0);
+                                            setToastMessage("🍔 Opening Neba Cafe Premium Menu!");
+                                          } else if (store === "YOM BURGERIZZA" || store.toLowerCase().includes("yom") || store.toLowerCase().includes("burgerizza")) {
+                                            setWebAppKeyboard("yom_menu");
+                                            setMountainCategory("Burger");
+                                            setMenuPage(0);
+                                            setToastMessage("🍔 Opening YOM Burgerizza Premium Menu!");
                                         } else {
                                           setToastMessage(`🏪 Choice Set: ${store}! Now describe your items in chat!`);
                                           setIsMenuOpen(false);
@@ -2141,9 +3036,6 @@ export default function TelegramSimulator({
                                         <div className="flex items-center gap-1.5 text-[9.5px] font-extrabold text-slate-400">
                                           <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
                                             ⏱️ {meta.deliveryTime}
-                                          </span>
-                                          <span className="bg-orange-50 text-[#E0560B] px-1.5 py-0.5 rounded">
-                                            🛵 {meta.deliveryFee}
                                           </span>
                                         </div>
                                       </div>
