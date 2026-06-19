@@ -66,9 +66,8 @@ export const STORE_PAGES = [
     "Sunny burger",
     "YOM BURGERIZZA",
     "Barcon Migb Bet",
-    "liyu taim migb bet",
+    "Liyu Taim (ልዩ ጣዕም)",
     "Zanzibar kitchen",
-    "Yegna Store",
     "medi shiro",
     "Lewi piyasa",
     "Twin's Kitchen",
@@ -179,6 +178,33 @@ export const getStoreMeta = (storeName: string) => {
       image: "https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=400&q=80"
     };
   }
+  
+  if (storeName === "Barcon Migb Bet" || storeName.toLowerCase().includes("barcon") || storeName.toLowerCase().includes("barkon")) {
+    return {
+      rating: "4.9",
+      deliveryTime: "15-30 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  if (storeName === "liyu taim migb bet" || storeName === "Liyu Taim (ልዩ ጣዕም)" || storeName.toLowerCase().includes("liyu") || storeName.toLowerCase().includes("taim")) {
+    return {
+      rating: "4.8",
+      deliveryTime: "15-30 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  if (storeName === "Zanzibar kitchen" || storeName.toLowerCase().includes("zanzibar")) {
+    return {
+      rating: "4.9",
+      deliveryTime: "15-35 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=400&q=80"
+    };
+  }
 
   if (storeName === "YOM BURGERIZZA" || storeName.toLowerCase().includes("yom") || storeName.toLowerCase().includes("burgerizza")) {
     return {
@@ -186,6 +212,42 @@ export const getStoreMeta = (storeName: string) => {
       deliveryTime: "15-30 min",
       deliveryFee: "Free Delivery",
       image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  if (storeName === "medi shiro" || storeName.toLowerCase().includes("medi shiro") || storeName.toLowerCase().includes("medi_shiro") || storeName.toLowerCase().includes("medishiro")) {
+    return {
+      rating: "4.9",
+      deliveryTime: "15-25 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  if (storeName === "Lewi piyasa" || storeName.toLowerCase().includes("lewi") || storeName.toLowerCase().includes("piyasa") || storeName.toLowerCase().includes("piyassa")) {
+    return {
+      rating: "4.9",
+      deliveryTime: "15-30 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  if (storeName === "Twin's Kitchen" || storeName.toLowerCase().includes("twin") || storeName.toLowerCase().includes("twins")) {
+    return {
+      rating: "4.8",
+      deliveryTime: "15-30 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=400&q=80"
+    };
+  }
+
+  if (storeName === "Mohi Ertb" || storeName.toLowerCase().includes("mohi") || storeName.toLowerCase().includes("ertb") || storeName.toLowerCase().includes("ertib")) {
+    return {
+      rating: "4.7",
+      deliveryTime: "15-25 min",
+      deliveryFee: "Free Delivery",
+      image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80"
     };
   }
 
@@ -683,8 +745,275 @@ export const NEBA_CAFE_MENU: Record<string, MountainItem[]> = {
   ],
 };
 
+export const BARCON_MENU: Record<string, MountainItem[]> = {
+  Injera: [
+    { name: "Key Wet(ቀይ ወጥ)", price: 450.0 },
+    { name: "Tefersho(ተፈረሾ)", price: 450.0 },
+    { name: "Beyeaynet (በአይነት)", price: 200.0 },
+    { name: "Gomen Besiga(ጎመን በስጋ)", price: 450.0 },
+    { name: "Mahberawi 1/2(ማህበራዊ)", price: 1100.0 },
+    { name: "Shiro Feses(ሽሮ ፈሰስ)", price: 200.0 },
+    { name: "Misir Wet(ምስር ወጥ)", price: 200.0 },
+    { name: "vegetabl With Meat(አትክልት በስጋ)", price: 400.0 },
+  ],
+  Pasta: [
+    { name: "ፓስታ በስጎ", price: 200.0 },
+    { name: "Pasta Beatikilt (ፓስታ በአትክልት)", price: 200.0 },
+    { name: "Pasta Besiga(ፓስታ በስጋ)", price: 450.0 },
+  ],
+  Breakfast: [
+    { name: "Enkulal Firfir (እንቁላል ፍርፍር)", price: 250.0 },
+    { name: "እንቁላል ስልስ", price: 250.0 },
+  ],
+  Local: [
+    { name: "Ayb Besiga(አይብ በስጋ)", price: 450.0 },
+    { name: "አገልግል ግማሽ", price: 1100.0 },
+    { name: "Mahberawi(ማህበራዊ)", price: 1600.0 },
+    { name: "Enkulal Besiga (እንቁላል በስጋ)", price: 450.0 },
+    { name: "ስጋ ፍርፍር", price: 400.0 },
+    { name: "Merek Tibs", price: 450.0 },
+    { name: "Ayb Begomen(አይብ በጎመን)", price: 300.0 },
+    { name: "Dulet", price: 400.0 },
+    { name: "Pasta Be enkulal", price: 250.0 },
+    { name: "Minchet", price: 400.0 },
+    { name: "Dinch Wot", price: 200.0 },
+  ]
+};
+
+export const MEDI_SHIRO_MENU: Record<string, MountainItem[]> = {
+  Injera: [
+    { name: "በየአይነት beaynet", price: 180.0 },
+    { name: "ተፈረሽ", price: 340.0 },
+    { name: "ጥብስ", price: 340.0 },
+    { name: "ፓስታ በአትክልት (L)", price: 290.0 },
+    { name: "አሮ በቅቤ", price: 240.0 },
+    { name: "ቀይ ወጥ", price: 340.0 },
+    { name: "ምንቸት", price: 340.0 },
+    { name: "Firfir besiga", price: 290.0 },
+    { name: "Special firfr", price: 240.0 },
+    { name: "Injera ፍርፍር", price: 180.0 },
+  ],
+  Local: [
+    { name: "ጭቅና ጥብስ", price: 340.0 },
+    { name: "Misir Wot", price: 180.0 },
+    { name: "ቃሊሎ", price: 340.0 },
+    { name: "Dinch Besiga", price: 240.0 },
+    { name: "enkulal sills", price: 220.0 },
+    { name: "Gomen Besiga", price: 290.0 },
+    { name: "Pasta Besugo", price: 180.0 },
+  ],
+  "Traditional Foods": [
+    { name: "አትክልት በስጋ", price: 290.0 },
+  ],
+  Pasta: [
+    { name: "ፓስታ በአትክልት", price: 180.0 },
+  ],
+};
+
+export const LEWI_PIYASA_MENU: Record<string, MountainItem[]> = {
+  Burger: [
+    { name: "Lewi Burger", price: 810.0 },
+    { name: "Beef Burger", price: 700.0 },
+    { name: "Fish Burger", price: 810.0 },
+    { name: "Cheese Burger", price: 850.0 },
+  ],
+  Breakfast: [
+    { name: "French Fries", price: 505.0 },
+    { name: "Normal Chips", price: 390.0 },
+  ],
+  Local: [
+    { name: "Lewi Agelgl", price: 1100.0 },
+    { name: "Kuanta firfr", price: 720.0 },
+    { name: "Misto", price: 655.0 },
+    { name: "Misto Fresh", price: 655.0 },
+    { name: "Macchiato", price: 150.0 },
+    { name: "Tibs teferso", price: 800.0 },
+    { name: "Merek Tibs", price: 1350.0 },
+    { name: "Special Kitfo", price: 1050.0 },
+  ],
+  Pizza: [
+    { name: "Lewi Special Pizza", price: 950.0 },
+    { name: "Vegetable Pizza", price: 670.0 },
+    { name: "Tuna Pizza", price: 650.0 },
+    { name: "Beef Pizza", price: 850.0 },
+    { name: "AL Tuna Pizza", price: 650.0 },
+    { name: "Spice Chicken Pizza", price: 1000.0 },
+    { name: "Margarita Pizza", price: 850.0 },
+  ],
+  Lazagna: [
+    { name: "Lewi Lassagna", price: 820.0 },
+  ],
+  Fish: [
+    { name: "Fish gulash", price: 860.0 },
+    { name: "Fish Cotlet", price: 860.0 },
+  ],
+  Sandwich: [
+    { name: "Lewi Club Sandwich", price: 960.0 },
+    { name: "Chicken Sandwich", price: 800.0 },
+    { name: "Cheese Sandwich", price: 880.0 },
+    { name: "Fish Sandwich", price: 800.0 },
+    { name: "Steak Sandwich", price: 760.0 },
+    { name: "Tuna Melt", price: 820.0 },
+  ],
+  Juice: [
+    { name: "Mango Juice", price: 305.0 },
+    { name: "Mini_Strawberry Shake", price: 170.0 },
+    { name: "Sprice Juice", price: 320.0 },
+    { name: "Avocado Juice", price: 320.0 },
+  ],
+};
+
+export const TWINS_KITCHEN_MENU: Record<string, MountainItem[]> = {
+  Local: [
+    { name: "Kuanta Firfr", price: 400.0 },
+    { name: "Tefersho(ተፈረሾ)", price: 400.0 },
+    { name: "Kilikil", price: 300.0 },
+    { name: "Merek Tibs", price: 550.0 },
+    { name: "Minchet", price: 350.0 },
+    { name: "Doro Wot", price: 750.0 },
+    { name: "Gomen Besiga", price: 350.0 },
+    { name: "Pasta Besiga", price: 350.0 },
+    { name: "Pasta beatikilt", price: 250.0 },
+    { name: "TIbs", price: 550.0 },
+    { name: "Fasting firfr", price: 250.0 },
+    { name: "Gomen Kitfo", price: 350.0 },
+    { name: "Siga Firfr", price: 350.0 },
+    { name: "Gomen Beboloke", price: 250.0 },
+    { name: "Tegabino", price: 300.0 },
+    { name: "Ayib", price: 250.0 },
+    { name: "Enkulal Besiga", price: 350.0 },
+    { name: "Enkulal Firfr", price: 250.0 },
+    { name: "Fasting Shiro", price: 250.0 },
+  ],
+  Breakfast: [
+    { name: "Ruz Besiga", price: 350.0 },
+  ],
+};
+
+export const MOHI_ERTB_MENU: Record<string, MountainItem[]> = {
+  Sandwich: [
+    { name: "እርጥብ ertib", price: 100.0 },
+  ],
+  Injera: [
+    { name: "Teferisho", price: 300.0 },
+    { name: "ምንቸት", price: 270.0 },
+    { name: "በየአይነት", price: 130.0 },
+    { name: "ሽሮ", price: 130.0 },
+    { name: "ቀይ ወጥ", price: 270.0 },
+    { name: "Siga Firfir", price: 270.0 },
+    { name: "እንቁላል በስጋ", price: 280.0 },
+    { name: "እንቁላል ፍርፍር", price: 160.0 },
+    { name: "pasta በስጋ", price: 260.0 },
+    { name: "አትክልት", price: 130.0 },
+    { name: "ፍርፍር", price: 130.0 },
+    { name: "ምስር", price: 130.0 },
+    { name: "አትክልት በስጋ", price: 230.0 },
+    { name: "ጥብስ", price: 430.0 },
+  ],
+  Pasta: [
+    { name: "Pasta በስጋ", price: 140.0 },
+    { name: "pasta በእንቁላል", price: 160.0 },
+    { name: "Pasta በአትክልት", price: 130.0 },
+  ],
+};
+
+export const SELAM_SPECIAL_MENU: Record<string, MountainItem[]> = {
+  Local: [
+    { name: "Selam Special Half", price: 850.0 },
+    { name: "Selam Special 1/4", price: 650.0 },
+    { name: "Selam Special Full", price: 1400.0 },
+    { name: "Selam Special ነዑስ", price: 450.0 },
+    { name: "Tibs", price: 300.0 },
+    { name: "Teferisho", price: 400.0 },
+    { name: "Tibs teferso", price: 400.0 },
+    { name: "ምስር በእንቁላል", price: 300.0 },
+    { name: "Gomen Besiga", price: 350.0 },
+  ],
+};
+
+export const CAFE_9_MENU: Record<string, MountainItem[]> = {
+  Local: [
+    { name: "ቋንጣ ፍርፍር", price: 485.0 },
+    { name: "Combo", price: 585.0 },
+    { name: "Fasting firfr", price: 265.0 },
+    { name: "Bozena beayib", price: 435.0 },
+    { name: "Avocado Salad", price: 335.0 },
+    { name: "Fasting combo", price: 385.0 },
+    { name: "Pasta Besugo", price: 285.0 },
+    { name: "Siga Firfir", price: 435.0 },
+  ],
+  Sandwich: [
+    { name: "Club Sandwich", price: 635.0 },
+    { name: "Egg Sandwich", price: 325.0 },
+    { name: "Power Sandwich", price: 635.0 },
+    { name: "Tuna Sandwich", price: 385.0 },
+  ],
+  Pizza: [
+    { name: "Beef Pizza", price: 630.0 },
+    { name: "Chicken Pizza", price: 730.0 },
+    { name: "Margarita Pizza", price: 530.0 },
+    { name: "Tuna pizza", price: 485.0 },
+    { name: "Cheese Pizza", price: 580.0 },
+    { name: "Special Pizza", price: 730.0 },
+  ],
+  Breakfast: [
+    { name: "የፆም ስንድዊች", price: 435.0 },
+    { name: "French Fries", price: 215.0 },
+    { name: "Vegetable Rize", price: 285.0 },
+  ],
+  Burger: [
+    { name: "Cheese Burger", price: 525.0 },
+    { name: "Beef Burger", price: 525.0 },
+  ],
+  Fish: [
+    { name: "Fish cotlet", price: 385.0 },
+  ],
+  Juice: [
+    { name: "Special Juice", price: 225.0 },
+  ],
+  Shawarma: [
+    { name: "Tuna Wrap", price: 415.0 },
+  ],
+};
+
+export const LIYU_TAIM_MENU: Record<string, MountainItem[]> = {
+  Injera: [
+    { name: "ተፈረሾ(Tefersho)", price: 475.0 },
+    { name: "Mahiberawi(ማህበራዊ)", price: 630.0 },
+    { name: "በየአይነት (Beyeaynet)", price: 175.0 },
+    { name: "Misir Besiga(ምስር በስጋ)", price: 375.0 },
+    { name: "ስፔሻል ዱለት", price: 395.0 },
+    { name: "ድንች በስጋ(Dinch Besiga)", price: 375.0 },
+    { name: "ጥብስ(Tibs)", price: 425.0 },
+    { name: "Minchet(ምንቸት)", price: 375.0 },
+    { name: "ተጋቢኖ", price: 225.0 },
+    { name: "ኖርማል ዱለት", price: 375.0 },
+    { name: "ኮሌክሽን", price: 425.0 },
+    { name: "ሽሮ በቅቤ", price: 275.0 },
+  ],
+  Pasta: [
+    { name: "ፓስታ በአትክልት(Pasta Beatkilt)", price: 200.0 },
+    { name: "እስፔሻል ፓስታ", price: 275.0 },
+  ],
+  Breakfast: [
+    { name: "እንቁላል በስጋ", price: 375.0 },
+    { name: "እንቁላል ፍርፍር (Enkulal Firfir)", price: 275.0 },
+  ],
+  Local: [
+    { name: "ጥብስ", price: 425.0 },
+    { name: "ቀይ ወጥ", price: 375.0 },
+    { name: "ስጋ ፍርፍር", price: 375.0 },
+    { name: "Atkilt besiga (አትክልት በስጋ)", price: 375.0 },
+    { name: "senber", price: 375.0 },
+    { name: "ሚንቶ", price: 375.0 },
+    { name: "normal አትክልት", price: 175.0 },
+    { name: "Misir Wot", price: 175.0 },
+    { name: "አይብ በስጋ", price: 425.0 },
+  ],
+};
+
 export const MARTI_KITCHEN_MENU: Record<string, MountainItem[]> = {
-  Habeshan: [
+  Local: [
     { name: "የፍስክ እጨብጭቡለት", price: 1260.0 },
     { name: "ማርቲ ኮምቦ(ማርቲ ስፔሻል)", price: 1260.0 },
     { name: "ድርቆሽ ፍርፍር", price: 410.0 },
@@ -790,10 +1119,64 @@ export const YOM_BURGERIZZA_MENU: Record<string, MountainItem[]> = {
     { name: "Mango Juice", price: 280.0 },
     { name: "Avocado Juice", price: 280.0 },
   ],
-  Habeshan: [
+  Local: [
     { name: "Grilled Goat Tibs", price: 950.0 },
     { name: "Tibs", price: 860.0 },
     { name: "በዘነ ሽሮ", price: 590.0 },
+  ],
+};
+
+export const ZANZIBAR_MENU: Record<string, MountainItem[]> = {
+  Fish: [
+    { name: "Fish Gulash", price: 670.0 },
+    { name: "Asa Dulet", price: 550.0 },
+    { name: "Asa lebleb", price: 550.0 },
+  ],
+  Local: [
+    { name: "Fasting Half Combo", price: 755.0 },
+    { name: "Half Combo", price: 855.0 },
+    { name: "Full Combo", price: 1105.0 },
+    { name: "ቁንጣ ፍርፍር", price: 620.0 },
+    { name: "Fasting Full Combo", price: 955.0 },
+    { name: "ፓስታ በስጎ", price: 500.0 },
+    { name: "Merek Tibs", price: 660.0 },
+    { name: "Tefersho", price: 650.0 },
+    { name: "Fasting Firfr", price: 420.0 },
+    { name: "Special Avocado", price: 410.0 },
+    { name: "Chikina Tibs", price: 670.0 },
+    { name: "ድርቆሽ ፍርፍር", price: 520.0 },
+    { name: "Chikina Tefersho", price: 660.0 },
+    { name: "Pasta beatkilt", price: 500.0 },
+    { name: "Drkosh Firfr Besiga", price: 580.0 },
+    { name: "Shiro Bekibe", price: 370.0 },
+    { name: "tegabino", price: 430.0 },
+    { name: "Ruz Besiga", price: 560.0 },
+  ],
+  Juice: [
+    { name: "Sprice Juice", price: 250.0 },
+    { name: "Special Juice", price: 310.0 },
+  ],
+  Pizza: [
+    { name: "Special Pizza", price: 800.0 },
+    { name: "Vegetable Pizza", price: 570.0 },
+    { name: "Margarita Pizza", price: 640.0 },
+  ],
+  Sandwich: [
+    { name: "Tuna Salad", price: 720.0 },
+    { name: "Tuna Sandwich", price: 570.0 },
+  ],
+  Breakfast: [
+    { name: "Fish Cotlet With rize", price: 590.0 },
+    { name: "Normal Chips", price: 380.0 },
+    { name: "አትክልት", price: 410.0 },
+  ],
+  Burger: [
+    { name: "Special Burger", price: 650.0 },
+    { name: "Cheese Burger", price: 570.0 },
+  ],
+  Chicken: [
+    { name: "Half Arrosto", price: 2060.0 },
+    { name: "Full Arrosto", price: 4060.0 },
   ],
 };
 
@@ -837,6 +1220,15 @@ export default function TelegramSimulator({
     | "neba_menu"
     | "marti_menu"
     | "yom_menu"
+    | "barcon_menu"
+    | "medi_shiro_menu"
+    | "lewi_piyasa_menu"
+    | "twins_kitchen_menu"
+    | "mohi_ertb_menu"
+    | "selam_special_menu"
+    | "cafe_9_menu"
+    | "liyu_taim_menu"
+    | "zanzibar_menu"
   >("main");
   const [webAppKeyboard, setWebAppKeyboard] = useState<
     | "main"
@@ -853,6 +1245,15 @@ export default function TelegramSimulator({
     | "neba_menu"
     | "marti_menu"
     | "yom_menu"
+    | "barcon_menu"
+    | "medi_shiro_menu"
+    | "lewi_piyasa_menu"
+    | "twins_kitchen_menu"
+    | "mohi_ertb_menu"
+    | "selam_special_menu"
+    | "cafe_9_menu"
+    | "liyu_taim_menu"
+    | "zanzibar_menu"
   >("main");
   const [mountainCategory, setMountainCategory] = useState<string>("Juice");
   const [mountainSelected, setMountainSelected] = useState<
@@ -931,7 +1332,7 @@ export default function TelegramSimulator({
             setToastMessage(`🍔 Welcome to Neba Cafe Premium Menu!`);
           } else if (arg === "Marti kitchen" || arg.toLowerCase().includes("marti")) {
             setTgKeyboard("marti_menu");
-            setMountainCategory("Habeshan");
+            setMountainCategory("Local");
             setMenuPage(0);
             setToastMessage(`🥘 Welcome to Marti Kitchen Premium Menu!`);
           } else if (arg === "YOM BURGERIZZA" || arg.toLowerCase().includes("yom") || arg.toLowerCase().includes("burgerizza")) {
@@ -939,6 +1340,51 @@ export default function TelegramSimulator({
             setMountainCategory("Burger");
             setMenuPage(0);
             setToastMessage(`🍔 Welcome to YOM Burgerizza Premium Menu!`);
+          } else if (arg === "Barcon Migb Bet" || arg.toLowerCase().includes("barcon") || arg.toLowerCase().includes("barkon")) {
+            setTgKeyboard("barcon_menu");
+            setMountainCategory("Injera");
+            setMenuPage(0);
+            setToastMessage(`🥘 Welcome to Barkon ምግብ ቤት Premium Menu!`);
+          } else if (arg === "liyu taim migb bet" || arg === "Liyu Taim (ልዩ ጣዕም)" || arg.toLowerCase().includes("liyu") || arg.toLowerCase().includes("taim")) {
+            setTgKeyboard("liyu_taim_menu");
+            setMountainCategory("Injera");
+            setMenuPage(0);
+            setToastMessage(`🥘 Welcome to Liyu Taim (ልዩ ጣዕም) Premium Menu!`);
+          } else if (arg === "Zanzibar kitchen" || arg.toLowerCase().includes("zanzibar")) {
+            setTgKeyboard("zanzibar_menu");
+            setMountainCategory("Fish");
+            setMenuPage(0);
+            setToastMessage(`🥘 Welcome to Zanzibar kitchen Premium Menu!`);
+          } else if (arg === "medi shiro" || arg.toLowerCase().includes("medi shiro") || arg.toLowerCase().includes("medi_shiro") || arg.toLowerCase().includes("medishiro")) {
+            setTgKeyboard("medi_shiro_menu");
+            setMountainCategory("Injera");
+            setMenuPage(0);
+            setToastMessage(`🥘 Welcome to medi shiro Premium Menu!`);
+          } else if (arg === "Lewi piyasa" || arg.toLowerCase().includes("lewi") || arg.toLowerCase().includes("piyasa") || arg.toLowerCase().includes("piyassa")) {
+            setTgKeyboard("lewi_piyasa_menu");
+            setMountainCategory("Pizza");
+            setMenuPage(0);
+            setToastMessage(`🥘 Welcome to Lewi Piyassa Premium Menu!`);
+          } else if (arg === "Twin's Kitchen" || arg.toLowerCase().includes("twin") || arg.toLowerCase().includes("twins")) {
+            setTgKeyboard("twins_kitchen_menu");
+            setMountainCategory("Local");
+            setMenuPage(0);
+            setToastMessage(`🥘 Welcome to Twin's Kitchen Premium Menu!`);
+          } else if (arg === "Mohi Ertb" || arg.toLowerCase().includes("mohi") || arg.toLowerCase().includes("ertb") || arg.toLowerCase().includes("ertib")) {
+            setTgKeyboard("mohi_ertb_menu");
+            setMountainCategory("Sandwich");
+            setMenuPage(0);
+            setToastMessage(`🥘 Welcome to Mohi Ertb Premium Menu!`);
+          } else if (arg === "selam special" || arg.toLowerCase().includes("selam")) {
+            setTgKeyboard("selam_special_menu");
+            setMountainCategory("Local");
+            setMenuPage(0);
+            setToastMessage(`🥘 Welcome to Selam Special Premium Menu!`);
+          } else if (arg === "Cafe 9" || arg.toLowerCase().includes("cafe 9") || arg.toLowerCase().includes("cafe9") || arg.toLowerCase().includes("cafe_9")) {
+            setTgKeyboard("cafe_9_menu");
+            setMountainCategory("Local");
+            setMenuPage(0);
+            setToastMessage(`🥘 Welcome to Cafe 9 Premium Menu!`);
           } else {
             setIsMenuOpen(true);
             setToastMessage(`🏪 Selected: ${arg}! Set as pick-up location.`);
@@ -1105,7 +1551,7 @@ export default function TelegramSimulator({
 
   const renderInteractiveMenu = (
     isInsideWebApp: boolean,
-    menuType: "mountain" | "htown" | "sunny" | "rome" | "aroma" | "chanoly" | "neba" | "marti" | "yom",
+    menuType: "mountain" | "htown" | "sunny" | "rome" | "aroma" | "chanoly" | "neba" | "marti" | "yom" | "barcon" | "medi_shiro" | "lewi_piyasa" | "twins_kitchen" | "mohi_ertb" | "selam_special" | "cafe_9" | "liyu_taim" | "zanzibar",
   ) => {
     const menuData =
       menuType === "mountain"
@@ -1124,7 +1570,25 @@ export default function TelegramSimulator({
                     ? NEBA_CAFE_MENU
                     : menuType === "marti"
                       ? MARTI_KITCHEN_MENU
-                      : YOM_BURGERIZZA_MENU;
+                      : menuType === "barcon"
+                        ? BARCON_MENU
+                        : menuType === "medi_shiro"
+                          ? MEDI_SHIRO_MENU
+                          : menuType === "lewi_piyasa"
+                            ? LEWI_PIYASA_MENU
+                            : menuType === "twins_kitchen"
+                              ? TWINS_KITCHEN_MENU
+                              : menuType === "mohi_ertb"
+                                ? MOHI_ERTB_MENU
+                                : menuType === "selam_special"
+                                  ? SELAM_SPECIAL_MENU
+                                : menuType === "cafe_9"
+                                  ? CAFE_9_MENU
+                                  : menuType === "liyu_taim"
+                                    ? LIYU_TAIM_MENU
+                                    : menuType === "zanzibar"
+                                      ? ZANZIBAR_MENU
+                                      : YOM_BURGERIZZA_MENU;
 
     const rawCategories = menuType === "yom"
       ? [
@@ -1136,18 +1600,88 @@ export default function TelegramSimulator({
           "Breakfast",
           "Sandwich",
           "Juice",
-          "Habeshan",
+          "Local",
         ]
       : menuType === "marti"
         ? [
             "All",
-            "Habeshan",
+            "Local",
             "Injera",
             "Breakfast",
             "Soft Drink",
             "Sandwich",
           ]
-        : [
+        : menuType === "barcon" || menuType === "liyu_taim"
+          ? [
+              "All",
+              "Injera",
+              "Local",
+              "Pasta",
+              "Breakfast",
+            ]
+        : menuType === "medi_shiro"
+          ? [
+              "All",
+              "Injera",
+              "Local",
+              "Traditional Foods",
+              "Pasta",
+            ]
+        : menuType === "lewi_piyasa"
+          ? [
+              "All",
+              "Burger",
+              "Breakfast",
+              "Local",
+              "Pizza",
+              "Lazagna",
+              "Fish",
+              "Sandwich",
+              "Juice",
+            ]
+        : menuType === "twins_kitchen"
+          ? [
+              "All",
+              "Local",
+              "Breakfast",
+            ]
+        : menuType === "mohi_ertb"
+          ? [
+              "All",
+              "Sandwich",
+              "Injera",
+              "Pasta",
+            ]
+        : menuType === "selam_special"
+          ? [
+              "All",
+              "Local",
+            ]
+        : menuType === "cafe_9"
+          ? [
+              "All",
+              "Local",
+              "Sandwich",
+              "Pizza",
+              "Breakfast",
+              "Burger",
+              "Fish",
+              "Juice",
+              "Shawarma",
+            ]
+        : menuType === "zanzibar"
+          ? [
+              "All",
+              "Fish",
+              "Local",
+              "Juice",
+              "Pizza",
+              "Sandwich",
+              "Breakfast",
+              "Burger",
+              "Chicken",
+            ]
+          : [
             "All",
             "Noodles",
             "Pizza",
@@ -1226,6 +1760,69 @@ export default function TelegramSimulator({
               ? "ከየም በርገሪዛ ምርጥ ምርጫዎች ይምረጡ (በገጽ 10 እቃዎች)፦"
               : "Select from YOM Burgerizza's finest selections (10 per page):",
           };
+        case "barcon":
+          return {
+            title: "🥘 Barkon ምግብ ቤት Premium Menu",
+            desc: isAmharic
+              ? "ከባርኮን ምግብ ቤት ምርጥ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "liyu_taim":
+          return {
+            title: "🥘 Liyu Taim (ልዩ ጣዕም) Premium Menu",
+            desc: isAmharic
+              ? "ከሊዩ ጣዕም ምርጥ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "zanzibar":
+          return {
+            title: "🥘 Zanzibar Kitchen Premium Menu",
+            desc: isAmharic
+              ? "ከዛንዚባር ምርጥ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "medi_shiro":
+          return {
+            title: "🥘 Medi Shiro Premium Menu",
+            desc: isAmharic
+              ? "ከሜዲ ሽሮ ምግብ ቤት ምርጥ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "lewi_piyasa":
+          return {
+            title: "🍕 Lewi Piyassa Premium Menu",
+            desc: isAmharic
+              ? "ከሌዊ ፒያሳ ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "twins_kitchen":
+          return {
+            title: "🥘 Twin's Kitchen Premium Menu",
+            desc: isAmharic
+              ? "ከቱዊንስ ኪችን ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "mohi_ertb":
+          return {
+            title: "🥘 Mohi Ertb Premium Menu",
+            desc: isAmharic
+              ? "ከሞሂ እርጥብ ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "selam_special":
+          return {
+            title: "🥘 Selam Special Premium Menu",
+            desc: isAmharic
+              ? "ከሰላም ስፔሻል ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "cafe_9":
+          return {
+            title: "🥘 Cafe 9 Premium Menu",
+            desc: isAmharic
+              ? "ከካፌ 9 ምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
         case "marti":
         default:
           return {
@@ -1256,211 +1853,49 @@ export default function TelegramSimulator({
                     ? "Neba Cafe"
                     : menuType === "marti"
                       ? "Marti kitchen"
-                      : "YOM BURGERIZZA"
+                      : menuType === "barcon"
+                        ? "Barcon Migb Bet"
+                        : menuType === "medi_shiro"
+                          ? "medi shiro"
+                        : menuType === "lewi_piyasa"
+                          ? "Lewi piyasa"
+                        : menuType === "twins_kitchen"
+                          ? "Twin's Kitchen"
+                        : menuType === "mohi_ertb"
+                          ? "Mohi Ertb"
+                        : menuType === "selam_special"
+                          ? "selam special"
+                        : menuType === "cafe_9"
+                          ? "Cafe 9"
+                          : menuType === "liyu_taim"
+                            ? "Liyu Taim (ልዩ ጣዕም)"
+                            : menuType === "zanzibar"
+                              ? "Zanzibar kitchen"
+                              : "YOM BURGERIZZA"
     );
 
     const getThemeColors = () => {
-      switch (menuType) {
-        case "mountain":
-          return {
-            primary: "#059669",
-            primaryHover: "#047857",
-            primaryBg: "bg-emerald-50",
-            primaryBorder: "border-emerald-100",
-            primaryText: "text-emerald-600",
-            textAccent: "text-emerald-600",
-            itemCardBorderHover: "hover:border-emerald-250",
-            cartGradient: "from-emerald-700 to-emerald-600",
-            headerBg: "bg-white text-slate-800 border-b border-emerald-100",
-            headerTag: "bg-emerald-50 text-emerald-600 border-emerald-100",
-            catButtonSelected: "bg-emerald-600 text-white border-emerald-600 shadow-sm",
-            btnSubmit: "bg-emerald-600 hover:bg-emerald-700 border-emerald-600 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
-            badgeColor: "text-emerald-600 bg-emerald-50 border-emerald-100",
-            itemCardBg: "bg-white border border-slate-200/85 hover:border-emerald-250 hover:-translate-y-0.5 shadow-3xs",
-            qtyCircleBg: "bg-emerald-600",
-            textPrice: "text-emerald-600",
-            textGroupHover: "group-hover:text-emerald-600",
-            btnHoverText: "hover:text-emerald-600 border-slate-250",
-            buttonMainBg: "bg-emerald-600 hover:bg-emerald-700",
-          };
-        case "sunny":
-          return {
-            primary: "#d97706",
-            primaryHover: "#b45309",
-            primaryBg: "bg-amber-50",
-            primaryBorder: "border-amber-100",
-            primaryText: "text-amber-600",
-            textAccent: "text-amber-600",
-            itemCardBorderHover: "hover:border-amber-250",
-            cartGradient: "from-amber-750 to-amber-600",
-            headerBg: "bg-white text-slate-800 border-b border-amber-100",
-            headerTag: "bg-amber-50 text-amber-600 border-amber-100",
-            catButtonSelected: "bg-amber-650 text-white border-amber-655 shadow-sm",
-            btnSubmit: "bg-amber-600 hover:bg-amber-700 border-amber-600 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
-            badgeColor: "text-amber-600 bg-amber-50 border-amber-100",
-            itemCardBg: "bg-white border border-slate-200/85 hover:border-amber-250 hover:-translate-y-0.5 shadow-3xs",
-            qtyCircleBg: "bg-amber-650",
-            textPrice: "text-amber-650",
-            textGroupHover: "group-hover:text-amber-655",
-            btnHoverText: "hover:text-amber-650 border-slate-250",
-            buttonMainBg: "bg-amber-600 hover:bg-amber-700",
-          };
-        case "htown":
-          return {
-            primary: "#E0560B",
-            primaryHover: "#C24103",
-            primaryBg: "bg-orange-50",
-            primaryBorder: "border-orange-100",
-            primaryText: "text-[#E0560B]",
-            textAccent: "text-[#E0560B]",
-            itemCardBorderHover: "hover:border-orange-255",
-            cartGradient: "from-orange-600 to-[#E0560B]",
-            headerBg: "bg-white text-slate-800 border-b border-rose-100",
-            headerTag: "bg-orange-50 text-[#E0560B] border-orange-100",
-            catButtonSelected: "bg-[#E0560B] text-white border-[#E0560B] shadow-sm",
-            btnSubmit: "bg-[#E0560B] hover:bg-[#C24103] border-[#E0560B] text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
-            badgeColor: "text-[#E0560B] bg-orange-50 border-orange-100",
-            itemCardBg: "bg-white border border-slate-200/85 hover:border-orange-250 hover:-translate-y-0.5 shadow-3xs",
-            qtyCircleBg: "bg-[#E0560B]",
-            textPrice: "text-[#E0560B]",
-            textGroupHover: "group-hover:text-[#E0560B]",
-            btnHoverText: "hover:text-[#E0560B] border-slate-250",
-            buttonMainBg: "bg-[#E0560B] hover:bg-[#C24103]",
-          };
-        case "rome":
-          return {
-            primary: "#991b1b",
-            primaryHover: "#7f1d1d",
-            primaryBg: "bg-red-50",
-            primaryBorder: "border-red-100",
-            primaryText: "text-red-700",
-            textAccent: "text-red-700",
-            itemCardBorderHover: "hover:border-red-250",
-            cartGradient: "from-red-700 to-red-600",
-            headerBg: "bg-white text-slate-800 border-b border-red-100",
-            headerTag: "bg-red-50 text-red-700 border-red-100",
-            catButtonSelected: "bg-red-700 text-white border-red-700 shadow-sm",
-            btnSubmit: "bg-red-750 hover:bg-red-800 border-red-750 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
-            badgeColor: "text-red-700 bg-red-50 border-red-100",
-            itemCardBg: "bg-white border border-slate-200/85 hover:border-red-250 hover:-translate-y-0.5 shadow-3xs",
-            qtyCircleBg: "bg-red-700",
-            textPrice: "text-red-700",
-            textGroupHover: "group-hover:text-red-700",
-            btnHoverText: "hover:text-red-700 border-slate-250",
-            buttonMainBg: "bg-red-700 hover:bg-red-800",
-          };
-        case "chanoly":
-          return {
-            primary: "#ea580c",
-            primaryHover: "#c2410c",
-            primaryBg: "bg-orange-50/50",
-            primaryBorder: "border-orange-100/80",
-            primaryText: "text-orange-900 border-orange-200/55",
-            textAccent: "text-orange-900",
-            itemCardBorderHover: "hover:border-orange-400",
-            cartGradient: "from-orange-900 to-orange-850",
-            headerBg: "bg-white text-orange-950 border-b border-orange-100",
-            headerTag: "bg-orange-50 text-orange-900 border-orange-100",
-            catButtonSelected: "bg-orange-900 text-white border-orange-900 shadow-sm",
-            btnSubmit: "bg-orange-900 hover:bg-orange-950 border-orange-900 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
-            badgeColor: "text-orange-900 bg-orange-50 border-orange-100",
-            itemCardBg: "bg-white border border-slate-200/85 hover:border-orange-300 hover:-translate-y-0.5 shadow-3xs",
-            qtyCircleBg: "bg-orange-900",
-            textPrice: "text-orange-950",
-            textGroupHover: "group-hover:text-orange-900",
-            btnHoverText: "hover:text-orange-900 border-slate-250",
-            buttonMainBg: "bg-orange-900 hover:bg-orange-950",
-          };
-        case "neba":
-          return {
-            primary: "#0891b2",
-            primaryHover: "#0e7490",
-            primaryBg: "bg-cyan-50/50",
-            primaryBorder: "border-cyan-100/80",
-            primaryText: "text-cyan-900 border-cyan-200/55",
-            textAccent: "text-cyan-900",
-            itemCardBorderHover: "hover:border-cyan-400",
-            cartGradient: "from-cyan-900 to-cyan-850",
-            headerBg: "bg-white text-cyan-950 border-b border-cyan-100",
-            headerTag: "bg-cyan-50 text-cyan-900 border-cyan-100",
-            catButtonSelected: "bg-cyan-900 text-white border-cyan-900 shadow-sm",
-            btnSubmit: "bg-cyan-900 hover:bg-cyan-950 border-cyan-900 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
-            badgeColor: "text-cyan-900 bg-cyan-50 border-cyan-100",
-            itemCardBg: "bg-white border border-slate-200/85 hover:border-cyan-300 hover:-translate-y-0.5 shadow-3xs",
-            qtyCircleBg: "bg-cyan-900",
-            textPrice: "text-cyan-950",
-            textGroupHover: "group-hover:text-cyan-900",
-            btnHoverText: "hover:text-cyan-900 border-slate-250",
-            buttonMainBg: "bg-cyan-900 hover:bg-cyan-950",
-          };
-        case "marti":
-          return {
-            primary: "#c2410c",
-            primaryHover: "#9a3412",
-            primaryBg: "bg-orange-50/40",
-            primaryBorder: "border-orange-100/70",
-            primaryText: "text-orange-900 border-orange-200/55",
-            textAccent: "text-orange-900",
-            itemCardBorderHover: "hover:border-orange-400",
-            cartGradient: "from-orange-800 to-orange-700",
-            headerBg: "bg-white text-orange-950 border-b border-orange-100",
-            headerTag: "bg-orange-50 text-orange-900 border-orange-100",
-            catButtonSelected: "bg-orange-800 text-white border-orange-850 shadow-sm",
-            btnSubmit: "bg-orange-800 hover:bg-orange-900 border-orange-800 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
-            badgeColor: "text-orange-900 bg-orange-50 border-orange-100",
-            itemCardBg: "bg-white border border-slate-200/85 hover:border-orange-300 hover:-translate-y-0.5 shadow-3xs",
-            qtyCircleBg: "bg-orange-800",
-            textPrice: "text-orange-950",
-            textGroupHover: "group-hover:text-orange-900",
-            btnHoverText: "hover:text-orange-900 p border-slate-250",
-            buttonMainBg: "bg-orange-800 hover:bg-orange-900",
-          };
-        case "yom":
-          return {
-            primary: "#1b5e20",
-            primaryHover: "#2e7d32",
-            primaryBg: "bg-emerald-50/45",
-            primaryBorder: "border-emerald-150/70",
-            primaryText: "text-emerald-900 border-emerald-250/55",
-            textAccent: "text-emerald-900",
-            itemCardBorderHover: "hover:border-emerald-450",
-            cartGradient: "from-emerald-800 to-emerald-700",
-            headerBg: "bg-white text-emerald-950 border-b border-emerald-100",
-            headerTag: "bg-emerald-50 text-emerald-900 border-emerald-100",
-            catButtonSelected: "bg-emerald-800 text-white border-emerald-850 shadow-sm",
-            btnSubmit: "bg-emerald-800 hover:bg-emerald-900 border-emerald-800 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
-            badgeColor: "text-emerald-900 bg-emerald-50 border-emerald-100",
-            itemCardBg: "bg-white border border-slate-200/85 hover:border-emerald-300 hover:-translate-y-0.5 shadow-3xs",
-            qtyCircleBg: "bg-emerald-800",
-            textPrice: "text-emerald-950",
-            textGroupHover: "group-hover:text-emerald-900",
-            btnHoverText: "hover:text-emerald-900 border-slate-250",
-            buttonMainBg: "bg-emerald-800 hover:bg-emerald-900",
-          };
-        case "aroma":
-        default:
-          return {
-            primary: "#7c2d12",
-            primaryHover: "#451a03",
-            primaryBg: "bg-amber-50/50",
-            primaryBorder: "border-amber-100/80",
-            primaryText: "text-amber-900 border-amber-200/55",
-            textAccent: "text-amber-900",
-            itemCardBorderHover: "hover:border-amber-400",
-            cartGradient: "from-amber-900 to-amber-800",
-            headerBg: "bg-white text-amber-950 border-b border-amber-100",
-            headerTag: "bg-amber-50 text-amber-900 border-amber-100",
-            catButtonSelected: "bg-amber-900 text-white border-amber-900 shadow-sm",
-            btnSubmit: "bg-amber-900 hover:bg-amber-950 border-amber-900 text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
-            badgeColor: "text-amber-900 bg-amber-50 border-amber-100",
-            itemCardBg: "bg-white border border-slate-200/85 hover:border-amber-300 hover:-translate-y-0.5 shadow-3xs",
-            qtyCircleBg: "bg-amber-900",
-            textPrice: "text-amber-900",
-            textGroupHover: "group-hover:text-amber-900",
-            btnHoverText: "hover:text-amber-900 border-slate-250",
-            buttonMainBg: "bg-amber-900 hover:bg-amber-950",
-          };
-      }
+      return {
+        primary: "#E0560B",
+        primaryHover: "#C24103",
+        primaryBg: "bg-orange-50/50",
+        primaryBorder: "border-orange-100/80",
+        primaryText: "text-[#E0560B]",
+        textAccent: "text-[#E0560B]",
+        itemCardBorderHover: "hover:border-orange-300",
+        cartGradient: "from-orange-600 to-[#E0560B]",
+        headerBg: "bg-white text-slate-800 border-b border-rose-100",
+        headerTag: "bg-orange-50 text-[#E0560B] border-orange-100",
+        catButtonSelected: "bg-[#E0560B] text-white border-[#E0560B] shadow-sm",
+        btnSubmit: "bg-[#E0560B] hover:bg-[#C24103] border-[#E0560B] text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
+        badgeColor: "text-[#E0560B] bg-orange-50 border-orange-100",
+        itemCardBg: "bg-white border border-slate-200/85 hover:border-orange-250 hover:-translate-y-0.5 shadow-3xs",
+        qtyCircleBg: "bg-[#E0560B]",
+        textPrice: "text-[#E0560B]",
+        textGroupHover: "group-hover:text-[#E0560B]",
+        btnHoverText: "hover:text-[#E0560B] border-slate-250",
+        buttonMainBg: "bg-[#E0560B] hover:bg-[#C24103]",
+      };
     };
     const colors = getThemeColors();
 
@@ -1593,7 +2028,25 @@ export default function TelegramSimulator({
                       ? "Neba Cafe"
                       : menuType === "marti"
                         ? "Marti kitchen"
-                        : "YOM BURGERIZZA";
+                        : menuType === "barcon"
+                          ? "Barcon Migb Bet"
+                          : menuType === "medi_shiro"
+                            ? "medi shiro"
+                          : menuType === "lewi_piyasa"
+                            ? "Lewi piyasa"
+                          : menuType === "twins_kitchen"
+                            ? "Twin's Kitchen"
+                          : menuType === "mohi_ertb"
+                            ? "Mohi Ertb"
+                          : menuType === "selam_special"
+                            ? "selam special"
+                          : menuType === "cafe_9"
+                            ? "Cafe 9"
+                            : menuType === "liyu_taim"
+                              ? "Liyu Taim (ልዩ ጣዕም)"
+                              : menuType === "zanzibar"
+                                ? "Zanzibar kitchen"
+                                : "YOM BURGERIZZA";
 
       const finalMsg = `Please organize a ticket for: ${itemsList.join(", ")}.\n\nMy delivery profile parameters:\n👤 Name: ${nameText}\n📞 Phone: ${phoneText}\n📍 Pick-Up Location: ${pickupAddress}\n📍 Drop-Off Address: ${dropAddress}`;
 
@@ -1613,6 +2066,16 @@ export default function TelegramSimulator({
 
     return (
       <div className="w-full flex flex-col gap-3 font-sans text-slate-800 leading-normal animate-fadeIn">
+        {/* Simple elegant button at the very top of a specific hotel menu to show other hotels */}
+        <button
+          type="button"
+          id="menu-btn-show-other-hotels"
+          onClick={handleBackOrderMenu}
+          className="w-full bg-orange-50 hover:bg-orange-100 text-[#E0560B] font-extrabold text-[11.5px] py-2.5 px-4 rounded-xl transition flex text-center items-center justify-center gap-2 cursor-pointer border border-orange-200/50 shadow-3xs hover:-translate-y-0.5 active:scale-98 font-sans"
+        >
+          🏬 {isAmharic ? "ሌሎች ሆቴሎችን አሳይ" : "Show Other Hotels"}
+        </button>
+
         {/* Fancy Custom Branded Header Bubble */}
         <div
           className={`p-4 rounded-2xl rounded-bl-none shadow-sm flex flex-col gap-1.5 transition-all duration-300 border bg-white border-slate-200`}
@@ -1671,7 +2134,7 @@ export default function TelegramSimulator({
                   isSelected ? `${colors.catButtonSelected} transform scale-102` : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50 hover:-translate-y-0.5 shadow-2xs"
                 }`}
               >
-                {cat}
+                {cat.toLowerCase().trim() === "injera" && isAmharic ? "Injera" : cat}
               </button>
             );
           })}
@@ -1918,6 +2381,11 @@ export default function TelegramSimulator({
     }
     if (normalized.includes("yom burgerizza menu") || normalized.includes("yom burgeritza") || normalized.includes("yom menu") || normalized === "yom burger menu" || normalized === "yom") {
       handleKeyboardAction("select_store", "YOM BURGERIZZA");
+      setInputText("");
+      return;
+    }
+    if (normalized.includes("barcon menu") || normalized.includes("barkon menu") || normalized.includes("barcon") || normalized.includes("barkon")) {
+      handleKeyboardAction("select_store", "Barcon Migb Bet");
       setInputText("");
       return;
     }
@@ -2268,7 +2736,7 @@ export default function TelegramSimulator({
                             }
                           }
                         }}
-                        className="w-full bg-[#f0f3f6] hover:bg-[#e4ebf3] text-blue-600 rounded-xl py-2 px-3 text-xs font-bold text-center border border-slate-200/60 cursor-pointer transition flex items-center justify-center gap-1.5"
+                        className="w-full bg-[#f0f4f9] hover:bg-[#e5ecf4] text-[#007aff] rounded-2xl py-3 px-4 text-[13px] font-semibold text-center border-none cursor-pointer transition flex items-center justify-center gap-1.5 active:scale-[0.98]"
                       >
                         {btn.label}
                       </button>
@@ -2325,7 +2793,25 @@ export default function TelegramSimulator({
                           ? "bg-orange-800/5 border-orange-500/10"
                           : tgKeyboard === "yom_menu"
                             ? "bg-emerald-800/5 border-emerald-500/10"
-                            : "bg-orange-50/40 border-orange-100/90"
+                            : tgKeyboard === "barcon_menu"
+                              ? "bg-emerald-850/5 border-emerald-500/15"
+                              : tgKeyboard === "medi_shiro_menu"
+                                ? "bg-amber-800/5 border-amber-500/10"
+                              : tgKeyboard === "lewi_piyasa_menu"
+                                ? "bg-red-500/5 border-red-500/10"
+                              : tgKeyboard === "twins_kitchen_menu"
+                                ? "bg-amber-900/5 border-amber-600/10"
+                              : tgKeyboard === "mohi_ertb_menu"
+                                ? "bg-amber-500/5 border-amber-500/10"
+                              : tgKeyboard === "selam_special_menu"
+                                ? "bg-emerald-800/5 border-emerald-500/10"
+                              : tgKeyboard === "cafe_9_menu"
+                                ? "bg-green-700/5 border-green-500/10"
+                                : tgKeyboard === "liyu_taim_menu"
+                                  ? "bg-green-800/5 border-green-500/10"
+                                  : tgKeyboard === "zanzibar_menu"
+                                    ? "bg-teal-800/5 border-teal-500/10"
+                                    : "bg-orange-50/40 border-orange-100/90"
         }`}>
           {tgKeyboard === "mountain_hotel_menu" ||
           tgKeyboard === "htown_menu" ||
@@ -2335,7 +2821,16 @@ export default function TelegramSimulator({
           tgKeyboard === "chanoly_menu" ||
           tgKeyboard === "neba_menu" ||
           tgKeyboard === "marti_menu" ||
-          tgKeyboard === "yom_menu" ? (
+          tgKeyboard === "yom_menu" ||
+          tgKeyboard === "barcon_menu" ||
+          tgKeyboard === "medi_shiro_menu" ||
+          tgKeyboard === "lewi_piyasa_menu" ||
+          tgKeyboard === "twins_kitchen_menu" ||
+          tgKeyboard === "mohi_ertb_menu" ||
+          tgKeyboard === "selam_special_menu" ||
+          tgKeyboard === "cafe_9_menu" ||
+          tgKeyboard === "liyu_taim_menu" ||
+          tgKeyboard === "zanzibar_menu" ? (
             renderInteractiveMenu(
               false,
               tgKeyboard === "mountain_hotel_menu"
@@ -2350,11 +2845,29 @@ export default function TelegramSimulator({
                         ? "aroma"
                         : tgKeyboard === "chanoly_menu"
                           ? "chanoly"
-                          : tgKeyboard === "neba_menu"
-                            ? "neba"
-                            : tgKeyboard === "marti_menu"
-                              ? "marti"
-                              : "yom",
+                        : tgKeyboard === "neba_menu"
+                          ? "neba"
+                          : tgKeyboard === "marti_menu"
+                            ? "marti"
+                            : tgKeyboard === "barcon_menu"
+                              ? "barcon"
+                              : tgKeyboard === "medi_shiro_menu"
+                                ? "medi_shiro"
+                              : tgKeyboard === "lewi_piyasa_menu"
+                                ? "lewi_piyasa"
+                              : tgKeyboard === "twins_kitchen_menu"
+                                ? "twins_kitchen"
+                              : tgKeyboard === "mohi_ertb_menu"
+                                ? "mohi_ertb"
+                              : tgKeyboard === "selam_special_menu"
+                                ? "selam_special"
+                              : tgKeyboard === "cafe_9_menu"
+                                ? "cafe_9"
+                                : tgKeyboard === "liyu_taim_menu"
+                                  ? "liyu_taim"
+                                  : tgKeyboard === "zanzibar_menu"
+                                    ? "zanzibar"
+                                    : "yom",
             )
           ) : (
             <>
@@ -2363,17 +2876,21 @@ export default function TelegramSimulator({
                 {tgKeyboard === "main" ? (
                   isAmharic ? (
                     <div className="whitespace-pre-line leading-relaxed text-slate-800 text-[12px] font-medium">
-                      እገዛ ይፈልጋሉ?
-                      እባክዎን <span className="text-emerald-700 font-bold">@Yegnadeliverysupport</span> ን ያግኙ እና እንረዳዎታለን።
+                      📞 <span className="font-extrabold text-[#E0560B]">የቶሎ ዕገዛ መጠየቂያ (Contact Support)</span>
 
-                      ከታች ያሉትን ቁልፎች ይጠቀሙ።
+                      👤 <span className="font-bold text-slate-750">የደንበኛ ስም፦</span> {customerProfile.name || "(ያልተመዘገበ)"}
+                      📞 <span className="font-bold text-slate-755">ስልክ ቁጥር፦</span> {customerProfile.phone || "(ያልተመዘገበ)"}
+
+                      እገዛ ይፈልጋሉ? እባክዎን በቀጥታ በነጻ ስልክ መስመር *9801* ላይ ያግኙን እና እንረዳዎታለን። ከታች ያሉትን ቁልፎች ይጠቀሙ።
                     </div>
                   ) : (
                     <div className="whitespace-pre-line leading-relaxed text-slate-805 text-[12.5px] font-semibold">
-                      Need help?
-                      Please contact <span className="text-sky-600 font-bold">@Yegnadeliverysupport</span> and we will assist you.
+                      📞 <span className="font-extrabold text-[#E0560B]">Tollo Support Center (Contact Support)</span>
 
-                      Use the buttons below.
+                      👤 <span className="font-bold text-slate-750">Customer Name:</span> {customerProfile.name || "(Not set)"}
+                      📞 <span className="font-bold text-slate-755">Phone Number:</span> {customerProfile.phone || "(Not set)"}
+
+                      Need help? Please call our support desk at *9801* and we will assist you. Use the buttons below.
                     </div>
                   )
                 ) : (
@@ -2422,7 +2939,7 @@ export default function TelegramSimulator({
                       </button>
                     </div>
 
-                    {/* Row 3: Recent Orders */}
+                    {/* Row 4: Recent Orders */}
                     <button
                       type="button"
                       onClick={() => handleKeyboardAction("recent_orders")}
@@ -2432,24 +2949,6 @@ export default function TelegramSimulator({
                         ? "የቅርብ ጊዜ ትዕዛዞች"
                         : "Recent Orders"}
                     </button>
-
-                    {/* Row 4: Discounts, Download Our App */}
-                    <div className="grid grid-cols-2 gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => handleKeyboardAction("discounts")}
-                        className="bg-[#538761] hover:bg-[#437251] text-white font-semibold text-[12px] py-2.5 px-3 rounded-lg text-center flex items-center justify-center transition cursor-pointer shadow-xs border border-emerald-700/10 active:scale-98 leading-tight font-bold"
-                      >
-                        {isAmharic ? "ቅናሾች" : "Discounts"}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleKeyboardAction("download_app")}
-                        className="bg-[#538761] hover:bg-[#437251] text-white font-semibold text-[12px] py-2.5 px-3 rounded-lg text-center flex items-center justify-center transition cursor-pointer shadow-xs border border-emerald-700/10 active:scale-98 leading-tight font-bold"
-                      >
-                        {isAmharic ? "መተግበሪያ አውርድ" : "Download Our App"}
-                      </button>
-                    </div>
                   </div>
                 ) : (
                   <div className="w-full flex flex-col gap-2 font-sans">
@@ -2718,227 +3217,195 @@ export default function TelegramSimulator({
               {/* Dynamic menu content container representing the Custom Web App Menu */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 flex flex-col justify-between">
                 <div>
-                  {/* Web App Branding Portal Box */}
-                  <div className="bg-gradient-to-r from-orange-600 to-[#E0560B] text-white rounded-2xl p-4 shadow-sm text-center mb-4 font-sans relative overflow-hidden">
-                    <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-white/10 rounded-full blur-xl" />
-                    <h3 className="font-extrabold text-xs md:text-sm tracking-wide flex items-center justify-center gap-1.5 uppercase">
-                      🛵{" "}
-                      {isAmharic
-                        ? "ቶሎ ፈጣን መላኪያ መተግበሪያ"
-                        : "Tollo Speedy Delivery Portal"}
-                    </h3>
-                    <p className="text-[10px] text-orange-50 font-medium mt-1 leading-normal">
-                      {isAmharic
-                        ? "ምቹ እና ፈጣን የትዕዛዝ መተግበሪያ፤ ሱቆችን ይምረጡ፣ በቀጥታ ይዘዙ።"
-                        : "Browse partner restaurants and place orders effortlessly."}
-                    </p>
-                  </div>
-
-                  {/* Profile/System State Box for Continuity */}
-                  <div className="bg-white border border-slate-200 rounded-2xl p-3.5 flex justify-between items-center text-xs text-slate-700 font-sans shadow-2xs mb-4">
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-10 h-10 rounded-full bg-orange-50 text-[#E0560B] font-extrabold uppercase border border-orange-100 flex items-center justify-center text-sm shadow-2xs">
-                        {customerProfile.name
-                          ? customerProfile.name.charAt(0)
-                          : "U"}
-                      </div>
-                      <div className="leading-snug">
-                        <span className="font-extrabold text-[12px] block text-slate-800">
-                          {customerProfile.name ||
-                            (isAmharic ? "እንግዳ ደንበኛ" : "Guest Customer")}
-                        </span>
-                        <span className="text-[10.5px] text-slate-400 font-mono font-medium">
-                          {customerProfile.phone ||
-                            (isAmharic ? "ስልክ አልተገለጸም" : "No Phone")}
-                        </span>
-                      </div>
-                    </div>
-                    {customerProfile.pickupAddress && (
-                      <span className="bg-orange-50 text-[#E0560B] border border-orange-100 rounded-full px-3 py-1 text-[10px] font-extrabold max-w-[150px] truncate leading-tight shadow-3xs">
-                        🏪 {customerProfile.pickupAddress}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Render the Custom Telegram Bot Menu Keyboard in Web App */}
-                  <div className="p-3 bg-white border border-slate-200/85 rounded-2xl space-y-3 select-none shadow-2xs">
-                    {webAppKeyboard === "mountain_hotel_menu" ||
-                    webAppKeyboard === "htown_menu" ||
-                    webAppKeyboard === "sunny_menu" ||
-                    webAppKeyboard === "rome_menu" ||
-                    webAppKeyboard === "aroma_menu" ||
-                    webAppKeyboard === "chanoly_menu" ||
-                    webAppKeyboard === "neba_menu" ||
-                    webAppKeyboard === "marti_menu" ||
-                    webAppKeyboard === "yom_menu" ? (
-                      renderInteractiveMenu(
-                        true,
-                        webAppKeyboard === "mountain_hotel_menu"
-                          ? "mountain"
-                          : webAppKeyboard === "htown_menu"
-                            ? "htown"
-                            : webAppKeyboard === "sunny_menu"
-                              ? "sunny"
-                              : webAppKeyboard === "rome_menu"
-                                ? "rome"
-                                : webAppKeyboard === "aroma_menu"
-                                  ? "aroma"
-                                  : webAppKeyboard === "chanoly_menu"
-                                    ? "chanoly"
-                                    : webAppKeyboard === "neba_menu"
-                                      ? "neba"
-                                      : webAppKeyboard === "marti_menu"
-                                        ? "marti"
-                                        : "yom",
-                      )
-                    ) : (
-                      <>
-                        {/* Active menu conversation subtitle */}
-                        <div className="bg-slate-50 text-slate-800 rounded-2xl px-4 py-3 border border-slate-100 shadow-2xs text-xs md:text-sm max-w-full flex flex-col gap-1 font-sans">
-                          <span className="font-extrabold text-slate-800 leading-relaxed text-[11px] md:text-[12px] uppercase tracking-wide">
-                            {webAppKeyboard === "main"
-                              ? isAmharic
-                                ? `እንስራ እንድናደርስልዎ ምን ማድረግ ይፈልጋሉ?`
-                                : `What service or option would you like to request?`
-                              : isAmharic
-                                ? "እባክዎን የትዕዛዝ መነሻ ሱቅ (ካፌ) ይምረጡ፦"
-                                : "Select a partner restaurant/cafe below:"}
-                          </span>
-                          {webAppKeyboard === "main" && (
-                            <span className="text-slate-450 text-[10px] font-medium leading-normal">
-                              {isAmharic
-                                ? "ከታች ካሉት አማራጮች ውስጥ አንዱን ይጫኑ።"
-                                : "Please choose an action to execute."}
-                            </span>
-                          )}
+                  {webAppKeyboard === "main" ? (
+                    <div className="flex flex-col gap-4 font-sans select-none max-w-md mx-auto w-full pt-1">
+                      {/* White Container Frame matching the screenshot */}
+                      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs leading-normal">
+                        {/* Amharic Part */}
+                        <div className="flex items-start gap-2.5">
+                          <span className="text-xl shrink-0 mt-0.5">🚀</span>
+                          <div className="flex-1 text-slate-800">
+                            <h3 className="font-extrabold text-[13.5px] leading-snug tracking-tight">
+                              እንኳን ወደ ቶሎ | Tollo Delivery በሰላም መጡ! 👋
+                            </h3>
+                            <p className="text-slate-700 text-[12px] font-semibold leading-relaxed mt-3">
+                              የምግብ፣ የሸቀጣሸቀጥ፣ የዕቃዎችና የፈጣን መልዕክት ማድረሻ አገልግሎት።
+                            </p>
+                            <p className="text-slate-700 text-[12px] font-semibold leading-relaxed mt-2">
+                              በቀላሉ ይዘዙ፣ አስተማማኝ አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ፣ በታማኝነት ይክፈሉ።
+                            </p>
+                          </div>
                         </div>
 
-                        {/* Button grids & page switches */}
-                        <div className="mt-2 text-xs">
-                          {webAppKeyboard === "main" ? (
-                            <div className="w-full flex flex-col gap-2 font-sans">
-                              {/* Row 1: New Order */}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setWebAppKeyboard("stores_p1");
-                                  setToastMessage(
-                                    isAmharic
-                                      ? "🏬 የሱቆች ዝርዝር በቲኤምኤ ተከፍቷል"
-                                      : "🏬 Displaying partner store catalogs",
-                                  );
-                                  setTimeout(() => setToastMessage(null), 3000);
-                                }}
-                                className="w-full bg-[#E0560B] hover:bg-[#C24103] text-white font-extrabold text-[12.5px] py-3.5 px-4 rounded-xl text-center flex items-center justify-center transition-all cursor-pointer shadow-md active:scale-98 tracking-wide uppercase font-bold"
-                              >
-                                🍔{" "}
+                        {/* Dashed Line Separator */}
+                        <div className="text-slate-300 font-mono text-center my-4 tracking-widest text-xs select-none">
+                          -----------------------
+                        </div>
+
+                        {/* English Part */}
+                        <div className="flex items-start gap-2.5">
+                          <span className="text-xl shrink-0 mt-0.5">🚀</span>
+                          <div className="flex-1 text-slate-800">
+                            <h3 className="font-extrabold text-[13.5px] leading-snug tracking-tight">
+                              Welcome to ቶሎ | Tollo Delivery
+                            </h3>
+                            <p className="text-slate-600 text-[12px] font-medium leading-relaxed mt-3">
+                              Fast food, grocery, parcel, and courier delivery services.
+                            </p>
+                            <p className="text-slate-600 text-[12px] font-medium leading-relaxed mt-2">
+                              Order quickly, track deliveries in real time, and pay securely.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Action Buttons styled like the screenshot with soft background and blue text */}
+                      <div className="flex flex-col gap-2.5 mt-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setWebAppKeyboard("stores_p1");
+                            setToastMessage("🏬 Welcome to Tollo App Stores!");
+                            setTimeout(() => setToastMessage(null), 3000);
+                          }}
+                          className="w-full bg-[#f1f6fb] hover:bg-[#e4effb] text-[#0088cc] font-extrabold text-[13px] py-3 px-4 rounded-xl text-center flex items-center justify-center gap-2 transition cursor-pointer shadow-3xs active:scale-98"
+                        >
+                          🍔 ቶሎ ማዘዣ ክፈት (Open Tollo App)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setToastMessage("📞 Direct support ticket opened!");
+                            setTimeout(() => setToastMessage(null), 3000);
+                            onSendMessage("CONTACT_SUPPORT_TRIGGERED_ACTION");
+                            setIsMenuOpen(false);
+                          }}
+                          className="w-full bg-[#f1f6fb] hover:bg-[#e4effb] text-[#0088cc] font-extrabold text-[13px] py-3 px-4 rounded-xl text-center flex items-center justify-center gap-2 transition cursor-pointer shadow-3xs active:scale-98"
+                        >
+                          📞 እገዛ መጠየቂያ (Contact Support)
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Web App Branding Portal Box */}
+                      <div className="bg-gradient-to-r from-orange-600 to-[#E0560B] text-white rounded-2xl p-4 shadow-sm text-center mb-4 font-sans relative overflow-hidden">
+                        <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-white/10 rounded-full blur-xl" />
+                        <h3 className="font-extrabold text-xs md:text-sm tracking-wide flex items-center justify-center gap-1.5 uppercase">
+                          🛵{" "}
+                          {isAmharic
+                            ? "ቶሎ ፈጣን መላኪያ መተግበሪያ"
+                            : "Tollo Speedy Delivery Portal"}
+                        </h3>
+                        <p className="text-[10px] text-orange-50 font-medium mt-1 leading-normal">
+                          {isAmharic
+                            ? "ምቹ እና ፈጣን የትዕዛዝ መተግበሪያ፤ ሱቆችን ይምረጡ፣ በቀጥታ ይዘዙ።"
+                            : "Browse partner restaurants and place orders effortlessly."}
+                        </p>
+                      </div>
+
+                      {/* Profile/System State Box for Continuity */}
+                      <div className="bg-white border border-slate-200 rounded-2xl p-3.5 flex justify-between items-center text-xs text-slate-700 font-sans shadow-2xs mb-4">
+                        <div className="flex items-center gap-3.5">
+                          <div className="w-10 h-10 rounded-full bg-orange-50 text-[#E0560B] font-extrabold uppercase border border-orange-100 flex items-center justify-center text-sm shadow-2xs">
+                            {customerProfile.name
+                              ? customerProfile.name.charAt(0)
+                              : "U"}
+                          </div>
+                          <div className="leading-snug">
+                            <span className="font-extrabold text-[12px] block text-slate-800">
+                              {customerProfile.name ||
+                                (isAmharic ? "እንግዳ ደንበኛ" : "Guest Customer")}
+                            </span>
+                            <span className="text-[10.5px] text-slate-400 font-mono font-medium">
+                              {customerProfile.phone ||
+                                (isAmharic ? "ስልክ አልተገለጸም" : "No Phone")}
+                            </span>
+                          </div>
+                        </div>
+                        {customerProfile.pickupAddress && (
+                          <span className="bg-orange-50 text-[#E0560B] border border-orange-100 rounded-full px-3 py-1 text-[10px] font-extrabold max-w-[150px] truncate leading-tight shadow-3xs">
+                            🏪 {customerProfile.pickupAddress}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Render the Custom Telegram Bot Menu Keyboard in Web App */}
+                      <div className="p-3 bg-white border border-slate-200/85 rounded-2xl space-y-3 select-none shadow-2xs">
+                        {webAppKeyboard === "mountain_hotel_menu" ||
+                        webAppKeyboard === "htown_menu" ||
+                        webAppKeyboard === "sunny_menu" ||
+                        webAppKeyboard === "rome_menu" ||
+                        webAppKeyboard === "aroma_menu" ||
+                        webAppKeyboard === "chanoly_menu" ||
+                        webAppKeyboard === "neba_menu" ||
+                        webAppKeyboard === "marti_menu" ||
+                        webAppKeyboard === "yom_menu" ||
+                        webAppKeyboard === "barcon_menu" ||
+                        webAppKeyboard === "medi_shiro_menu" ||
+                        webAppKeyboard === "lewi_piyasa_menu" ||
+                        webAppKeyboard === "twins_kitchen_menu" ||
+                        webAppKeyboard === "mohi_ertb_menu" ||
+                        webAppKeyboard === "selam_special_menu" ||
+                        webAppKeyboard === "cafe_9_menu" ||
+                        webAppKeyboard === "liyu_taim_menu" ||
+                        webAppKeyboard === "zanzibar_menu" ? (
+                          renderInteractiveMenu(
+                            true,
+                            webAppKeyboard === "mountain_hotel_menu"
+                              ? "mountain"
+                              : webAppKeyboard === "htown_menu"
+                                ? "htown"
+                                : webAppKeyboard === "sunny_menu"
+                                  ? "sunny"
+                                  : webAppKeyboard === "rome_menu"
+                                    ? "rome"
+                                    : webAppKeyboard === "aroma_menu"
+                                      ? "aroma"
+                                      : webAppKeyboard === "chanoly_menu"
+                                        ? "chanoly"
+                                        : webAppKeyboard === "neba_menu"
+                                          ? "neba"
+                                          : webAppKeyboard === "marti_menu"
+                                            ? "marti"
+                                            : webAppKeyboard === "barcon_menu"
+                                              ? "barcon"
+                                              : webAppKeyboard === "medi_shiro_menu"
+                                                ? "medi_shiro"
+                                                : webAppKeyboard === "lewi_piyasa_menu"
+                                                  ? "lewi_piyasa"
+                                                  : webAppKeyboard === "twins_kitchen_menu"
+                                                    ? "twins_kitchen"
+                                                    : webAppKeyboard === "mohi_ertb_menu"
+                                                      ? "mohi_ertb"
+                                                      : webAppKeyboard === "selam_special_menu"
+                                                        ? "selam_special"
+                                                        : webAppKeyboard === "cafe_9_menu"
+                                                          ? "cafe_9"
+                                                          : webAppKeyboard === "liyu_taim_menu"
+                                                            ? "liyu_taim"
+                                                            : webAppKeyboard === "zanzibar_menu"
+                                                              ? "zanzibar"
+                                                              : "yom",
+                          )
+                        ) : (
+                          <>
+                            {/* Active menu conversation subtitle */}
+                            <div className="bg-slate-50 text-slate-800 rounded-2xl px-4 py-3 border border-slate-100 shadow-2xs text-xs md:text-sm max-w-full flex flex-col gap-1 font-sans">
+                              <span className="font-extrabold text-slate-800 leading-relaxed text-[11px] md:text-[12px] uppercase tracking-wide">
                                 {isAmharic
-                                  ? "አዲስ ትዕዛዝ (New Order)"
-                                  : "New Order"}
-                              </button>
-
-                              {/* Row 2: Change Language, Help */}
-                              <div className="grid grid-cols-2 gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    onLanguageChange(!isAmharic);
-                                    onSendMessage("Change Language");
-                                    setToastMessage(
-                                      isAmharic
-                                        ? "🌐 Language switched to English"
-                                        : "🌐 ቋንቋ ወደ አማርኛ ተቀይሯል",
-                                    );
-                                    setTimeout(
-                                      () => setToastMessage(null),
-                                      3000,
-                                    );
-                                  }}
-                                  className="bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-[12px] py-3 px-3 rounded-xl text-center flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-slate-200 active:scale-98 leading-tight"
-                                >
-                                  🌐 {isAmharic ? "ቋንቋ ቀይር" : "Change Language"}
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    onSendMessage("Help");
-                                    setIsMenuOpen(false);
-                                    setToastMessage(
-                                      "💡 Help instructions sent!",
-                                    );
-                                    setTimeout(
-                                      () => setToastMessage(null),
-                                      3000,
-                                    );
-                                  }}
-                                  className="bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-[12px] py-3 px-3 rounded-xl text-center flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-slate-200 active:scale-98 leading-tight"
-                                >
-                                  💡 {isAmharic ? "እገዛ (Help)" : "Help"}
-                                </button>
-                              </div>
-
-                              {/* Row 3: Recent Orders */}
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  onSendMessage("Recent Orders");
-                                  setIsMenuOpen(false);
-                                  setToastMessage(
-                                    "📋 Recent orders requested!",
-                                  );
-                                  setTimeout(() => setToastMessage(null), 3000);
-                                }}
-                                className="w-full bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-[12px] py-3 px-4 rounded-xl text-center flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-slate-200 active:scale-98"
-                              >
-                                📋{" "}
-                                {isAmharic
-                                  ? "የቅርብ ጊዜ ትዕዛዞች (Recent Orders)"
-                                  : "Recent Orders"}
-                              </button>
-
-                              {/* Row 4: Discounts, Download Our App */}
-                              <div className="grid grid-cols-2 gap-2">
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    onSendMessage("Discounts");
-                                    setIsMenuOpen(false);
-                                    setToastMessage("🎁 Discounts menu sent!");
-                                    setTimeout(
-                                      () => setToastMessage(null),
-                                      3000,
-                                    );
-                                  }}
-                                  className="bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-[12px] py-3 px-3 rounded-xl text-center flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-slate-200 active:scale-98 leading-tight"
-                                >
-                                  🎁{" "}
-                                  {isAmharic ? "ቅናሾች (Discounts)" : "Discounts"}
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    onSendMessage("Download Our App");
-                                    setIsMenuOpen(false);
-                                    setToastMessage("📲 Download link sent!");
-                                    setTimeout(
-                                      () => setToastMessage(null),
-                                      3000,
-                                    );
-                                  }}
-                                  className="bg-white hover:bg-slate-50 text-slate-700 font-extrabold text-[12px] py-3 px-3 rounded-xl text-center flex items-center justify-center transition-all cursor-pointer shadow-2xs border border-slate-200 active:scale-98 leading-tight"
-                                >
-                                  📲{" "}
-                                  {isAmharic
-                                    ? "መተግበሪያ አውርድ"
-                                    : "Download Our App"}
-                                </button>
-                              </div>
+                                  ? "እባክዎን የትዕዛዝ መነሻ ሱቅ (ካፌ) ይምረጡ፦"
+                                  : "Select a partner restaurant/cafe below:"}
+                              </span>
                             </div>
-                          ) : (
-                            <div className="w-full flex flex-col gap-3 font-sans animate-fadeIn">
-                              {/* Restaurant Selection Grid with rating, images, and lift animations */}
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[360px] overflow-y-auto p-1 bg-slate-50/40 rounded-xl">
-                                {(
+
+                            {/* Button grids & page switches */}
+                            <div className="mt-2 text-xs">
+                              {/* Restaurant grid rendered directly */}
+                              <div className="w-full flex flex-col gap-3 font-sans animate-fadeIn">
+                                {/* Restaurant Selection Grid with rating, images, and lift animations */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[360px] overflow-y-auto p-1 bg-slate-50/40 rounded-xl">
+                                  {(
                                   STORE_PAGES[
                                     webAppKeyboard === "stores_p1"
                                       ? 0
@@ -2993,7 +3460,7 @@ export default function TelegramSimulator({
                                            setToastMessage("🍜 Opening Chanoly Noodles Premium Menu!");
                                          } else if (store === "Marti kitchen" || store.toLowerCase().includes("marti")) {
                                            setWebAppKeyboard("marti_menu");
-                                           setMountainCategory("Habeshan");
+                                           setMountainCategory("Local");
                                            setMenuPage(0);
                                            setToastMessage("🥘 Opening Marti Kitchen Premium Menu!");
                                          } else if (store === "Neba Cafe" || store.toLowerCase().includes("neba")) {
@@ -3006,6 +3473,51 @@ export default function TelegramSimulator({
                                             setMountainCategory("Burger");
                                             setMenuPage(0);
                                             setToastMessage("🍔 Opening YOM Burgerizza Premium Menu!");
+                                        } else if (store === "Barcon Migb Bet" || store.toLowerCase().includes("barcon") || store.toLowerCase().includes("barkon")) {
+                                            setWebAppKeyboard("barcon_menu");
+                                            setMountainCategory("Injera");
+                                            setMenuPage(0);
+                                            setToastMessage("🥘 Opening Barkon ምግብ ቤት Premium Menu!");
+                                        } else if (store === "liyu taim migb bet" || store === "Liyu Taim (ልዩ ጣዕም)" || store.toLowerCase().includes("liyu") || store.toLowerCase().includes("taim")) {
+                                            setWebAppKeyboard("liyu_taim_menu");
+                                            setMountainCategory("Injera");
+                                            setMenuPage(0);
+                                            setToastMessage("🥘 Opening Liyu Taim (ልዩ ጣዕም) Premium Menu!");
+                                        } else if (store === "Zanzibar kitchen" || store.toLowerCase().includes("zanzibar")) {
+                                            setWebAppKeyboard("zanzibar_menu");
+                                            setMountainCategory("Fish");
+                                            setMenuPage(0);
+                                            setToastMessage("🥘 Opening Zanzibar kitchen Premium Menu!");
+                                        } else if (store === "medi shiro" || store.toLowerCase().includes("medi shiro") || store.toLowerCase().includes("medi_shiro") || store.toLowerCase().includes("medishiro")) {
+                                            setWebAppKeyboard("medi_shiro_menu");
+                                            setMountainCategory("Injera");
+                                            setMenuPage(0);
+                                            setToastMessage("🥘 Opening Medi Shiro Premium Menu!");
+                                        } else if (store === "Lewi piyasa" || store.toLowerCase().includes("lewi") || store.toLowerCase().includes("piyasa") || store.toLowerCase().includes("piyassa")) {
+                                            setWebAppKeyboard("lewi_piyasa_menu");
+                                            setMountainCategory("Pizza");
+                                            setMenuPage(0);
+                                            setToastMessage("🍕 Opening Lewi Piyassa Premium Menu!");
+                                        } else if (store === "Twin's Kitchen" || store.toLowerCase().includes("twin") || store.toLowerCase().includes("twins")) {
+                                            setWebAppKeyboard("twins_kitchen_menu");
+                                            setMountainCategory("Local");
+                                            setMenuPage(0);
+                                            setToastMessage("🥘 Opening Twin's Kitchen Premium Menu!");
+                                        } else if (store === "Mohi Ertb" || store.toLowerCase().includes("mohi") || store.toLowerCase().includes("ertb") || store.toLowerCase().includes("ertib")) {
+                                            setWebAppKeyboard("mohi_ertb_menu");
+                                            setMountainCategory("Sandwich");
+                                            setMenuPage(0);
+                                            setToastMessage("🥘 Opening Mohi Ertb Premium Menu!");
+                                        } else if (store === "selam special" || store.toLowerCase().includes("selam")) {
+                                            setWebAppKeyboard("selam_special_menu");
+                                            setMountainCategory("Local");
+                                            setMenuPage(0);
+                                            setToastMessage("🥘 Opening Selam Special Premium Menu!");
+                                        } else if (store === "Cafe 9" || store.toLowerCase().includes("cafe 9") || store.toLowerCase().includes("cafe9") || store.toLowerCase().includes("cafe_9")) {
+                                            setWebAppKeyboard("cafe_9_menu");
+                                            setMountainCategory("Local");
+                                            setMenuPage(0);
+                                            setToastMessage("🥘 Opening Cafe 9 Premium Menu!");
                                         } else {
                                           setToastMessage(`🏪 Choice Set: ${store}! Now describe your items in chat!`);
                                           setIsMenuOpen(false);
@@ -3123,12 +3635,13 @@ export default function TelegramSimulator({
                                 </div>
                               </div>
                             </div>
-                          )}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
 
                 <div className="p-4 bg-slate-100 rounded-xl border border-slate-200 mt-4 text-[10.5px] text-slate-550 italic font-medium font-sans text-center leading-relaxed">
                   💡{" "}

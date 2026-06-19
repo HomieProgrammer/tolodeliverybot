@@ -35,16 +35,37 @@ if (apiKey && apiKey !== "MY_GEMINI_API_KEY") {
 
 // Default menu items list
 const MENU_ITEMS = [
-  { id: "item_1", name: "Cheeseburger Deluxe", category: "Burgers", price: 6.50, description: "Juicy beef patty, cheddar, lettuce, tomato, special sauce", isAvailable: true, estimatedPrepTime: 8 },
-  { id: "item_2", name: "Spicy Chicken Wrap", category: "Wraps", price: 7.00, description: "Crispy chicken, hot pepper sauce, lettuce, wrapped in flatbread", isAvailable: true, estimatedPrepTime: 7 },
-  { id: "item_3", name: "Pepperoni Pizza (Medium)", category: "Pizza", price: 12.00, description: "Classic tomato sauce, mozzarella, loaded with pepperoni", isAvailable: true, estimatedPrepTime: 12 },
-  { id: "item_4", name: "Margherita Pizza (Medium)", category: "Pizza", price: 10.00, description: "Fresh mozzarella, tomatoes, basil leaves, extra virgin olive oil", isAvailable: true, estimatedPrepTime: 10 },
-  { id: "item_5", name: "French Fries (Large)", category: "Sides", price: 3.50, description: "Crisp golden fries seasoned with a touch of sea salt", isAvailable: true, estimatedPrepTime: 5 },
-  { id: "item_6", name: "BBQ Chicken Wings (8pcs)", category: "Sides", price: 8.50, description: "Tender wings glazed in smokey hickory BBQ sauce", isAvailable: true, estimatedPrepTime: 9 },
-  { id: "item_7", name: "Waffles with Nutella", category: "Dessert", price: 5.50, description: "Warm waffle topped with creamy Nutella and icing sugar", isAvailable: true, estimatedPrepTime: 6 },
-  { id: "item_8", name: "Coca Cola (Can)", category: "Drinks", price: 2.00, description: "Ice-cold classic fizzy beverage", isAvailable: true, estimatedPrepTime: 2 },
-  { id: "item_9", name: "Fresh Orange Juice", category: "Drinks", price: 3.50, description: "100% natural, freshly squeezed orange juice", isAvailable: true, estimatedPrepTime: 3 },
-  { id: "item_10", name: "Cappuccino", category: "Hot Drinks", price: 3.00, description: "Creamy espresso with steamed milk foam", isAvailable: true, estimatedPrepTime: 4 },
+  // Injera (እንጀራ)
+  { id: "item_b1", name: "Key Wet(ቀይ ወጥ)", category: "Injera", price: 450.00, description: "Classic spicy Ethiopian beef stew cooked with berbere and savory spices, served with fresh Injera.", isAvailable: true, estimatedPrepTime: 12 },
+  { id: "item_b2", name: "Tefersho(ተፈረሾ)", category: "Injera", price: 450.00, description: "Savory pulled beef or lamb stew sautéed with spiced butter, garlic, and onions, served with Injera.", isAvailable: true, estimatedPrepTime: 10 },
+  { id: "item_b3", name: "Beyeaynet (በአይነት)", category: "Injera", price: 200.00, description: "Variety platter of traditional fasting stews including lentils, peas, and standard vegetables on Injera.", isAvailable: true, estimatedPrepTime: 5 },
+  { id: "item_b4", name: "Gomen Besiga(ጎመን በስጋ)", category: "Injera", price: 450.00, description: "Collard greens slow-cooked with succulent pieces of beef, garlic, ginger, and kibbeh (Ethiopian clarified butter).", isAvailable: true, estimatedPrepTime: 15 },
+  { id: "item_b5", name: "Mahberawi 1/2(ማህበራዊ)", category: "Injera", price: 1100.00, description: "Half-portion combination platter of mixed meat and vegetable stews, perfect for sharing.", isAvailable: true, estimatedPrepTime: 18 },
+  { id: "item_b6", name: "Shiro Feses(ሽሮ ፈሰስ)", category: "Injera", price: 200.00, description: "Smooth, liquid-consistency chickpea stew slow-simmered with onions, garlic, and spices.", isAvailable: true, estimatedPrepTime: 8 },
+  { id: "item_b7", name: "Misir Wet(ምስር ወጥ)", category: "Injera", price: 200.00, description: "Aromatic and spicy red lentil stew slow-cooked with berbere sauce.", isAvailable: true, estimatedPrepTime: 8 },
+  { id: "item_b8", name: "vegetabl With Meat(አትክልት በስጋ)", category: "Injera", price: 400.00, description: "Garden vegetables (cabbage, carrots, potatoes) sautéed with juicy beef chunks.", isAvailable: true, estimatedPrepTime: 14 },
+
+  // Pasta
+  { id: "item_b9", name: "ፓስታ በስጎ", category: "Pasta", price: 200.00, description: "Classic pasta noodles tossed in a home-style spiced tomato and onion sauce (sigo).", isAvailable: true, estimatedPrepTime: 8 },
+  { id: "item_b10", name: "Pasta Beatikilt (ፓስታ በአትክልት)", category: "Pasta", price: 200.00, description: "Freshly prepared pasta mixed with steamed seasonal vegetables and aromatic herbs.", isAvailable: true, estimatedPrepTime: 8 },
+  { id: "item_b11", name: "Pasta Besiga(ፓስታ በስጋ)", category: "Pasta", price: 450.00, description: "Perfectly boiled pasta topped with rich, savory beef bolognese sauce.", isAvailable: true, estimatedPrepTime: 10 },
+
+  // Breakfast
+  { id: "item_b12", name: "Enkulal Firfir (እንቁላል ፍርፍር)", category: "Breakfast", price: 250.00, description: "Ethiopian scrambled eggs sautéed with tomatoes, onions, green peppers, and spiced butter.", isAvailable: true, estimatedPrepTime: 6 },
+  { id: "item_b13", name: "እንቁላል ስልስ", category: "Breakfast", price: 250.00, description: "Scrambled eggs simmered in a rich tomato sauce with local spices and kibbeh.", isAvailable: true, estimatedPrepTime: 8 },
+
+  // Habeshan
+  { id: "item_b14", name: "Ayb Besiga(አይብ በስጋ)", category: "Habeshan", price: 450.00, description: "Sautéed savory beef pieces accompanied by spicy local yellow/white home-style cheese (ayeb).", isAvailable: true, estimatedPrepTime: 12 },
+  { id: "item_b15", name: "አገልግል ግማሽ", category: "Habeshan", price: 1100.00, description: "Half-size traditional wrapped meat basket containing various rich stews and rolls.", isAvailable: true, estimatedPrepTime: 20 },
+  { id: "item_b16", name: "Mahberawi(ማህበራዊ)", category: "Habeshan", price: 1600.00, description: "Grand festive mixed platter of meat wots, tibs, and boiled eggs, served over double-layered Injera.", isAvailable: true, estimatedPrepTime: 20 },
+  { id: "item_b17", name: "Enkulal Besiga (እንቁላል በስጋ)", category: "Habeshan", price: 450.00, description: "Scrambled egg platter sautéed with tender shredded beef pieces and green chillies.", isAvailable: true, estimatedPrepTime: 8 },
+  { id: "item_b18", name: "ስጋ ፍርፍር", category: "Habeshan", price: 400.00, description: "Succulent beef pieces sautéed in spiced butter, stewed in berbere, shredded and mixed with Injera.", isAvailable: true, estimatedPrepTime: 10 },
+  { id: "item_b19", name: "Merek Tibs", category: "Habeshan", price: 450.00, description: "Juicy pan-fried meat chunks served with a savory, spiced seasoned broth.", isAvailable: true, estimatedPrepTime: 12 },
+  { id: "item_b20", name: "Ayb Begomen(አይብ በጎመን)", category: "Habeshan", price: 300.00, description: "Local cottage cheese (ayeb) blended with spiced leafy greens and ghee.", isAvailable: true, estimatedPrepTime: 10 },
+  { id: "item_b21", name: "Dulet", category: "Habeshan", price: 400.00, description: "Traditional spicy minced tripe, liver, and lean beef sautéed in mitmita and clarified spiced butter.", isAvailable: true, estimatedPrepTime: 12 },
+  { id: "item_b22", name: "Pasta Be enkulal", category: "Habeshan", price: 250.00, description: "Stir-fried pasta tossed with savory scrambled eggs and sliced sautéed peppers.", isAvailable: true, estimatedPrepTime: 8 },
+  { id: "item_b23", name: "Minchet", category: "Habeshan", price: 400.00, description: "Minced lean beef simmered in a rich, mild or spicy berbere gravy, garnished with boiled eggs.", isAvailable: true, estimatedPrepTime: 12 },
+  { id: "item_b24", name: "Dinch Wot", category: "Habeshan", price: 200.00, description: "Slow-cooked savory potato stew infused with onions, garlic, turmeric, and local herbs.", isAvailable: true, estimatedPrepTime: 8 }
 ];
 
 // In-memory active catalog editing support for Admin UI

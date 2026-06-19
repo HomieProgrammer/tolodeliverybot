@@ -220,7 +220,23 @@ export default function App() {
       const response = await fetch("/api/menu");
       if (response.ok) {
         const data = await response.json();
-        setMenuItems(data);
+        // Consolidate Injera, injera2, and Injera 3 into a single canonical "Injera" category
+        const consolidatedData = data.map((item: any) => {
+          if (item && item.category) {
+            const catLower = item.category.toLowerCase().trim();
+            if (
+              catLower === "injera" ||
+              catLower === "injera2" ||
+              catLower === "injera 2" ||
+              catLower === "injera3" ||
+              catLower === "injera 3"
+            ) {
+              return { ...item, category: "Injera" };
+            }
+          }
+          return item;
+        });
+        setMenuItems(consolidatedData);
       }
     } catch (err) {
       console.error("Error loading menu:", err);
@@ -247,7 +263,7 @@ export default function App() {
         id: "msg_welcome_1",
         sender: "bot",
         type: "start_flow",
-        text: "🚀 እንኳን ወደ ቶሎ | Tollo Delivery በሰላም መጡ! 👋\n\nየምግብ፣ የሸቀጣሸቀጥ፣ የዕቃዎችና የፈጣን መልእክት ማድረሻ አገልግሎት።\nበቀላሉ ይዘዙ፣ አስተማማኝ አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ፣ በታማኝነት ይክፈሉ።\n\n-------------------------\n\n🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\nOrder quickly, track deliveries in real time, and pay securely.",
+        text: "🚀 እንኳን ወደ ቶሎ | Tollo Delivery በሰላም መጡ! 👋\n\nየምግብ፣ የሸቀጣሸቀጥ፣ የዕቃዎችና የፈጣን መልዕክት ማድረሻ አገልግሎት።\nበቀላሉ ይዘዙ፣ አስተማማኝ አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ፣ በታማኝነት ይክፈሉ።\n\n-------------------------\n\n🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\nOrder quickly, track deliveries in real time, and pay securely.",
         buttons: [
           {
             label: "🍔 ቶሎ ማዘዣ ክፈት (Open Tollo App)",
@@ -329,7 +345,7 @@ export default function App() {
           {
             id: "msg_help_" + Date.now(),
             sender: "bot",
-            text: "ℹ️ *ቶሎ የማዘዣ መመሪያ / Tollo User Guide*\n\n1. *ክፍት መተግበሪያ (Open App):* Click the bottom 'Open Tollo Delivery' button to easily enter your name, phone, pickup, and delivery addresses.\n2. *የሱቅ ምርጫ (Store Selection):* Select your favorite restaurant or supermarket from our list to set it as the pickup location.\n3. *ምግብ ይዘዙ (Describe Order):* Type the items you want, e.g., '1 Special Burger and 1 Sprite'.\n4. *ቅድሚያ ክፍያ (Advance Payment):* Pay 1/3 advance via Telebirr or CBE Birr and upload the receipt screenshot in the app to finalize!\n\n📞 Need direct help? Call our support desk at *9801* or contact @Cephasimon.",
+            text: `ℹ️ *ቶሎ የማዘዣ መመሪያ / Tollo User Guide*\n\n1. *ክፍት መተግበሪያ (Open App):* Click the bottom 'Open Tollo Delivery' button to easily enter your name, phone, pickup, and delivery addresses.\n2. *የሱቅ ምርጫ (Store Selection):* Select your favorite restaurant or supermarket from our list to set it as the pickup location.\n3. *ምግብ ይዘዙ (Describe Order):* Type the items you want, e.g., '1 Special Burger and 1 Sprite'.\n4. *ቅድሚያ ክፍያ (Advance Payment):* Pay 1/3 advance via Telebirr or CBE Birr and upload the receipt screenshot in the app to finalize!\n\n👤 *የደንበኛ መረጃ / Active Profile:* \n• ስም (Name): ${customerProfile.name || "(ያልተመዘገበ / Not set)"}\n• ስልክ (Phone): ${customerProfile.phone || "(ያልተመዘገበ / Not set)"}\n\n📞 Need direct help? Call our support desk at *9801* or contact @Cephasimon.`,
             timestamp: timestampStr,
           },
         ]);
@@ -458,7 +474,7 @@ export default function App() {
           {
             id: "msg_support_" + Date.now(),
             sender: "bot",
-            text: "📞 *Tollo Customer Care Desk*\n\nOur customer support desk is active 24/7.\n\nReplying directly to this bot goes directly to our live desk. Alternatively, you can email us at *support@tollodelivery.com* or call our toll-free support line at *9801*.\n\nHow can we help you today?",
+            text: `📞 *ቶሎ የደንበኞች ድጋፍ መስኮት | Tollo Support Desk* 🤝\n\n👤 *ደንበኛ ስም (Customer Name):* ${customerProfile.name || "(ያልተመዘገበ / Not set yet)"}\n📞 *ስልክ ቁጥር (Phone Number):* ${customerProfile.phone || "(ያልተመዘገበ / Not set yet)"}\n\nOur customer support agents are active 24/7. Replying directly to this bot goes directly to our live desk. Alternatively, you can email us at *support@tollodelivery.com* or call our toll-free support line at *9801*.`,
             timestamp: timestampStr,
           },
         ]);
@@ -501,7 +517,7 @@ export default function App() {
             sender: "bot",
             type: "start_flow",
             text: isStartCommand
-              ? "🚀 እንኳን ወደ ቶሎ | Tollo Delivery በሰላም መጡ! 👋\n\nየምግብ፣ የሸቀጣሸቀጥ፣ የዕቃዎችና የፈጣን መልእክት ማድረሻ አገልግሎት።\nበቀላሉ ይዘዙ፣ አስተማማኝ አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ፣ በታማኝነት ይክፈሉ።\n\n-------------------------\n\n🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\nOrder quickly, track deliveries in real time, and pay securely."
+              ? "🚀 እንኳን ወደ ቶሎ | Tollo Delivery በሰላም መጡ! 👋\n\nየምግብ፣ የሸቀጣሸቀጥ፣ የዕቃዎችና የፈጣን መልዕክት ማድረሻ አገልግሎት።\nበቀላሉ ይዘዙ፣ አስተማማኝ አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ፣ በታማኝነት ይክፈሉ።\n\n-------------------------\n\n🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\nOrder quickly, track deliveries in real time, and pay securely."
               : "🍔 *ቶሎ ማዘዣ ረዳት (Tollo Mini App)*\n\nእባክዎን ከታች ያለውን የ 'Open Tollo App' ቁልፍ በመጫን ትዕዛዝዎን ይፈጽሙ፣ የማድረሻ ቦታዎችዎን ያስተካክሉ ወይም አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ!\n\nTo place your order, browse our full live menu, track active deliveries, or manage your delivery parameters, please use our secure ቶሎ | Tollo Delivery Mini App directly inside Telegram by clicking the button below!",
             buttons: [
               {
