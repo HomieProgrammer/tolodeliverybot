@@ -345,7 +345,7 @@ export default function App() {
           {
             id: "msg_help_" + Date.now(),
             sender: "bot",
-            text: `ℹ️ *ቶሎ የማዘዣ መመሪያ / Tollo User Guide*\n\n1. *ክፍት መተግበሪያ (Open App):* Click the bottom 'Open Tollo Delivery' button to easily enter your name, phone, pickup, and delivery addresses.\n2. *የሱቅ ምርጫ (Store Selection):* Select your favorite restaurant or supermarket from our list to set it as the pickup location.\n3. *ምግብ ይዘዙ (Describe Order):* Type the items you want, e.g., '1 Special Burger and 1 Sprite'.\n4. *ቅድሚያ ክፍያ (Advance Payment):* Pay 1/3 advance via Telebirr or CBE Birr and upload the receipt screenshot in the app to finalize!\n\n👤 *የደንበኛ መረጃ / Active Profile:* \n• ስም (Name): ${customerProfile.name || "(ያልተመዘገበ / Not set)"}\n• ስልክ (Phone): ${customerProfile.phone || "(ያልተመዘገበ / Not set)"}\n\n📞 Need direct help? Call our support desk at *9801* or contact @Cephasimon.`,
+            text: `ℹ️ *ቶሎ የማዘዣ መመሪያ / Tollo User Guide*\n\n1. *ክፍት መተግበሪያ (Open App):* Click the bottom 'Open Tollo Delivery' button to easily enter your name, phone, pickup, and delivery addresses.\n2. *የሱቅ ምርጫ (Store Selection):* Select your favorite restaurant or supermarket from our list to set it as the pickup location.\n3. *ምግብ ይዘዙ (Describe Order):* Type the items you want, e.g., '1 Special Burger and 1 Sprite'.\n4. *ቅድሚያ ክፍያ (Advance Payment):* Pay 1/3 advance via Telebirr or CBE Birr and upload the receipt screenshot in the app to finalize!\n\n👤 *የደንበኛ መረጃ / Active Profile:* \n• ስም (Name): ${customerProfile.name || "(ያልተመዘገበ / Not set)"}\n• ስልክ (Phone): ${customerProfile.phone || "(ያልተመዘገበ / Not set)"}\n\n📞 Need direct help? Call our support desk at *+251965803642* or contact *@tollodeliverysupport*.`,
             timestamp: timestampStr,
           },
         ]);
@@ -474,7 +474,7 @@ export default function App() {
           {
             id: "msg_support_" + Date.now(),
             sender: "bot",
-            text: `📞 *ቶሎ የደንበኞች ድጋፍ መስኮት | Tollo Support Desk* 🤝\n\n👤 *ደንበኛ ስም (Customer Name):* ${customerProfile.name || "(ያልተመዘገበ / Not set yet)"}\n📞 *ስልክ ቁጥር (Phone Number):* ${customerProfile.phone || "(ያልተመዘገበ / Not set yet)"}\n\nOur customer support agents are active 24/7. Replying directly to this bot goes directly to our live desk. Alternatively, you can email us at *support@tollodelivery.com* or call our toll-free support line at *9801*.`,
+            text: `📞 *ቶሎ የደንበኞች ድጋፍ መስኮት | Tollo Support Desk* 🤝\n\n👤 *ደንበኛ ስም (Customer Name):* ${customerProfile.name || "(ያልተመዘገበ / Not set yet)"}\n📞 *ስልክ ቁጥር (Phone Number):* ${customerProfile.phone || "(ያልተመዘገበ / Not set yet)"}\n\nOur customer support agents are active 24/7. Replying directly to this bot goes directly to our live desk. Alternatively, you can reach us via Telegram at *@tollodeliverysupport* or call us directly at *+251965803642*.`,
             timestamp: timestampStr,
           },
         ]);
