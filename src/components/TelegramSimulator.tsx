@@ -170,10 +170,28 @@ export const CENTRAL_RESTAURANT_THEMES: Record<string, StoreBrandTheme> = {
     brandingEmoji: "🍔",
   },
   antsokiya: {
-    primary: "#C24103",
-    primaryHover: "#9A3412",
-    primaryRgb: "194, 65, 3",
+    primary: "#5E9D6E",
+    primaryHover: "#4F8A5E",
+    primaryRgb: "94, 157, 110",
     brandingEmoji: "🥗",
+  },
+  hibir: {
+    primary: "#5E9D6E",
+    primaryHover: "#4F8A5E",
+    primaryRgb: "94, 157, 110",
+    brandingEmoji: "☕",
+  },
+  mamas_cheko: {
+    primary: "#EC4899",
+    primaryHover: "#DB2777",
+    primaryRgb: "236, 72, 153",
+    brandingEmoji: "🍰",
+  },
+  sunny_burger_2: {
+    primary: "#F97316",
+    primaryHover: "#EA580C",
+    primaryRgb: "249, 115, 22",
+    brandingEmoji: "🍔",
   },
 };
 
@@ -302,6 +320,34 @@ export const getStoreMeta = (storeName: string) => {
       deliveryFee: "Free Delivery",
       image:
         "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=400&q=80",
+    };
+  }
+
+  if (
+    storeName === "Mama's Cheko Bar" ||
+    storeName.toLowerCase().includes("mamas cheko") ||
+    storeName.toLowerCase().includes("cheko")
+  ) {
+    return {
+      rating: "4.9",
+      deliveryTime: "15-25 min",
+      deliveryFee: "Free Delivery",
+      image:
+        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=400&q=80",
+    };
+  }
+
+  if (
+    storeName === "Sunny burger #2" ||
+    storeName.toLowerCase().includes("sunny burger #2") ||
+    (storeName.toLowerCase().includes("sunny") && storeName.includes("2"))
+  ) {
+    return {
+      rating: "4.8",
+      deliveryTime: "10-20 min",
+      deliveryFee: "Free Delivery",
+      image:
+        "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=80",
     };
   }
 
@@ -1530,12 +1576,8 @@ export const BEKOS_PASTRY_MENU: Record<string, MountainItem[]> = {
     { name: "Caramel Mini cake", price: 200.0 },
     { name: "Chocolate minicake", price: 200.0 },
   ],
-  Pizza: [
-    { name: "Beef Pizza", price: 630.0 },
-  ],
-  Breakfast: [
-    { name: "Normal Chips", price: 250.0 },
-  ],
+  Pizza: [{ name: "Beef Pizza", price: 630.0 }],
+  Breakfast: [{ name: "Normal Chips", price: 250.0 }],
   Burger: [
     { name: "Special Burger", price: 710.0 },
     { name: "Hat Creek Burger", price: 770.0 },
@@ -1576,9 +1618,7 @@ export const LIGHT_BURGER_MENU: Record<string, MountainItem[]> = {
     { name: "Beef Pizza", price: 1480.0 },
     { name: "Chicken Pizza", price: 1980.0 },
   ],
-  Breakfast: [
-    { name: "French Fries", price: 480.0 },
-  ],
+  Breakfast: [{ name: "French Fries", price: 480.0 }],
 };
 
 export const ANA_CAFE_MENU: Record<string, MountainItem[]> = {
@@ -1586,24 +1626,16 @@ export const ANA_CAFE_MENU: Record<string, MountainItem[]> = {
     { name: "Club Sandwich", price: 610.0 },
     { name: "Chips", price: 280.0 },
   ],
-  Chicken: [
-    { name: "Special Chicken Shawarma", price: 710.0 },
-  ],
-  Shawarma: [
-    { name: "Special Fetira", price: 410.0 },
-  ],
+  Chicken: [{ name: "Special Chicken Shawarma", price: 710.0 }],
+  Shawarma: [{ name: "Special Fetira", price: 410.0 }],
   Burger: [
     { name: "Special Burger", price: 640.0 },
     { name: "Special Club Sandwich", price: 710.0 },
     { name: "Beef Burger", price: 510.0 },
     { name: "Egg Burger", price: 560.0 },
   ],
-  Fish: [
-    { name: "Fish Gulash", price: 610.0 },
-  ],
-  "እንጀራ": [
-    { name: "Teferisho", price: 510.0 },
-  ],
+  Fish: [{ name: "Fish Gulash", price: 610.0 }],
+  እንጀራ: [{ name: "Teferisho", price: 510.0 }],
   Pizza: [
     { name: "Special Pizza", price: 710.0 },
     { name: "Meat Lover Pizza", price: 660.0 },
@@ -1620,12 +1652,8 @@ export const SAFELAND_CAFE_MENU: Record<string, MountainItem[]> = {
     { name: "Beef Burger", price: 460.0 },
     { name: "Burgerizza", price: 750.0 },
   ],
-  Cake: [
-    { name: "Custard Donut", price: 115.0 },
-  ],
-  Chicken: [
-    { name: "Chicken wings", price: 700.0 },
-  ],
+  Cake: [{ name: "Custard Donut", price: 115.0 }],
+  Chicken: [{ name: "Chicken wings", price: 700.0 }],
   Juice: [
     { name: "Banana Shake", price: 240.0 },
     { name: "Chocolate Shake", price: 290.0 },
@@ -1645,9 +1673,7 @@ export const SAFELAND_CAFE_MENU: Record<string, MountainItem[]> = {
     { name: "Fasting Takos", price: 450.0 },
     { name: "Chicken Shawarma", price: 630.0 },
   ],
-  Breakfast: [
-    { name: "Special Chips", price: 500.0 },
-  ],
+  Breakfast: [{ name: "Special Chips", price: 500.0 }],
 };
 
 export const ADDIS_ASA_MENU: Record<string, MountainItem[]> = {
@@ -1710,7 +1736,7 @@ export const FUNCHE_SHIRO_MENU: Record<string, MountainItem[]> = {
     { name: "Pasta Besugo(ፓስታ በሱጎ)", price: 250.0 },
     { name: "Pasta Besiga (ፓስታ በስጋ)", price: 450.0 },
   ],
-  "እንጀራ": [
+  እንጀራ: [
     { name: "Beyeaynet (በየአይነት)", price: 300.0 },
     { name: "Misto(ሚስቶ)", price: 450.0 },
     { name: "Tefersho(ተፈረሾ)", price: 450.0 },
@@ -1724,9 +1750,7 @@ export const FUNCHE_SHIRO_MENU: Record<string, MountainItem[]> = {
 };
 
 export const HABTSH_MENU: Record<string, MountainItem[]> = {
-  Habeshan: [
-    { name: "Half Punch", price: 2080.0 },
-  ],
+  Habeshan: [{ name: "Half Punch", price: 2080.0 }],
 };
 
 export const BOSS_FRIES_MENU: Record<string, MountainItem[]> = {
@@ -1749,20 +1773,14 @@ export const BLISS_COFFEE_MENU: Record<string, MountainItem[]> = {
     { name: "Super Mix Burger", price: 750.0 },
     { name: "Chiken Burger", price: 550.0 },
   ],
-  Pizza: [
-    { name: "Meat Lover Pizza", price: 750.0 },
-  ],
+  Pizza: [{ name: "Meat Lover Pizza", price: 750.0 }],
   Sandwich: [
     { name: "Club Sandwich", price: 650.0 },
     { name: "Tuna Sandwich", price: 600.0 },
     { name: "Vegetables Sandwich", price: 450.0 },
   ],
-  Shawarma: [
-    { name: "Beef Rap", price: 550.0 },
-  ],
+  Shawarma: [{ name: "Beef Rap", price: 550.0 }],
 };
-
-
 
 export const TINA_FAYA_MENU: Record<string, MountainItem[]> = {
   "Traditional Foods": [
@@ -1821,15 +1839,9 @@ export const ABENEZER_KURT_MENU: Record<string, MountainItem[]> = {
 };
 
 export const ABIY_FILAFIL_MENU: Record<string, MountainItem[]> = {
-  Breakfast: [
-    { name: "Normal Filafil", price: 120.0 },
-  ],
-  Burger: [
-    { name: "Special Filafil", price: 125.0 },
-  ],
-  Shawarma: [
-    { name: "Normal Ertb", price: 80.0 },
-  ],
+  Breakfast: [{ name: "Normal Filafil", price: 120.0 }],
+  Burger: [{ name: "Special Filafil", price: 125.0 }],
+  Shawarma: [{ name: "Normal Ertb", price: 80.0 }],
 };
 
 export const FEVEN_RESTAURANT_MENU: Record<string, MountainItem[]> = {
@@ -1853,7 +1865,7 @@ export const FEVEN_RESTAURANT_MENU: Record<string, MountainItem[]> = {
 };
 
 export const TEWEDAJ_MENU: Record<string, MountainItem[]> = {
-  "እንጀራ": [
+  እንጀራ: [
     { name: "የጾም አገልግል", price: 500.0 },
     { name: "ምንቸት", price: 400.0 },
     { name: "የፍስክ አገልግል", price: 800.0 },
@@ -1914,18 +1926,77 @@ export const ANTSOKIYA_MENU: Record<string, MountainItem[]> = {
     { name: "ክትፎ Normal", price: 950.0 },
     { name: "ክትፎ Special", price: 1050.0 },
   ],
-  "እንጀራ": [
+  እንጀራ: [
     { name: "ስጋ ፍርፍር", price: 350.0 },
-    { name: "ተፈራሽ Normal", price: 350.0 },
-    { name: "ተፈራሽ special", price: 650.0 },
+    { name: "ተፈሪሽ Normal", price: 350.0 },
+    { name: "ተፈሪሽ special", price: 650.0 },
     { name: "Tibs Special", price: 650.0 },
     { name: "ቀይ ወጥ", price: 350.0 },
   ],
-  "Traditional Foods": [
-    { name: "Ayib Begomen", price: 350.0 },
-  ],
+  "Traditional Foods": [{ name: "Ayib Begomen", price: 350.0 }],
 };
 
+export const HIBIR_MENU: Record<string, MountainItem[]> = {
+  Burger: [
+    { name: "Hibir Double Juice Burger", price: 700.0 },
+    { name: "Cheese Burger", price: 550.0 },
+    { name: "Hibir Burgerizza", price: 900.0 },
+    { name: "Double Cheese Burger", price: 600.0 },
+    { name: "Chicken Burger", price: 830.0 },
+    { name: "Fasting Burger", price: 450.0 },
+    { name: "Hibir Special Burger", price: 730.0 },
+    { name: "Triple Burger", price: 750.0 },
+    { name: "Beef Burger", price: 530.0 },
+    { name: "Fish Burger", price: 550.0 },
+    { name: "Stromboli Pizza", price: 670.0 },
+  ],
+  Pizza: [
+    { name: "Special Pizza", price: 800.0 },
+    { name: "Beef Pizza", price: 650.0 },
+    { name: "Margarita Pizza", price: 530.0 },
+  ],
+  Lazagna: [{ name: "Lazagna", price: 940.0 }],
+  Sandwich: [
+    { name: "french fries", price: 250.0 },
+    { name: "Hibir Burrito", price: 870.0 },
+  ],
+  Juice: [
+    { name: "Mango Iced Tea", price: 280.0 },
+    { name: "Special Juice", price: 280.0 },
+  ],
+  Habeshan: [{ name: "ቋንጣ ፍርፍር", price: 530.0 }],
+};
+
+export const MAMAS_CHEKO_MENU: Record<string, MountainItem[]> = {
+  Cake: [
+    { name: "Combo", price: 520.00 },
+    { name: "Churros", price: 400.00 },
+    { name: "Craps", price: 400.00 },
+    { name: "Fasting Churos", price: 400.00 },
+    { name: "Fasting Creps", price: 400.00 },
+    { name: "Waffle", price: 400.00 },
+    { name: "Desert Oreo", price: 300.00 },
+    { name: "Puncakes", price: 400.00 }
+  ]
+};
+
+export const SUNNY_BURGER_2_MENU: Record<string, MountainItem[]> = {
+  Juice: [
+    { name: "Chocolate Shake", price: 270.00 },
+    { name: "Mango Juice", price: 200.00 },
+    { name: "Strawberry mojito", price: 200.00 }
+  ],
+  Pizza: [
+    { name: "Special Pizza", price: 920.00 }
+  ],
+  Sandwich: [
+    { name: "Egg Roll", price: 500.00 },
+    { name: "Egg Sandwich", price: 300.00 }
+  ],
+  Shawarma: [
+    { name: "Fasting Roll", price: 430.00 }
+  ]
+};
 
 export default function TelegramSimulator({
   messages,
@@ -1997,6 +2068,9 @@ export default function TelegramSimulator({
     | "tewedaj_menu"
     | "yellow_burger_menu"
     | "antsokiya_menu"
+    | "hibir_menu"
+    | "mamas_cheko_menu"
+    | "sunny_burger_2_menu"
   >("main");
   const [webAppKeyboard, setWebAppKeyboard] = useState<
     | "main"
@@ -2043,6 +2117,9 @@ export default function TelegramSimulator({
     | "tewedaj_menu"
     | "yellow_burger_menu"
     | "antsokiya_menu"
+    | "hibir_menu"
+    | "mamas_cheko_menu"
+    | "sunny_burger_2_menu"
   >("stores_p1");
   const [mountainCategory, setMountainCategory] = useState<string>("Juice");
   const [mountainSelected, setMountainSelected] = useState<
@@ -2382,7 +2459,9 @@ export default function TelegramSimulator({
             setTgKeyboard("abenezer_kurt_menu");
             setMountainCategory("Habeshan");
             setMenuPage(0);
-            setToastMessage(`🥩 Welcome to Abenezer Kurt Ena Kitfo Premium Menu!`);
+            setToastMessage(
+              `🥩 Welcome to Abenezer Kurt Ena Kitfo Premium Menu!`,
+            );
           } else if (
             arg === "Feven Restaurant" ||
             arg.toLowerCase().includes("feven")
@@ -2418,7 +2497,20 @@ export default function TelegramSimulator({
             setTgKeyboard("yellow_burger_menu");
             setMountainCategory("Burger");
             setMenuPage(0);
-            setToastMessage(`🍔 Welcome to Yellow Burger & Pizza Combined Menu!`);
+            setToastMessage(
+              `🍔 Welcome to Yellow Burger & Pizza Combined Menu!`,
+            );
+          } else if (
+            arg === "Hibir Cafe & Restorant" ||
+            arg === "Hibir" ||
+            arg.toLowerCase().includes("hibir")
+          ) {
+            setTgKeyboard("hibir_menu");
+            setMountainCategory("Burger");
+            setMenuPage(0);
+            setToastMessage(
+              `☕ Welcome to Hibir Cafe & Restorant Premium Menu!`,
+            );
           } else if (
             arg === "Antsokiya Traditional Food" ||
             arg === "Antsokiya" ||
@@ -2427,7 +2519,31 @@ export default function TelegramSimulator({
             setTgKeyboard("antsokiya_menu");
             setMountainCategory("Habeshan");
             setMenuPage(0);
-            setToastMessage(`🥘 Welcome to Antsokiya Traditional Food Premium Menu!`);
+            setToastMessage(
+              `🥘 Welcome to Antsokiya Traditional Food Premium Menu!`,
+            );
+          } else if (
+            arg === "Mama's Cheko Bar" ||
+            arg.toLowerCase().includes("mamas cheko") ||
+            arg.toLowerCase().includes("cheko")
+          ) {
+            setTgKeyboard("mamas_cheko_menu");
+            setMountainCategory("Cake");
+            setMenuPage(0);
+            setToastMessage(
+              `🍰 Welcome to Mama's Cheko Bar Premium Menu!`,
+            );
+          } else if (
+            arg === "Sunny burger #2" ||
+            arg.toLowerCase().includes("sunny burger #2") ||
+            (arg.toLowerCase().includes("sunny") && (arg.includes("2") || arg.toLowerCase().includes("two")))
+          ) {
+            setTgKeyboard("sunny_burger_2_menu");
+            setMountainCategory("Juice");
+            setMenuPage(0);
+            setToastMessage(
+              `☀️ Welcome to Sunny burger #2 Premium Menu!`,
+            );
           } else {
             setIsMenuOpen(true);
             setToastMessage(`🏪 Selected: ${arg}! Set as pick-up location.`);
@@ -2633,7 +2749,10 @@ export default function TelegramSimulator({
       | "abiy_filafil"
       | "tewedaj"
       | "yellow_burger"
-      | "antsokiya",
+      | "antsokiya"
+      | "hibir"
+      | "mamas_cheko"
+      | "sunny_burger_2",
   ) => {
     const menuData =
       menuType === "mountain"
@@ -2684,35 +2803,55 @@ export default function TelegramSimulator({
                                                     ? SAFELAND_CAFE_MENU
                                                     : menuType === "addis_asa"
                                                       ? ADDIS_ASA_MENU
-                                                      : menuType === "chef_teketel"
+                                                      : menuType ===
+                                                          "chef_teketel"
                                                         ? CHEF_TEKETEL_MENU
-                                                        : menuType === "chef_dani"
+                                                        : menuType ===
+                                                            "chef_dani"
                                                           ? DANI_CHEF_MENU
-                                                          : menuType === "funche_shiro"
+                                                          : menuType ===
+                                                              "funche_shiro"
                                                             ? FUNCHE_SHIRO_MENU
-                                                            : menuType === "habtsh"
+                                                            : menuType ===
+                                                                "habtsh"
                                                               ? HABTSH_MENU
-                                                              : menuType === "boss_fries"
+                                                              : menuType ===
+                                                                  "boss_fries"
                                                                 ? BOSS_FRIES_MENU
-                                                                : menuType === "bliss_coffee"
+                                                                : menuType ===
+                                                                    "bliss_coffee"
                                                                   ? BLISS_COFFEE_MENU
-                                                                  : menuType === "tina_faya"
+                                                                  : menuType ===
+                                                                      "tina_faya"
                                                                     ? TINA_FAYA_MENU
-                                                                    : menuType === "azi_hotel"
+                                                                    : menuType ===
+                                                                        "azi_hotel"
                                                                       ? AZI_HOTEL_MENU
-                                                                      : menuType === "abenezer_kurt"
+                                                                      : menuType ===
+                                                                          "abenezer_kurt"
                                                                         ? ABENEZER_KURT_MENU
-                                                                        : menuType === "feven"
+                                                                        : menuType ===
+                                                                            "feven"
                                                                           ? FEVEN_RESTAURANT_MENU
-                                                                          : menuType === "abiy_filafil"
+                                                                          : menuType ===
+                                                                              "abiy_filafil"
                                                                             ? ABIY_FILAFIL_MENU
-                                                                            : menuType === "tewedaj"
+                                                                            : menuType ===
+                                                                                "tewedaj"
                                                                               ? TEWEDAJ_MENU
-                                                                              : menuType === "yellow_burger"
+                                                                              : menuType ===
+                                                                                  "yellow_burger"
                                                                                 ? YELLOW_BURGER_MENU
-                                                                                : menuType === "antsokiya"
+                                                                                : menuType ===
+                                                                                    "antsokiya"
                                                                                   ? ANTSOKIYA_MENU
-                                                                                  : YOM_BURGERIZZA_MENU;
+                                                                                  : menuType === "hibir"
+                                                      ? HIBIR_MENU
+                                                      : menuType === "mamas_cheko"
+                                                        ? MAMAS_CHEKO_MENU
+                                                        : menuType === "sunny_burger_2"
+                                                          ? SUNNY_BURGER_2_MENU
+                                                          : YOM_BURGERIZZA_MENU;
 
     const rawCategories =
       menuType === "yom"
@@ -2755,140 +2894,151 @@ export default function TelegramSimulator({
                         ? ["All", "Shawarma"]
                         : menuType === "funche_shiro"
                           ? ["All", "እንጀራ", "Habeshan", "Pasta"]
-                      : menuType === "cafe_9"
-                        ? [
-                            "All",
-                            "Local",
-                            "Sandwich",
-                            "Pizza",
-                            "Breakfast",
-                            "Burger",
-                            "Fish",
-                            "Juice",
-                            "Shawarma",
-                          ]
-                        : menuType === "zanzibar"
-                          ? [
-                              "All",
-                              "Fish",
-                              "Local",
-                              "Juice",
-                              "Pizza",
-                              "Sandwich",
-                              "Breakfast",
-                              "Burger",
-                              "Chicken",
-                            ]
-                          : menuType === "time_cafe"
+                          : menuType === "cafe_9"
                             ? [
                                 "All",
+                                "Local",
                                 "Sandwich",
                                 "Pizza",
+                                "Breakfast",
                                 "Burger",
-                                "Cake",
+                                "Fish",
+                                "Juice",
+                                "Shawarma",
                               ]
-                            : menuType === "fenet_kitfo" || menuType === "tina_faya" || menuType === "azi_hotel"
-                              ? ["All", "Traditional Foods", "Habeshan"]
-                              : menuType === "bekos_pastry"
-                                ? [
-                                    "All",
-                                    "Cake",
-                                    "Pizza",
-                                    "Breakfast",
-                                    "Burger",
-                                  ]
-                                : menuType === "light_burger"
-                                  ? [
-                                      "All",
-                                      "Burger",
-                                      "Cake",
-                                      "Chicken",
-                                      "Sandwich",
-                                      "Pizza",
-                                      "Breakfast",
-                                    ]
-                                  : menuType === "ana_cafe"
+                            : menuType === "zanzibar"
+                              ? [
+                                  "All",
+                                  "Fish",
+                                  "Local",
+                                  "Juice",
+                                  "Pizza",
+                                  "Sandwich",
+                                  "Breakfast",
+                                  "Burger",
+                                  "Chicken",
+                                ]
+                              : menuType === "time_cafe"
+                                ? ["All", "Sandwich", "Pizza", "Burger", "Cake"]
+                                : menuType === "fenet_kitfo" ||
+                                    menuType === "tina_faya" ||
+                                    menuType === "azi_hotel"
+                                  ? ["All", "Traditional Foods", "Habeshan"]
+                                  : menuType === "bekos_pastry"
                                     ? [
                                         "All",
-                                        "Sandwich",
-                                        "Chicken",
-                                        "Shawarma",
-                                        "Burger",
-                                        "Fish",
-                                        "እንጀራ",
+                                        "Cake",
                                         "Pizza",
+                                        "Breakfast",
+                                        "Burger",
                                       ]
-                                    : menuType === "safeland_cafe"
+                                    : menuType === "light_burger"
                                       ? [
                                           "All",
                                           "Burger",
                                           "Cake",
                                           "Chicken",
-                                          "Juice",
+                                          "Sandwich",
                                           "Pizza",
-                                          "Shawarma",
                                           "Breakfast",
                                         ]
-                                      : menuType === "addis_asa"
+                                      : menuType === "ana_cafe"
                                         ? [
                                             "All",
+                                            "Sandwich",
+                                            "Chicken",
+                                            "Shawarma",
+                                            "Burger",
                                             "Fish",
+                                            "እንጀራ",
+                                            "Pizza",
                                           ]
-                                        : menuType === "chef_teketel"
+                                        : menuType === "safeland_cafe"
                                           ? [
                                               "All",
-                                              "Habeshan",
+                                              "Burger",
+                                              "Cake",
+                                              "Chicken",
+                                              "Juice",
+                                              "Pizza",
+                                              "Shawarma",
+                                              "Breakfast",
                                             ]
-                                          : menuType === "feven"
-                                            ? [
-                                                "All",
-                                                "Habeshan",
-                                              ]
-                                            : menuType === "abiy_filafil"
-                                              ? [
-                                                  "All",
-                                                  "Breakfast",
-                                                  "Burger",
-                                                  "Shawarma",
-                                                ]
-                                              : menuType === "tewedaj"
-                                                ? [
-                                                    "All",
-                                                    "እንጀራ",
-                                                    "Habeshan",
-                                                  ]
-                                                : menuType === "yellow_burger"
+                                          : menuType === "addis_asa"
+                                            ? ["All", "Fish"]
+                                            : menuType === "chef_teketel"
+                                              ? ["All", "Habeshan"]
+                                              : menuType === "feven"
+                                                ? ["All", "Habeshan"]
+                                                : menuType === "abiy_filafil"
                                                   ? [
                                                       "All",
-                                                      "Burger",
-                                                      "Pizza",
-                                                      "Juice",
                                                       "Breakfast",
-                                                      "Sandwich",
+                                                      "Burger",
+                                                      "Shawarma",
                                                     ]
-                                                  : menuType === "antsokiya"
+                                                  : menuType === "tewedaj"
                                                     ? [
                                                         "All",
-                                                        "Habeshan",
                                                         "እንጀራ",
-                                                        "Traditional Foods",
+                                                        "Habeshan",
                                                       ]
-                                                    : [
-                                  "All",
-                                  "Noodles",
-                                  "Pizza",
-                                  "Burger",
-                                  "Juice",
-                                  "Sandwich",
-                                  "Shawarma",
-                                  "Chicken",
-                                  "Breakfast",
-                                  "Coffee",
-                                  "Pasta",
-                                  "Soft Drink",
-                                  "Cake",
-                                  "Pastry",
-                                ];
+                                                    : menuType ===
+                                                        "yellow_burger"
+                                                      ? [
+                                                          "All",
+                                                          "Burger",
+                                                          "Pizza",
+                                                          "Juice",
+                                                          "Breakfast",
+                                                          "Sandwich",
+                                                        ]
+                                                      : menuType === "antsokiya"
+                                                        ? [
+                                                            "All",
+                                                            "Habeshan",
+                                                            "እንጀራ",
+                                                            "Traditional Foods",
+                                                          ]
+                                                        : menuType === "hibir"
+                                                          ? [
+                                                              "All",
+                                                              "Burger",
+                                                              "Pizza",
+                                                              "Lazagna",
+                                                              "Sandwich",
+                                                              "Juice",
+                                                              "Habeshan",
+                                                            ]
+                                                          : menuType === "mamas_cheko"
+                                                            ? [
+                                                                "All",
+                                                                "Cake",
+                                                              ]
+                                                            : menuType === "sunny_burger_2"
+                                                               ? [
+                                                                   "All",
+                                                                   "Juice",
+                                                                   "Sandwich",
+                                                                   "Pizza",
+                                                                   "Shawarma",
+                                                                 ]
+                                                          : [
+                                                              "All",
+                                                              "Noodles",
+                                                              "Pizza",
+                                                              "Burger",
+                                                              "Juice",
+                                                              "Sandwich",
+                                                              "Shawarma",
+                                                              "Chicken",
+                                                              "Breakfast",
+                                                              "Coffee",
+                                                              "Pasta",
+                                                              "Soft Drink",
+                                                              "Cake",
+                                                              "Pastry",
+                                                            ];
 
     const categories = rawCategories.filter(
       (cat) =>
@@ -3143,6 +3293,27 @@ export default function TelegramSimulator({
               ? "ከአንጾኪያ ባህላዊ ምግቦች ይምረጡ (በገጽ 20 እቃዎች)፦"
               : "Select an item to add (20 per page):",
           };
+        case "hibir":
+          return {
+            title: "☕ Hibir Cafe & Restorant Premium Menu",
+            desc: isAmharic
+              ? "ከህብር ካፌ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "mamas_cheko":
+          return {
+            title: "🍰 Mama's Cheko Bar Premium Menu",
+            desc: isAmharic
+              ? "ከማማስ ቼኮ ባር ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "sunny_burger_2":
+          return {
+            title: "☀️ Sunny burger #2 Premium Menu",
+            desc: isAmharic
+              ? "ከሳኒ በርገር #2 ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
         case "marti":
         default:
           return {
@@ -3205,36 +3376,53 @@ export default function TelegramSimulator({
                                                     ? "Zanzibar kitchen"
                                                     : menuType === "addis_asa"
                                                       ? "Addis Asa"
-                                                      : menuType === "chef_teketel"
+                                                      : menuType ===
+                                                          "chef_teketel"
                                                         ? "Chef Teketel"
-                                                        : menuType === "chef_dani"
+                                                        : menuType ===
+                                                            "chef_dani"
                                                           ? "DANI CHEF"
-                                                          : menuType === "funche_shiro"
+                                                          : menuType ===
+                                                              "funche_shiro"
                                                             ? "Funche shiro"
-                                                            : menuType === "tina_faya"
+                                                            : menuType ===
+                                                                "tina_faya"
                                                               ? "Tina Faaya Kitfo"
-                                                              : menuType === "azi_hotel"
+                                                              : menuType ===
+                                                                  "azi_hotel"
                                                                 ? "Azi Hotel"
-                                                                : menuType === "abenezer_kurt"
+                                                                : menuType ===
+                                                                    "abenezer_kurt"
                                                                   ? "Abenezer Kurt Ena Kitfo"
-                                                                  : menuType === "feven"
+                                                                  : menuType ===
+                                                                      "feven"
                                                                     ? "Feven Restaurant"
-                                                                    : menuType === "abiy_filafil"
+                                                                    : menuType ===
+                                                                        "abiy_filafil"
                                                                       ? "Abiy Filafil"
-                                                                      : menuType === "tewedaj"
+                                                                      : menuType ===
+                                                                          "tewedaj"
                                                                         ? "Tewedaj"
-                                                                        : menuType === "yellow_burger"
+                                                                        : menuType ===
+                                                                            "yellow_burger"
                                                                           ? "Yellow Burger & Pizza"
-                                                                          : menuType === "antsokiya"
+                                                                          : menuType ===
+                                                                              "antsokiya"
                                                                             ? "Antsokiya Traditional Food"
-                                                                            : "YOM BURGERIZZA",
+                                                                            : menuType === "hibir"
+                                                                               ? "Hibir Cafe & Restorant"
+                                                                               : menuType === "mamas_cheko"
+                                                                                 ? "Mama's Cheko Bar"
+                                                                                 : menuType === "sunny_burger_2"
+                                                                                   ? "Sunny burger #2"
+                                                                                   : "YOM BURGERIZZA",
     );
 
     const getThemeColors = () => {
       const activeTheme = CENTRAL_RESTAURANT_THEMES[menuType] || {
-        primary: "#E0560B",
-        primaryHover: "#C24103",
-        primaryRgb: "224, 86, 11",
+        primary: "#5E9D6E",
+        primaryHover: "#4F8A5E",
+        primaryRgb: "94, 157, 110",
       };
 
       return {
@@ -3245,20 +3433,26 @@ export default function TelegramSimulator({
         primaryText: "text-[var(--brand-primary)]",
         textAccent: "text-[var(--brand-primary)]",
         itemCardBorderHover: "hover:border-[var(--brand-primary)]",
-        cartGradient: "from-[var(--brand-primary-hover)] to-[var(--brand-primary)]",
-        headerBg: "bg-white text-slate-800 border-b border-[rgba(var(--brand-primary-rgb),0.12)]",
-        headerTag: "bg-[rgba(var(--brand-primary-rgb),0.06)] text-[var(--brand-primary)] border-[rgba(var(--brand-primary-rgb),0.18)]",
-        catButtonSelected: "bg-[var(--brand-primary)] text-white border-[var(--brand-primary)] shadow-sm",
+        cartGradient:
+          "from-[var(--brand-primary-hover)] to-[var(--brand-primary)]",
+        headerBg:
+          "bg-white text-slate-800 border-b border-[rgba(var(--brand-primary-rgb),0.12)]",
+        headerTag:
+          "bg-[rgba(var(--brand-primary-rgb),0.06)] text-[var(--brand-primary)] border-[rgba(var(--brand-primary-rgb),0.18)]",
+        catButtonSelected:
+          "bg-[var(--brand-primary)] text-white border-[var(--brand-primary)] shadow-sm",
         btnSubmit:
           "bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] border-[var(--brand-primary)] text-white uppercase tracking-wider font-extrabold shadow-md hover:shadow-lg hover:-translate-y-0.5",
-        badgeColor: "text-[var(--brand-primary)] bg-[rgba(var(--brand-primary-rgb),0.06)] border-[rgba(var(--brand-primary-rgb),0.18)]",
+        badgeColor:
+          "text-[var(--brand-primary)] bg-[rgba(var(--brand-primary-rgb),0.06)] border-[rgba(var(--brand-primary-rgb),0.18)]",
         itemCardBg:
           "bg-white border border-slate-200/85 hover:border-[var(--brand-primary)] hover:-translate-y-0.5 shadow-3xs",
         qtyCircleBg: "bg-[var(--brand-primary)]",
         textPrice: "text-[var(--brand-primary)]",
         textGroupHover: "group-hover:text-[var(--brand-primary)]",
         btnHoverText: "hover:text-[var(--brand-primary)] border-slate-250",
-        buttonMainBg: "bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]",
+        buttonMainBg:
+          "bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]",
       };
     };
     const colors = getThemeColors();
@@ -3303,12 +3497,12 @@ export default function TelegramSimulator({
       const filtered = itemsToDisplay.filter(
         (it) =>
           it.name !== "Chukame Betibis(ጨካሜ በትቢስ) with እርጎ" &&
-          it.name !== "Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"
+          it.name !== "Chukame Betibis(ጨካሜ በትቢስ) without እርጎ",
       );
       const hasChukameInOriginal = itemsToDisplay.some(
         (it) =>
           it.name === "Chukame Betibis(ጨካሜ በትቢስ) with እርጎ" ||
-          it.name === "Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"
+          it.name === "Chukame Betibis(ጨካሜ በትቢስ) without እርጎ",
       );
       if (hasChukameInOriginal) {
         filtered.push({ name: "Chukame Betibis(ጨካሜ በትቢስ)", price: 850.0 });
@@ -3331,15 +3525,17 @@ export default function TelegramSimulator({
     );
 
     const getChukameQty = () => {
-      return (mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] || 0) +
-             (mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] || 0);
+      return (
+        (mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] || 0) +
+        (mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] || 0)
+      );
     };
 
     const handleToggleItem = (item: { name: string; price: number }) => {
       if (item.name === "Chukame Betibis(ጨካሜ በትቢስ)") {
         setChukameModal({
           isOpen: true,
-          storeName: menuType === "tina_faya" ? "tina_faya" : "azi_hotel"
+          storeName: menuType === "tina_faya" ? "tina_faya" : "azi_hotel",
         });
         return;
       }
@@ -3353,12 +3549,14 @@ export default function TelegramSimulator({
 
     const handleDecrementItem = (item: { name: string; price: number }) => {
       if (item.name === "Chukame Betibis(ጨካሜ በትቢስ)") {
-        const withYogurtQty = mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] || 0;
-        const withoutYogurtQty = mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] || 0;
+        const withYogurtQty =
+          mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] || 0;
+        const withoutYogurtQty =
+          mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] || 0;
         if (withYogurtQty > 0 && withoutYogurtQty > 0) {
           setChukameModal({
             isOpen: true,
-            storeName: menuType === "tina_faya" ? "tina_faya" : "azi_hotel"
+            storeName: menuType === "tina_faya" ? "tina_faya" : "azi_hotel",
           });
         } else if (withYogurtQty > 0) {
           setMountainSelected((prev) => {
@@ -3378,7 +3576,8 @@ export default function TelegramSimulator({
             if (withoutYogurtQty <= 1) {
               delete updated["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"];
             } else {
-              updated["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] = withoutYogurtQty - 1;
+              updated["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] =
+                withoutYogurtQty - 1;
             }
             return updated;
           });
@@ -3499,20 +3698,24 @@ export default function TelegramSimulator({
     };
 
     const activeTheme = CENTRAL_RESTAURANT_THEMES[menuType] || {
-      primary: "#E0560B",
-      primaryHover: "#C24103",
-      primaryRgb: "224, 86, 11",
+      primary: "#5E9D6E",
+      primaryHover: "#4F8A5E",
+      primaryRgb: "94, 157, 110",
     };
 
     return (
       <div className="w-full flex flex-col gap-3 font-sans text-slate-800 leading-normal animate-fadeIn text-slate-800">
-        <style dangerouslySetInnerHTML={{ __html: `
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
           :root {
             --brand-primary: ${activeTheme.primary};
             --brand-primary-hover: ${activeTheme.primaryHover};
             --brand-primary-rgb: ${activeTheme.primaryRgb};
           }
-        `}} />
+        `,
+          }}
+        />
         {/* Simple elegant button at the very top of a specific hotel menu to show other hotels */}
         <button
           type="button"
@@ -3596,9 +3799,10 @@ export default function TelegramSimulator({
           className={`grid grid-cols-2 gap-3 max-h-[350px] overflow-y-auto p-1 rounded-xl scrollbar-xs`}
         >
           {paginatedItems.map((item, itemIdx) => {
-            const qty = item.name === "Chukame Betibis(ጨካሜ በትቢስ)"
-              ? getChukameQty()
-              : (mountainSelected[item.name] || 0);
+            const qty =
+              item.name === "Chukame Betibis(ጨካሜ በትቢስ)"
+                ? getChukameQty()
+                : mountainSelected[item.name] || 0;
             return (
               <div
                 key={itemIdx}
@@ -3796,14 +4000,14 @@ export default function TelegramSimulator({
             <div className="bg-white rounded-3xl w-full max-w-sm p-5 border border-slate-200 shadow-2xl relative overflow-hidden flex flex-col gap-3">
               {/* Top decoration bar */}
               <div className="w-12 h-1.5 bg-slate-100 rounded-full mx-auto" />
-              
+
               <div className="text-center">
                 <h4 className="font-extrabold text-[var(--brand-primary)] text-base mb-1 tracking-tight">
                   Chukame Betibis (ጨካሜ በትቢስ)
                 </h4>
                 <p className="text-[10px] text-slate-500 font-bold leading-normal">
-                  {isAmharic 
-                    ? "እባክዎ በእርጎ ወይም ያለእርጎ ይምረጡ" 
+                  {isAmharic
+                    ? "እባክዎ በእርጎ ወይም ያለእርጎ ይምረጡ"
                     : "Choose if you want with/without traditional yogurt (Ego)"}
                 </p>
               </div>
@@ -3820,20 +4024,27 @@ export default function TelegramSimulator({
                       930.00 Br
                     </span>
                   </div>
-                  
+
                   {/* Plus/minus triggers */}
                   <div className="flex items-center gap-2">
-                    {(mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] || 0) > 0 && (
+                    {(mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] ||
+                      0) > 0 && (
                       <button
                         type="button"
                         onClick={() => {
-                          const currentQty = mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] || 0;
+                          const currentQty =
+                            mountainSelected[
+                              "Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"
+                            ] || 0;
                           setMountainSelected((prev) => {
                             const updated = { ...prev };
                             if (currentQty <= 1) {
-                              delete updated["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"];
+                              delete updated[
+                                "Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"
+                              ];
                             } else {
-                              updated["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] = currentQty - 1;
+                              updated["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] =
+                                currentQty - 1;
                             }
                             return updated;
                           });
@@ -3845,18 +4056,23 @@ export default function TelegramSimulator({
                         -
                       </button>
                     )}
-                    
+
                     <span className="font-bold text-xs min-w-[16px] text-center font-mono text-slate-800">
-                      {mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] || 0}
+                      {mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] ||
+                        0}
                     </span>
 
                     <button
                       type="button"
                       onClick={() => {
-                        const currentQty = mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"] || 0;
+                        const currentQty =
+                          mountainSelected[
+                            "Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"
+                          ] || 0;
                         setMountainSelected((prev) => ({
                           ...prev,
-                          ["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"]: currentQty + 1
+                          ["Chukame Betibis(ጨካሜ በትቢስ) with እርጎ"]:
+                            currentQty + 1,
                         }));
                         setToastMessage("Added 1 with እርጎ");
                         setTimeout(() => setToastMessage(null), 1500);
@@ -3881,17 +4097,25 @@ export default function TelegramSimulator({
 
                   {/* Plus/minus triggers */}
                   <div className="flex items-center gap-2">
-                    {(mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] || 0) > 0 && (
+                    {(mountainSelected[
+                      "Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"
+                    ] || 0) > 0 && (
                       <button
                         type="button"
                         onClick={() => {
-                          const currentQty = mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] || 0;
+                          const currentQty =
+                            mountainSelected[
+                              "Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"
+                            ] || 0;
                           setMountainSelected((prev) => {
                             const updated = { ...prev };
                             if (currentQty <= 1) {
-                              delete updated["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"];
+                              delete updated[
+                                "Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"
+                              ];
                             } else {
-                              updated["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] = currentQty - 1;
+                              updated["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] =
+                                currentQty - 1;
                             }
                             return updated;
                           });
@@ -3905,16 +4129,22 @@ export default function TelegramSimulator({
                     )}
 
                     <span className="font-bold text-xs min-w-[16px] text-center font-mono text-slate-800">
-                      {mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] || 0}
+                      {mountainSelected[
+                        "Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"
+                      ] || 0}
                     </span>
 
                     <button
                       type="button"
                       onClick={() => {
-                        const currentQty = mountainSelected["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"] || 0;
+                        const currentQty =
+                          mountainSelected[
+                            "Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"
+                          ] || 0;
                         setMountainSelected((prev) => ({
                           ...prev,
-                          ["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"]: currentQty + 1
+                          ["Chukame Betibis(ጨካሜ በትቢስ) without እርጎ"]:
+                            currentQty + 1,
                         }));
                         setToastMessage("Added 1 without እርጎ");
                         setTimeout(() => setToastMessage(null), 1500);
@@ -4097,6 +4327,9 @@ export default function TelegramSimulator({
     if (activeKbd === "tewedaj_menu") return "tewedaj";
     if (activeKbd === "yellow_burger_menu") return "yellow_burger";
     if (activeKbd === "antsokiya_menu") return "antsokiya";
+    if (activeKbd === "hibir_menu") return "hibir";
+    if (activeKbd === "mamas_cheko_menu") return "mamas_cheko";
+    if (activeKbd === "sunny_burger_2_menu") return "sunny_burger_2";
     return null;
   })();
 
@@ -4104,9 +4337,9 @@ export default function TelegramSimulator({
     currentActiveKey && CENTRAL_RESTAURANT_THEMES[currentActiveKey]
       ? CENTRAL_RESTAURANT_THEMES[currentActiveKey]
       : {
-          primary: "#E0560B",
-          primaryHover: "#C24103",
-          primaryRgb: "224, 86, 11",
+          primary: "#5E9D6E",
+          primaryHover: "#4F8A5E",
+          primaryRgb: "94, 157, 110",
         };
 
   return (
@@ -4114,13 +4347,17 @@ export default function TelegramSimulator({
       id="tg-simulator"
       className="bg-[#f0f3f6] border border-slate-200 rounded-2xl overflow-hidden shadow-lg h-[620px] flex flex-col relative"
     >
-      <style dangerouslySetInnerHTML={{ __html: `
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
         :root {
           --brand-primary: ${activeGlobalTheme.primary};
           --brand-primary-hover: ${activeGlobalTheme.primaryHover};
           --brand-primary-rgb: ${activeGlobalTheme.primaryRgb};
         }
-      `}} />
+      `,
+        }}
+      />
       {/* Telegram Client Header */}
       <div className="bg-[#1e88e5] text-white px-4 py-3.5 flex items-center justify-between shadow-sm shrink-0">
         <div className="flex items-center gap-3">
@@ -4661,7 +4898,8 @@ export default function TelegramSimulator({
             tgKeyboard === "abiy_filafil_menu" ||
             tgKeyboard === "tewedaj_menu" ||
             tgKeyboard === "yellow_burger_menu" ||
-            tgKeyboard === "antsokiya_menu" ? (
+            tgKeyboard === "antsokiya_menu" ||
+            tgKeyboard === "hibir_menu" ? (
               renderInteractiveMenu(
                 false,
                 tgKeyboard === "mountain_hotel_menu"
@@ -4698,49 +4936,74 @@ export default function TelegramSimulator({
                                                 ? "liyu_taim"
                                                 : tgKeyboard === "zanzibar_menu"
                                                   ? "zanzibar"
-                                                  : tgKeyboard === "time_cafe_menu"
+                                                  : tgKeyboard ===
+                                                      "time_cafe_menu"
                                                     ? "time_cafe"
-                                                    : tgKeyboard === "fenet_kitfo_menu"
+                                                    : tgKeyboard ===
+                                                        "fenet_kitfo_menu"
                                                       ? "fenet_kitfo"
-                                                      : tgKeyboard === "bekos_pastry_menu"
+                                                      : tgKeyboard ===
+                                                          "bekos_pastry_menu"
                                                         ? "bekos_pastry"
-                                                        : tgKeyboard === "light_burger_menu"
+                                                        : tgKeyboard ===
+                                                            "light_burger_menu"
                                                           ? "light_burger"
-                                                          : tgKeyboard === "ana_cafe_menu"
+                                                          : tgKeyboard ===
+                                                              "ana_cafe_menu"
                                                             ? "ana_cafe"
-                                                            : tgKeyboard === "safeland_cafe_menu"
+                                                            : tgKeyboard ===
+                                                                "safeland_cafe_menu"
                                                               ? "safeland_cafe"
-                                                                : tgKeyboard === "addis_asa_menu"
-                                                                  ? "addis_asa"
-                                                                  : tgKeyboard === "chef_teketel_menu"
-                                                                    ? "chef_teketel"
-                                                                    : tgKeyboard === "dani_chef_menu"
-                                                                      ? "chef_dani"
-                                                                      : tgKeyboard === "funche_shiro_menu"
-                                                                        ? "funche_shiro"
-                                                                        : tgKeyboard === "habtsh_menu"
-                                                                          ? "habtsh"
-                                                                          : tgKeyboard === "boss_fries_menu"
-                                                                            ? "boss_fries"
-                                                                            : tgKeyboard === "bliss_coffee_menu"
-                                                                              ? "bliss_coffee"
-                                                                              : tgKeyboard === "tina_faya_menu"
-                                                                                ? "tina_faya"
-                                                                                : tgKeyboard === "azi_hotel_menu"
-                                                                                  ? "azi_hotel"
-                                                                                  : tgKeyboard === "abenezer_kurt_menu"
-                                                                                    ? "abenezer_kurt"
-                                                                                    : tgKeyboard === "feven_restaurant_menu"
-                                                                                      ? "feven"
-                                                                                      : tgKeyboard === "abiy_filafil_menu"
-                                                                                        ? "abiy_filafil"
-                                                                                        : tgKeyboard === "tewedaj_menu"
-                                                                                          ? "tewedaj"
-                                                                                          : tgKeyboard === "yellow_burger_menu"
-                                                                                            ? "yellow_burger"
-                                                                                            : tgKeyboard === "antsokiya_menu"
-                                                                                              ? "antsokiya"
-                                                              : "yom",
+                                                              : tgKeyboard ===
+                                                                  "addis_asa_menu"
+                                                                ? "addis_asa"
+                                                                : tgKeyboard ===
+                                                                    "chef_teketel_menu"
+                                                                  ? "chef_teketel"
+                                                                  : tgKeyboard ===
+                                                                      "dani_chef_menu"
+                                                                    ? "chef_dani"
+                                                                    : tgKeyboard ===
+                                                                        "funche_shiro_menu"
+                                                                      ? "funche_shiro"
+                                                                      : tgKeyboard ===
+                                                                          "habtsh_menu"
+                                                                        ? "habtsh"
+                                                                        : tgKeyboard ===
+                                                                            "boss_fries_menu"
+                                                                          ? "boss_fries"
+                                                                          : tgKeyboard ===
+                                                                              "bliss_coffee_menu"
+                                                                            ? "bliss_coffee"
+                                                                            : tgKeyboard ===
+                                                                                "tina_faya_menu"
+                                                                              ? "tina_faya"
+                                                                              : tgKeyboard ===
+                                                                                  "azi_hotel_menu"
+                                                                                ? "azi_hotel"
+                                                                                : tgKeyboard ===
+                                                                                    "abenezer_kurt_menu"
+                                                                                  ? "abenezer_kurt"
+                                                                                  : tgKeyboard ===
+                                                                                      "feven_restaurant_menu"
+                                                                                    ? "feven"
+                                                                                    : tgKeyboard ===
+                                                                                        "abiy_filafil_menu"
+                                                                                      ? "abiy_filafil"
+                                                                                      : tgKeyboard ===
+                                                                                          "tewedaj_menu"
+                                                                                        ? "tewedaj"
+                                                                                        : tgKeyboard === "hibir_menu"
+                                                                                            ? "hibir"
+                                                                                            : tgKeyboard === "yellow_burger_menu"
+                                                                                              ? "yellow_burger"
+                                                                                              : tgKeyboard === "antsokiya_menu"
+                                                                                                ? "antsokiya"
+                                                                                                : tgKeyboard === "mamas_cheko_menu"
+                                                                                                  ? "mamas_cheko"
+                                                                                                  : tgKeyboard === "sunny_burger_2_menu"
+                                                                                                    ? "sunny_burger_2"
+                                                                                                    : "yom",
               )
             ) : (
               <>
@@ -4750,7 +5013,7 @@ export default function TelegramSimulator({
                     isAmharic ? (
                       <div className="whitespace-pre-line leading-relaxed text-slate-800 text-[12px] font-medium">
                         📞{" "}
-                        <span className="font-extrabold text-[#E0560B]">
+                        <span className="font-extrabold text-[var(--brand-primary)]">
                           የቶሎ ዕገዛ መጠየቂያ (Contact Support)
                         </span>
                         👤{" "}
@@ -4770,7 +5033,7 @@ export default function TelegramSimulator({
                     ) : (
                       <div className="whitespace-pre-line leading-relaxed text-slate-805 text-[12.5px] font-semibold">
                         📞{" "}
-                        <span className="font-extrabold text-[#E0560B]">
+                        <span className="font-extrabold text-[var(--brand-primary)]">
                           Tollo Support Center (Contact Support)
                         </span>
                         👤{" "}
@@ -4855,7 +5118,11 @@ export default function TelegramSimulator({
                         </div>
                         <input
                           type="text"
-                          placeholder={isAmharic ? "ሆቴሎችን ይፈልጉ..." : "Search hotels/restaurants..."}
+                          placeholder={
+                            isAmharic
+                              ? "ሆቴሎችን ይፈልጉ..."
+                              : "Search hotels/restaurants..."
+                          }
                           value={storeSearchQuery}
                           onChange={(e) => setStoreSearchQuery(e.target.value)}
                           className="w-full bg-white border border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none rounded-xl py-1.5 pl-9 pr-8 text-[11px] font-semibold shadow-3xs transition-all duration-150"
@@ -4875,8 +5142,12 @@ export default function TelegramSimulator({
                       <div className="grid grid-cols-2 gap-2">
                         {(() => {
                           const displayedStores = storeSearchQuery.trim()
-                            ? STORE_PAGES.flat().filter(s => s.toLowerCase().includes(storeSearchQuery.toLowerCase()))
-                            : (STORE_PAGES[
+                            ? STORE_PAGES.flat().filter((s) =>
+                                s
+                                  .toLowerCase()
+                                  .includes(storeSearchQuery.toLowerCase()),
+                              )
+                            : STORE_PAGES[
                                 tgKeyboard === "stores_p1"
                                   ? 0
                                   : tgKeyboard === "stores_p2"
@@ -4884,15 +5155,20 @@ export default function TelegramSimulator({
                                     : tgKeyboard === "stores_p3"
                                       ? 2
                                       : 3
-                              ] || []);
+                              ] || [];
 
                           if (displayedStores.length === 0) {
                             return (
                               <div className="col-span-full py-8 text-center text-slate-400 font-bold text-xs flex flex-col items-center justify-center gap-1.5 animate-fadeIn">
-                                <span>🔍 {isAmharic ? "ምንም አልተገኘም" : "No matches found"}</span>
-                                <button 
+                                <span>
+                                  🔍{" "}
+                                  {isAmharic
+                                    ? "ምንም አልተገኘም"
+                                    : "No matches found"}
+                                </span>
+                                <button
                                   type="button"
-                                  onClick={() => setStoreSearchQuery("")} 
+                                  onClick={() => setStoreSearchQuery("")}
                                   className="text-orange-600 hover:underline text-[10px]"
                                 >
                                   {isAmharic ? "ፍለጋውን አጽዳ" : "Clear search"}
@@ -4902,43 +5178,43 @@ export default function TelegramSimulator({
                           }
 
                           return displayedStores.map((store, sIdx) => {
-                          const isEyob = store === "Eyob Book Zone";
-                          if (isEyob) return null;
+                            const isEyob = store === "Eyob Book Zone";
+                            if (isEyob) return null;
 
-                          const meta = getStoreMeta(store);
+                            const meta = getStoreMeta(store);
 
-                          return (
-                            <button
-                              key={sIdx}
-                              type="button"
-                              onClick={() =>
-                                handleKeyboardAction("select_store", store)
-                              }
-                              className="bg-white hover:bg-slate-50 border border-slate-200/85 text-slate-800 rounded-xl overflow-hidden flex flex-col transition-all cursor-pointer shadow-3xs hover:shadow-2xs hover:-translate-y-0.5 active:scale-98 font-sans w-full text-left"
-                              title={store}
-                            >
-                              <div className="w-full h-15 bg-slate-100 relative">
-                                <img
-                                  src={meta.image}
-                                  alt={store}
-                                  referrerPolicy="no-referrer"
-                                  className="w-full h-full object-cover"
-                                />
-                                <div className="absolute top-1 right-1 bg-white/95 backdrop-blur-3xs text-slate-800 text-[8.5px] font-black px-1.5 py-0.2 rounded-full shadow-3xs">
-                                  ⭐ {meta.rating}
+                            return (
+                              <button
+                                key={sIdx}
+                                type="button"
+                                onClick={() =>
+                                  handleKeyboardAction("select_store", store)
+                                }
+                                className="bg-white hover:bg-slate-50 border border-slate-200/85 text-slate-800 rounded-xl overflow-hidden flex flex-col transition-all cursor-pointer shadow-3xs hover:shadow-2xs hover:-translate-y-0.5 active:scale-98 font-sans w-full text-left"
+                                title={store}
+                              >
+                                <div className="w-full h-15 bg-slate-100 relative">
+                                  <img
+                                    src={meta.image}
+                                    alt={store}
+                                    referrerPolicy="no-referrer"
+                                    className="w-full h-full object-cover"
+                                  />
+                                  <div className="absolute top-1 right-1 bg-white/95 backdrop-blur-3xs text-slate-800 text-[8.5px] font-black px-1.5 py-0.2 rounded-full shadow-3xs">
+                                    ⭐ {meta.rating}
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="p-1.5 flex flex-col min-w-0">
-                                <span className="text-[9.5px] font-extrabold text-slate-800 truncate block leading-tight tracking-tight uppercase">
-                                  {store}
-                                </span>
-                                <span className="text-[8.5px] text-slate-400 font-bold leading-normal">
-                                  ⏱️ {meta.deliveryTime}
-                                </span>
-                              </div>
-                            </button>
-                          );
-                        })
+                                <div className="p-1.5 flex flex-col min-w-0">
+                                  <span className="text-[9.5px] font-extrabold text-slate-800 truncate block leading-tight tracking-tight uppercase">
+                                    {store}
+                                  </span>
+                                  <span className="text-[8.5px] text-slate-400 font-bold leading-normal">
+                                    ⏱️ {meta.deliveryTime}
+                                  </span>
+                                </div>
+                              </button>
+                            );
+                          });
                         })()}
                       </div>
 
@@ -5241,7 +5517,10 @@ export default function TelegramSimulator({
                         webAppKeyboard === "abiy_filafil_menu" ||
                         webAppKeyboard === "tewedaj_menu" ||
                         webAppKeyboard === "yellow_burger_menu" ||
-                        webAppKeyboard === "antsokiya_menu" ? (
+                        webAppKeyboard === "antsokiya_menu" ||
+                        webAppKeyboard === "hibir_menu" ||
+                        webAppKeyboard === "mamas_cheko_menu" ||
+                        webAppKeyboard === "sunny_burger_2_menu" ? (
                           renderInteractiveMenu(
                             true,
                             webAppKeyboard === "mountain_hotel_menu"
@@ -5349,7 +5628,16 @@ export default function TelegramSimulator({
                                                                                                       : webAppKeyboard ===
                                                                                                           "antsokiya_menu"
                                                                                                         ? "antsokiya"
-                                                                                  : "yom",
+                                                                                                        : webAppKeyboard ===
+                                                                                                            "hibir_menu"
+                                                                                                          ? "hibir"
+                                                                                                          : webAppKeyboard ===
+                                                                                                              "mamas_cheko_menu"
+                                                                                                            ? "mamas_cheko"
+                                                                                                            : webAppKeyboard ===
+                                                                                                                "sunny_burger_2_menu"
+                                                                                                              ? "sunny_burger_2"
+                                                                                                              : "yom",
                           )
                         ) : (
                           <>
@@ -5371,9 +5659,15 @@ export default function TelegramSimulator({
                                 </div>
                                 <input
                                   type="text"
-                                  placeholder={isAmharic ? "ሆቴሎችን ይፈልጉ..." : "Search hotels/restaurants..."}
+                                  placeholder={
+                                    isAmharic
+                                      ? "ሆቴሎችን ይፈልጉ..."
+                                      : "Search hotels/restaurants..."
+                                  }
                                   value={storeSearchQuery}
-                                  onChange={(e) => setStoreSearchQuery(e.target.value)}
+                                  onChange={(e) =>
+                                    setStoreSearchQuery(e.target.value)
+                                  }
                                   className="w-full bg-white border border-slate-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none rounded-xl py-2 pl-9 pr-8 text-[11px] font-semibold shadow-3xs transition-all duration-150"
                                 />
                                 {storeSearchQuery && (
@@ -5392,579 +5686,756 @@ export default function TelegramSimulator({
                                 {/* Restaurant Selection Grid with rating, images, and lift animations */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[360px] overflow-y-auto p-1 bg-slate-50/40 rounded-xl">
                                   {(() => {
-                                    const displayedStores = storeSearchQuery.trim()
-                                      ? STORE_PAGES.flat().filter(s => s.toLowerCase().includes(storeSearchQuery.toLowerCase()))
-                                      : (STORE_PAGES[
-                                          webAppKeyboard === "stores_p1"
-                                            ? 0
-                                            : webAppKeyboard === "stores_p2"
-                                              ? 1
-                                              : webAppKeyboard === "stores_p3"
-                                                ? 2
-                                                : 3
-                                        ] || []);
+                                    const displayedStores =
+                                      storeSearchQuery.trim()
+                                        ? STORE_PAGES.flat().filter((s) =>
+                                            s
+                                              .toLowerCase()
+                                              .includes(
+                                                storeSearchQuery.toLowerCase(),
+                                              ),
+                                          )
+                                        : STORE_PAGES[
+                                            webAppKeyboard === "stores_p1"
+                                              ? 0
+                                              : webAppKeyboard === "stores_p2"
+                                                ? 1
+                                                : webAppKeyboard === "stores_p3"
+                                                  ? 2
+                                                  : 3
+                                          ] || [];
 
                                     if (displayedStores.length === 0) {
                                       return (
                                         <div className="col-span-full py-10 text-center text-slate-400 font-bold text-xs flex flex-col items-center justify-center gap-1.5">
-                                          <span>🔍 {isAmharic ? "ምንም አልተገኘም" : "No matches found"}</span>
-                                          <button 
+                                          <span>
+                                            🔍{" "}
+                                            {isAmharic
+                                              ? "ምንም አልተገኘም"
+                                              : "No matches found"}
+                                          </span>
+                                          <button
                                             type="button"
-                                            onClick={() => setStoreSearchQuery("")} 
+                                            onClick={() =>
+                                              setStoreSearchQuery("")
+                                            }
                                             className="text-orange-600 hover:underline text-[10px]"
                                           >
-                                            {isAmharic ? "ፍለጋውን አጽዳ" : "Clear search"}
+                                            {isAmharic
+                                              ? "ፍለጋውን አጽዳ"
+                                              : "Clear search"}
                                           </button>
                                         </div>
                                       );
                                     }
 
-                                    return displayedStores.map((store, sIdx) => {
-                                      const isEyob = store === "Eyob Book Zone";
-                                      if (isEyob) return null;
+                                    return displayedStores.map(
+                                      (store, sIdx) => {
+                                        const isEyob =
+                                          store === "Eyob Book Zone";
+                                        if (isEyob) return null;
 
-                                      const meta = getStoreMeta(store);
+                                        const meta = getStoreMeta(store);
 
-                                      return (
-                                      <button
-                                        key={sIdx}
-                                        type="button"
-                                        onClick={() => {
-                                          setLocalPickupAddress(store);
-                                          onSendMessage(
-                                            `StoreSelected: ${store}`,
-                                          );
-                                          if (
-                                            store === "Mountain Hotel" ||
-                                            store === "Mountain cafe"
-                                          ) {
-                                            setWebAppKeyboard(
-                                              "mountain_hotel_menu",
-                                            );
-                                            setMountainCategory("Juice");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "⛰️ Opening Mountain Hotel Live Interactive Menu!",
-                                            );
-                                          } else if (
-                                            store === "H-Town Burger"
-                                          ) {
-                                            setWebAppKeyboard("htown_menu");
-                                            setMountainCategory("Burger");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🍔 Opening H-Town Burger Premium Menu!",
-                                            );
-                                          } else if (
-                                            store
-                                              .toLowerCase()
-                                              .includes("sunny")
-                                          ) {
-                                            setWebAppKeyboard("sunny_menu");
-                                            setMountainCategory("Burger");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "☀️ Opening Sunny Burger Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Rome 1960 Cafe" ||
-                                            store.toLowerCase().includes("rome")
-                                          ) {
-                                            setWebAppKeyboard("rome_menu");
-                                            setMountainCategory("Pizza");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🇮🇹 Opening Rome 1960 Cafe Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Aroma cafe" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("aroma")
-                                          ) {
-                                            setWebAppKeyboard("aroma_menu");
-                                            setMountainCategory("Breakfast");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "☕ Opening Aroma Cafe Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Chanoly Noodles" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("chanoly")
-                                          ) {
-                                            setWebAppKeyboard("chanoly_menu");
-                                            setMountainCategory("Noodles");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🍜 Opening Chanoly Noodles Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Marti kitchen" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("marti")
-                                          ) {
-                                            setWebAppKeyboard("marti_menu");
-                                            setMountainCategory("Local");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🥘 Opening Marti Kitchen Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Neba Cafe" ||
-                                            store.toLowerCase().includes("neba")
-                                          ) {
-                                            setWebAppKeyboard("neba_menu");
-                                            setMountainCategory("Burger");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🍔 Opening Neba Cafe Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "YOM BURGERIZZA" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("yom") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("burgerizza")
-                                          ) {
-                                            setWebAppKeyboard("yom_menu");
-                                            setMountainCategory("Burger");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🍔 Opening YOM Burgerizza Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Barcon Migb Bet" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("barcon") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("barkon")
-                                          ) {
-                                            setWebAppKeyboard("barcon_menu");
-                                            setMountainCategory("Injera");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🥘 Opening Barkon ምግብ ቤት Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "liyu taim migb bet" ||
-                                            store === "Liyu Taim (ልዩ ጣዕም)" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("liyu") ||
-                                            store.toLowerCase().includes("taim")
-                                          ) {
-                                            setWebAppKeyboard("liyu_taim_menu");
-                                            setMountainCategory("Injera");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🥘 Opening Liyu Taim (ልዩ ጣዕም) Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Zanzibar kitchen" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("zanzibar")
-                                          ) {
-                                            setWebAppKeyboard("zanzibar_menu");
-                                            setMountainCategory("Fish");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🥘 Opening Zanzibar kitchen Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "medi shiro" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("medi shiro") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("medi_shiro") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("medishiro")
-                                          ) {
-                                            setWebAppKeyboard(
-                                              "medi_shiro_menu",
-                                            );
-                                            setMountainCategory("Injera");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🥘 Opening Medi Shiro Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Lewi piyasa" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("lewi") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("piyasa") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("piyassa")
-                                          ) {
-                                            setWebAppKeyboard(
-                                              "lewi_piyasa_menu",
-                                            );
-                                            setMountainCategory("Pizza");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🍕 Opening Lewi Piyassa Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Twin's Kitchen" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("twin") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("twins")
-                                          ) {
-                                            setWebAppKeyboard(
-                                              "twins_kitchen_menu",
-                                            );
-                                            setMountainCategory("Local");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🥘 Opening Twin's Kitchen Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Mohi Ertb" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("mohi") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("ertb") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("ertib")
-                                          ) {
-                                            setWebAppKeyboard("mohi_ertb_menu");
-                                            setMountainCategory("Sandwich");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🥘 Opening Mohi Ertb Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "selam special" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("selam")
-                                          ) {
-                                            setWebAppKeyboard(
-                                              "selam_special_menu",
-                                            );
-                                            setMountainCategory("Local");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🥘 Opening Selam Special Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Cafe 9" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("cafe 9") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("cafe9") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("cafe_9")
-                                          ) {
-                                            setWebAppKeyboard("cafe_9_menu");
-                                            setMountainCategory("Local");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🥘 Opening Cafe 9 Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Time Cafe" ||
-                                            store.toLowerCase().includes("time")
-                                          ) {
-                                            setWebAppKeyboard("time_cafe_menu");
-                                            setMountainCategory("Sandwich");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "☕ Opening Time Cafe Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "fenet kitfo" ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("fenet") ||
-                                            store
-                                              .toLowerCase()
-                                              .includes("kitfo")
-                                          ) {
-                                            setWebAppKeyboard(
-                                              "fenet_kitfo_menu",
-                                            );
-                                            setMountainCategory("Habeshan");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🥘 Opening Fenet Kitfo Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Bekos Pastry" ||
-                                            store.toLowerCase().includes("bekos") ||
-                                            store.toLowerCase().includes("bekso") ||
-                                            store.toLowerCase().includes("pastry")
-                                          ) {
-                                            setWebAppKeyboard("bekos_pastry_menu");
-                                            setMountainCategory("Cake");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🍰 Opening Bekos Pastry Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Light Burger" ||
-                                            store.toLowerCase().includes("light burger") ||
-                                            store.toLowerCase().includes("light")
-                                          ) {
-                                            setWebAppKeyboard("light_burger_menu");
-                                            setMountainCategory("Burger");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🍔 Opening Light Burger Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Ana Cafe" ||
-                                            store.toLowerCase().includes("ana") ||
-                                            store.toLowerCase().includes("ana cafe")
-                                          ) {
-                                            setWebAppKeyboard("ana_cafe_menu");
-                                            setMountainCategory("Sandwich");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🍽️ Opening Ana Cafe Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "SAFELAND CAFE Piasa" ||
-                                            store.toLowerCase().includes("safeland") ||
-                                            store.toLowerCase().includes("safe")
-                                          ) {
-                                            setWebAppKeyboard("safeland_cafe_menu");
-                                            setMountainCategory("Burger");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🍔 Opening SAFELAND CAFE Premium Menu!",
-                                            );
-                                          } else if (
-                                            store === "Addis Asa" ||
-                                            store.toLowerCase().includes("addis asa") ||
-                                            store.toLowerCase().includes("asa") ||
-                                            store.toLowerCase().includes("ዓሳ")
-                                          ) {
-                                            setWebAppKeyboard("addis_asa_menu");
-                                            setMountainCategory("Fish");
-                                            setMenuPage(0);
-                                            setToastMessage(
-                                              "🐠 Opening Addis Asa Premium Menu!",
-                                            );
-                                           } else if (
-                                             store === "Chef Teketel" ||
-                                             store.toLowerCase().includes("teketel") ||
-                                             store.toLowerCase().includes("chef teketel")
-                                           ) {
-                                             setWebAppKeyboard("chef_teketel_menu");
-                                             setMountainCategory("Habeshan");
-                                             setMenuPage(0);
-                                             setToastMessage(
-                                               "👩‍🍳 Opening Chef Teketel Premium Menu!",
-                                             );
-                                           } else if (
-                                             store === "DANI CHEF" ||
-                                             store.toLowerCase().includes("dani") ||
-                                             store.toLowerCase().includes("chef dani")
-                                           ) {
-                                             setWebAppKeyboard("dani_chef_menu");
-                                             setMountainCategory("Shawarma");
-                                             setMenuPage(0);
-                                             setToastMessage(
-                                               "👩‍🍳 Opening DANI CHEF Premium Menu!",
-                                             );
-                                            } else if (
-                                              store === "Funche shiro" ||
-                                              store.toLowerCase().includes("funche") ||
-                                              store.toLowerCase().includes("funche shiro")
-                                            ) {
-                                              setWebAppKeyboard("funche_shiro_menu");
-                                              setMountainCategory("Habeshan");
-                                              setMenuPage(0);
-                                              setToastMessage(
-                                                "🥘 Opening Funche shiro Premium Menu!",
+                                        return (
+                                          <button
+                                            key={sIdx}
+                                            type="button"
+                                            onClick={() => {
+                                              setLocalPickupAddress(store);
+                                              onSendMessage(
+                                                `StoreSelected: ${store}`,
                                               );
-                                            } else if (
-                                              store === "Habtsh Fiyel Tib" ||
-                                              store.toLowerCase().includes("habtsh")
-                                            ) {
-                                              setWebAppKeyboard("habtsh_menu");
-                                              setMountainCategory("Habeshan");
-                                              setMenuPage(0);
-                                              setToastMessage(
-                                                "🥘 Opening Habtsh Premium Menu!",
+                                              if (
+                                                store === "Mountain Hotel" ||
+                                                store === "Mountain cafe"
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "mountain_hotel_menu",
+                                                );
+                                                setMountainCategory("Juice");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "⛰️ Opening Mountain Hotel Live Interactive Menu!",
+                                                );
+                                              } else if (
+                                                store === "H-Town Burger"
+                                              ) {
+                                                setWebAppKeyboard("htown_menu");
+                                                setMountainCategory("Burger");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍔 Opening H-Town Burger Premium Menu!",
+                                                );
+                                              } else if (
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("sunny")
+                                              ) {
+                                                setWebAppKeyboard("sunny_menu");
+                                                setMountainCategory("Burger");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "☀️ Opening Sunny Burger Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Rome 1960 Cafe" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("rome")
+                                              ) {
+                                                setWebAppKeyboard("rome_menu");
+                                                setMountainCategory("Pizza");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🇮🇹 Opening Rome 1960 Cafe Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Aroma cafe" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("aroma")
+                                              ) {
+                                                setWebAppKeyboard("aroma_menu");
+                                                setMountainCategory(
+                                                  "Breakfast",
+                                                );
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "☕ Opening Aroma Cafe Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Chanoly Noodles" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("chanoly")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "chanoly_menu",
+                                                );
+                                                setMountainCategory("Noodles");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍜 Opening Chanoly Noodles Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Marti kitchen" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("marti")
+                                              ) {
+                                                setWebAppKeyboard("marti_menu");
+                                                setMountainCategory("Local");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Marti Kitchen Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Neba Cafe" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("neba")
+                                              ) {
+                                                setWebAppKeyboard("neba_menu");
+                                                setMountainCategory("Burger");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍔 Opening Neba Cafe Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "YOM BURGERIZZA" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("yom") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("burgerizza")
+                                              ) {
+                                                setWebAppKeyboard("yom_menu");
+                                                setMountainCategory("Burger");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍔 Opening YOM Burgerizza Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Barcon Migb Bet" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("barcon") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("barkon")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "barcon_menu",
+                                                );
+                                                setMountainCategory("Injera");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Barkon ምግብ ቤት Premium Menu!",
+                                                );
+                                              } else if (
+                                                store ===
+                                                  "liyu taim migb bet" ||
+                                                store ===
+                                                  "Liyu Taim (ልዩ ጣዕም)" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("liyu") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("taim")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "liyu_taim_menu",
+                                                );
+                                                setMountainCategory("Injera");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Liyu Taim (ልዩ ጣዕም) Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Zanzibar kitchen" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("zanzibar")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "zanzibar_menu",
+                                                );
+                                                setMountainCategory("Fish");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Zanzibar kitchen Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "medi shiro" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("medi shiro") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("medi_shiro") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("medishiro")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "medi_shiro_menu",
+                                                );
+                                                setMountainCategory("Injera");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Medi Shiro Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Lewi piyasa" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("lewi") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("piyasa") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("piyassa")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "lewi_piyasa_menu",
+                                                );
+                                                setMountainCategory("Pizza");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍕 Opening Lewi Piyassa Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Twin's Kitchen" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("twin") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("twins")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "twins_kitchen_menu",
+                                                );
+                                                setMountainCategory("Local");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Twin's Kitchen Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Mohi Ertb" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("mohi") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("ertb") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("ertib")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "mohi_ertb_menu",
+                                                );
+                                                setMountainCategory("Sandwich");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Mohi Ertb Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "selam special" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("selam")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "selam_special_menu",
+                                                );
+                                                setMountainCategory("Local");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Selam Special Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Cafe 9" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("cafe 9") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("cafe9") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("cafe_9")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "cafe_9_menu",
+                                                );
+                                                setMountainCategory("Local");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Cafe 9 Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Time Cafe" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("time")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "time_cafe_menu",
+                                                );
+                                                setMountainCategory("Sandwich");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "☕ Opening Time Cafe Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "fenet kitfo" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("fenet") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("kitfo")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "fenet_kitfo_menu",
+                                                );
+                                                setMountainCategory("Habeshan");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Fenet Kitfo Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Bekos Pastry" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("bekos") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("bekso") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("pastry")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "bekos_pastry_menu",
+                                                );
+                                                setMountainCategory("Cake");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍰 Opening Bekos Pastry Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Light Burger" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("light burger") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("light")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "light_burger_menu",
+                                                );
+                                                setMountainCategory("Burger");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍔 Opening Light Burger Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Ana Cafe" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("ana") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("ana cafe")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "ana_cafe_menu",
+                                                );
+                                                setMountainCategory("Sandwich");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍽️ Opening Ana Cafe Premium Menu!",
+                                                );
+                                              } else if (
+                                                store ===
+                                                  "SAFELAND CAFE Piasa" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("safeland") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("safe")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "safeland_cafe_menu",
+                                                );
+                                                setMountainCategory("Burger");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍔 Opening SAFELAND CAFE Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Addis Asa" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("addis asa") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("asa") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("ዓሳ")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "addis_asa_menu",
+                                                );
+                                                setMountainCategory("Fish");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🐠 Opening Addis Asa Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Chef Teketel" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("teketel") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("chef teketel")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "chef_teketel_menu",
+                                                );
+                                                setMountainCategory("Habeshan");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "👩‍🍳 Opening Chef Teketel Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "DANI CHEF" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("dani") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("chef dani")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "dani_chef_menu",
+                                                );
+                                                setMountainCategory("Shawarma");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "👩‍🍳 Opening DANI CHEF Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Funche shiro" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("funche") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("funche shiro")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "funche_shiro_menu",
+                                                );
+                                                setMountainCategory("Habeshan");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Funche shiro Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Habtsh Fiyel Tib" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("habtsh")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "habtsh_menu",
+                                                );
+                                                setMountainCategory("Habeshan");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Habtsh Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Boss Fries" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("boss fries") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("boss")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "boss_fries_menu",
+                                                );
+                                                setMountainCategory(
+                                                  "Breakfast",
+                                                );
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍟 Opening Boss Fries Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Bliss Coffee" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("bliss") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("bliss coffee")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "bliss_coffee_menu",
+                                                );
+                                                setMountainCategory("Cake");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "☕ Opening Bliss Coffee Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Azi Hotel" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("azi") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("azi hotel")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "azi_hotel_menu",
+                                                );
+                                                setMountainCategory(
+                                                  "Traditional Foods",
+                                                );
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🏨 Opening Azi Hotel Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Tina Faaya Kitfo" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("tina") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("faya") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("faaya")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "tina_faya_menu",
+                                                );
+                                                setMountainCategory(
+                                                  "Traditional Foods",
+                                                );
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Tina Faaya Kitfo Premium Menu!",
+                                                );
+                                              } else if (
+                                                store ===
+                                                  "Abenezer Kurt Ena Kitfo" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("abenezer") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("kurt")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "abenezer_kurt_menu",
+                                                );
+                                                setMountainCategory("Habeshan");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥩 Opening Abenezer Kurt Ena Kitfo Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Feven Restaurant" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("feven")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "feven_restaurant_menu",
+                                                );
+                                                setMountainCategory("Habeshan");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Feven Restaurant Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Abiy Filafil" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("abiy") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("filafil") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("felafil")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "abiy_filafil_menu",
+                                                );
+                                                setMountainCategory(
+                                                  "Breakfast",
+                                                );
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🧆 Opening Abiy Filafil Combined Menu!",
+                                                );
+                                              } else if (
+                                                store === "Tewedaj" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("tewedaj")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "tewedaj_menu",
+                                                );
+                                                setMountainCategory("እንጀራ");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Tewedaj Premium Menu!",
+                                                );
+                                              } else if (
+                                                store ===
+                                                  "Yellow Burger & Pizza" ||
+                                                store === "Yellow Burger" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("yellow burger") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("yellow")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "yellow_burger_menu",
+                                                );
+                                                setMountainCategory("Burger");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍔 Opening Yellow Burger & Pizza Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Hibir Cafe & Restorant" ||
+                                                store === "Hibir" ||
+                                                store.toLowerCase().includes("hibir")
+                                              ) {
+                                                setWebAppKeyboard("hibir_menu");
+                                                setMountainCategory("Burger");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "☕ Opening Hibir Cafe & Restorant Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Antsokiya Traditional Food" ||
+                                                store === "Antsokiya" ||
+                                                store.toLowerCase().includes("antsokiya")
+                                              ) {
+                                                setWebAppKeyboard("antsokiya_menu");
+                                                setMountainCategory("Habeshan");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Antsokiya Traditional Food Premium Menu!",
+                                                );
+                                              } else {
+                                                setToastMessage(
+                                                  `🏪 Choice Set: ${store}! Now describe your items in chat!`,
+                                                );
+                                                setIsMenuOpen(false);
+                                              }
+                                              setTimeout(
+                                                () => setToastMessage(null),
+                                                4000,
                                               );
-                                            } else if (
-                                              store === "Boss Fries" ||
-                                              store.toLowerCase().includes("boss fries") ||
-                                              store.toLowerCase().includes("boss")
-                                            ) {
-                                              setWebAppKeyboard("boss_fries_menu");
-                                              setMountainCategory("Breakfast");
-                                              setMenuPage(0);
-                                              setToastMessage(
-                                                "🍟 Opening Boss Fries Premium Menu!",
-                                              );
-                                            } else if (
-                                              store === "Bliss Coffee" ||
-                                              store.toLowerCase().includes("bliss") ||
-                                              store.toLowerCase().includes("bliss coffee")
-                                            ) {
-                                              setWebAppKeyboard("bliss_coffee_menu");
-                                              setMountainCategory("Cake");
-                                              setMenuPage(0);
-                                              setToastMessage(
-                                                "☕ Opening Bliss Coffee Premium Menu!",
-                                              );
-                                             } else if (
-                                               store === "Azi Hotel" ||
-                                               store.toLowerCase().includes("azi") ||
-                                               store.toLowerCase().includes("azi hotel")
-                                             ) {
-                                               setWebAppKeyboard("azi_hotel_menu");
-                                               setMountainCategory("Traditional Foods");
-                                               setMenuPage(0);
-                                               setToastMessage(
-                                                 "🏨 Opening Azi Hotel Premium Menu!",
-                                               );
-                                             } else if (
-                                               store === "Tina Faaya Kitfo" ||
-                                               store.toLowerCase().includes("tina") ||
-                                               store.toLowerCase().includes("faya") ||
-                                               store.toLowerCase().includes("faaya")
-                                             ) {
-                                               setWebAppKeyboard("tina_faya_menu");
-                                               setMountainCategory("Traditional Foods");
-                                               setMenuPage(0);
-                                               setToastMessage(
-                                                 "🥘 Opening Tina Faaya Kitfo Premium Menu!",
-                                               );
-                                             } else if (
-                                               store === "Abenezer Kurt Ena Kitfo" ||
-                                               store.toLowerCase().includes("abenezer") ||
-                                               store.toLowerCase().includes("kurt")
-                                             ) {
-                                               setWebAppKeyboard("abenezer_kurt_menu");
-                                               setMountainCategory("Habeshan");
-                                               setMenuPage(0);
-                                               setToastMessage(
-                                                 "🥩 Opening Abenezer Kurt Ena Kitfo Premium Menu!",
-                                               );
-                                             } else if (
-                                               store === "Feven Restaurant" ||
-                                               store.toLowerCase().includes("feven")
-                                             ) {
-                                               setWebAppKeyboard("feven_restaurant_menu");
-                                               setMountainCategory("Habeshan");
-                                               setMenuPage(0);
-                                               setToastMessage(
-                                                 "🥘 Opening Feven Restaurant Premium Menu!",
-                                               );
-                                             } else if (
-                                               store === "Abiy Filafil" ||
-                                               store.toLowerCase().includes("abiy") ||
-                                               store.toLowerCase().includes("filafil") ||
-                                               store.toLowerCase().includes("felafil")
-                                             ) {
-                                               setWebAppKeyboard("abiy_filafil_menu");
-                                               setMountainCategory("Breakfast");
-                                               setMenuPage(0);
-                                               setToastMessage(
-                                                 "🧆 Opening Abiy Filafil Combined Menu!",
-                                               );
-                                             } else if (
-                                               store === "Tewedaj" ||
-                                               store.toLowerCase().includes("tewedaj")
-                                             ) {
-                                               setWebAppKeyboard("tewedaj_menu");
-                                               setMountainCategory("እንጀራ");
-                                               setMenuPage(0);
-                                               setToastMessage(
-                                                 "🥘 Opening Tewedaj Premium Menu!",
-                                               );
-                                             } else if (
-                                               store === "Yellow Burger & Pizza" ||
-                                               store === "Yellow Burger" ||
-                                               store.toLowerCase().includes("yellow burger") ||
-                                               store.toLowerCase().includes("yellow")
-                                             ) {
-                                               setWebAppKeyboard("yellow_burger_menu");
-                                               setMountainCategory("Burger");
-                                               setMenuPage(0);
-                                               setToastMessage(
-                                                 "🍔 Opening Yellow Burger & Pizza Premium Menu!",
-                                               );
-                                             } else if (
-                                               store === "Antsokiya Traditional Food" ||
-                                               store === "Antsokiya" ||
-                                               store.toLowerCase().includes("antsokiya")
-                                             ) {
-                                               setWebAppKeyboard("antsokiya_menu");
-                                               setMountainCategory("Habeshan");
-                                               setMenuPage(0);
-                                               setToastMessage(
-                                                 "🥘 Opening Antsokiya Traditional Food Premium Menu!",
-                                               );
-                                             } else {
-                                            setToastMessage(
-                                              `🏪 Choice Set: ${store}! Now describe your items in chat!`,
-                                            );
-                                            setIsMenuOpen(false);
-                                          }
-                                          setTimeout(
-                                            () => setToastMessage(null),
-                                            4000,
-                                          );
-                                        }}
-                                        className="bg-white hover:bg-slate-50 border border-slate-100 rounded-2xl p-3 text-left flex flex-col gap-2 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer active:scale-98 relative shadow-2xs group"
-                                        title={store}
-                                      >
-                                        {/* Store Cover Image */}
-                                        <div className="w-full h-24 rounded-xl overflow-hidden bg-slate-100 relative shadow-3xs">
-                                          <img
-                                            src={meta.image}
-                                            alt={store}
-                                            referrerPolicy="no-referrer"
-                                            className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
-                                          />
-                                          <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-3xs text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">
-                                            ⭐ {meta.rating}
-                                          </div>
-                                        </div>
+                                            }}
+                                            className="bg-white hover:bg-slate-50 border border-slate-100 rounded-2xl p-3 text-left flex flex-col gap-2 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 cursor-pointer active:scale-98 relative shadow-2xs group"
+                                            title={store}
+                                          >
+                                            {/* Store Cover Image */}
+                                            <div className="w-full h-24 rounded-xl overflow-hidden bg-slate-100 relative shadow-3xs">
+                                              <img
+                                                src={meta.image}
+                                                alt={store}
+                                                referrerPolicy="no-referrer"
+                                                className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500"
+                                              />
+                                              <div className="absolute top-2 right-2 bg-white/95 backdrop-blur-3xs text-slate-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-0.5 shadow-sm">
+                                                ⭐ {meta.rating}
+                                              </div>
+                                            </div>
 
-                                        <div className="space-y-1">
-                                          <h4 className="font-extrabold text-[12px] text-slate-800 tracking-tight leading-tight uppercase group-hover:text-[var(--brand-primary)] transition-colors truncate">
-                                            {store}
-                                          </h4>
+                                            <div className="space-y-1">
+                                              <h4 className="font-extrabold text-[12px] text-slate-800 tracking-tight leading-tight uppercase group-hover:text-[var(--brand-primary)] transition-colors truncate">
+                                                {store}
+                                              </h4>
 
-                                          <div className="flex items-center gap-1.5 text-[9.5px] font-extrabold text-slate-400">
-                                            <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
-                                              ⏱️ {meta.deliveryTime}
-                                            </span>
-                                          </div>
-                                        </div>
-                                      </button>
+                                              <div className="flex items-center gap-1.5 text-[9.5px] font-extrabold text-slate-400">
+                                                <span className="bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+                                                  ⏱️ {meta.deliveryTime}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          </button>
+                                        );
+                                      },
                                     );
-                                  })
-                                })()}
+                                  })()}
                                 </div>
 
                                 {/* Custom Eyob Book Zone row in TWA */}
