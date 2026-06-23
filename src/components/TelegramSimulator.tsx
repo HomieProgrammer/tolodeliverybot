@@ -193,6 +193,60 @@ export const CENTRAL_RESTAURANT_THEMES: Record<string, StoreBrandTheme> = {
     primaryRgb: "249, 115, 22",
     brandingEmoji: "🍔",
   },
+  rekik_coffee: {
+    primary: "#8B4513",
+    primaryHover: "#5C2E0B",
+    primaryRgb: "139, 69, 19",
+    brandingEmoji: "☕",
+  },
+  emi_pizza: {
+    primary: "#E11D48",
+    primaryHover: "#BE123C",
+    primaryRgb: "225, 29, 72",
+    brandingEmoji: "🍕",
+  },
+  yahweh_nisse: {
+    primary: "#10B981",
+    primaryHover: "#059669",
+    primaryRgb: "16, 185, 129",
+    brandingEmoji: "🥘",
+  },
+  mercy_fruit: {
+    primary: "#EAB308",
+    primaryHover: "#CA8A04",
+    primaryRgb: "234, 179, 8",
+    brandingEmoji: "🍹",
+  },
+  taso_italian: {
+    primary: "#06B6D4",
+    primaryHover: "#0891B2",
+    primaryRgb: "6, 182, 212",
+    brandingEmoji: "🍦",
+  },
+  colors_cafe: {
+    primary: "#DB2777",
+    primaryHover: "#BE185D",
+    primaryRgb: "219, 39, 119",
+    brandingEmoji: "🍰",
+  },
+  moonlight_restorant: {
+    primary: "#4F46E5",
+    primaryHover: "#4338CA",
+    primaryRgb: "79, 70, 229",
+    brandingEmoji: "🌙",
+  },
+  nota_lounge: {
+    primary: "#D97706",
+    primaryHover: "#B45309",
+    primaryRgb: "217, 119, 6",
+    brandingEmoji: "🍔",
+  },
+  queen_kitchen: {
+    primary: "#8B5CF6",
+    primaryHover: "#7C3AED",
+    primaryRgb: "139, 92, 246",
+    brandingEmoji: "👑",
+  },
 };
 
 export const STORE_PAGES = [
@@ -277,6 +331,57 @@ export const STORE_PAGES = [
 ];
 
 export const getStoreMeta = (storeName: string) => {
+  if (
+    storeName === "Rekik Coffee" ||
+    storeName.toLowerCase().includes("rekik")
+  ) {
+    return {
+      rating: "4.8",
+      deliveryTime: "10-20 min",
+      deliveryFee: "Free Delivery",
+      image:
+        "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=400&q=80",
+    };
+  }
+
+  if (storeName === "Emi Pizza" || storeName.toLowerCase().includes("emi")) {
+    return {
+      rating: "4.9",
+      deliveryTime: "15-30 min",
+      deliveryFee: "Free Delivery",
+      image:
+        "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=400&q=80",
+    };
+  }
+
+  if (
+    storeName === "Yahiw Nisse Cafe & Restaurant" ||
+    storeName.toLowerCase().includes("yahiw") ||
+    storeName.toLowerCase().includes("nisse") ||
+    storeName.toLowerCase().includes("yahweh")
+  ) {
+    return {
+      rating: "4.8",
+      deliveryTime: "15-30 min",
+      deliveryFee: "Free Delivery",
+      image:
+        "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=400&q=80",
+    };
+  }
+
+  if (
+    storeName === "Mercy Fruit Salad" ||
+    storeName.toLowerCase().includes("mercy")
+  ) {
+    return {
+      rating: "4.9",
+      deliveryTime: "10-25 min",
+      deliveryFee: "Free Delivery",
+      image:
+        "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?auto=format&fit=crop&w=400&q=80",
+    };
+  }
+
   if (
     storeName === "Rome 1960 Cafe" ||
     storeName.toLowerCase().includes("rome")
@@ -1969,33 +2074,182 @@ export const HIBIR_MENU: Record<string, MountainItem[]> = {
 
 export const MAMAS_CHEKO_MENU: Record<string, MountainItem[]> = {
   Cake: [
-    { name: "Combo", price: 520.00 },
-    { name: "Churros", price: 400.00 },
-    { name: "Craps", price: 400.00 },
-    { name: "Fasting Churos", price: 400.00 },
-    { name: "Fasting Creps", price: 400.00 },
-    { name: "Waffle", price: 400.00 },
-    { name: "Desert Oreo", price: 300.00 },
-    { name: "Puncakes", price: 400.00 }
-  ]
+    { name: "Combo", price: 520.0 },
+    { name: "Churros", price: 400.0 },
+    { name: "Crepes", price: 400.0 },
+    { name: "Fasting Churros", price: 400.0 },
+    { name: "Fasting Crepes", price: 400.0 },
+    { name: "Waffle", price: 400.0 },
+    { name: "Dessert Oreo", price: 300.0 },
+    { name: "Pancakes", price: 400.0 },
+  ],
 };
 
-export const SUNNY_BURGER_2_MENU: Record<string, MountainItem[]> = {
-  Juice: [
-    { name: "Chocolate Shake", price: 270.00 },
-    { name: "Mango Juice", price: 200.00 },
-    { name: "Strawberry mojito", price: 200.00 }
+export const REKIK_COFFEE_MENU: Record<string, MountainItem[]> = {
+  Habeshan: [
+    { name: "Tegabino", price: 300.0 },
+    { name: "Drkosh Firfr", price: 310.0 },
+    { name: "Aynet", price: 290.0 },
+    { name: "Merek Tibs", price: 550.0 },
+    { name: "Tefersho", price: 470.0 },
+    { name: "Siga Firfr", price: 400.0 },
+    { name: "Special kuanta firfr", price: 550.0 },
+    { name: "Half Half Drkosh", price: 320.0 },
+    { name: "Ruz Besiga", price: 470.0 },
+    { name: "Suf Fitft", price: 300.0 },
+    { name: "Firfr bekibe", price: 310.0 },
+    { name: "Half Half Shiro beselata", price: 290.0 },
+    { name: "Misir Wot", price: 290.0 },
+    { name: "Pasta Beatikilt", price: 290.0 },
+    { name: "Shiro", price: 250.0 },
+    { name: "Enkulal Sils", price: 300.0 },
+    { name: "Fasting Firfr", price: 270.0 },
   ],
+};
+
+export const EMI_PIZZA_MENU: Record<string, MountainItem[]> = {
   Pizza: [
-    { name: "Special Pizza", price: 920.00 }
+    { name: "Special Pizza", price: 800.0 },
+    { name: "Calazone Pizza", price: 750.0 },
   ],
-  Sandwich: [
-    { name: "Egg Roll", price: 500.00 },
-    { name: "Egg Sandwich", price: 300.00 }
+  Juice: [
+    { name: "Special Juice", price: 240.0 },
+    { name: "Chocolate Shake", price: 280.0 },
+    { name: "Emi Juice", price: 230.0 },
   ],
   Shawarma: [
-    { name: "Fasting Roll", price: 430.00 }
-  ]
+    { name: "Chicken Shawarma", price: 770.0 },
+    { name: "Vegetable Shawarma", price: 550.0 },
+  ],
+  Burger: [
+    { name: "Special Burger", price: 780.0 },
+    { name: "Triple Burger", price: 850.0 },
+  ],
+  Sandwich: [{ name: "Club Sandwich", price: 700.0 }],
+  Cake: [
+    { name: "Chocolate Cake", price: 180.0 },
+    { name: "Strawberry Cake", price: 190.0 },
+    { name: "Vanilla Cake", price: 170.0 },
+    { name: "Cheese Cake", price: 220.0 },
+  ],
+};
+
+export const YAHWEH_NISSE_MENU: Record<string, MountainItem[]> = {
+  Habeshan: [
+    { name: "Teferisho", price: 600.0 },
+    { name: "Merek Tibs", price: 700.0 },
+    { name: "Gomen Besiga", price: 400.0 },
+    { name: "Half Agelgl", price: 550.0 },
+    { name: "Kuanta firfr", price: 600.0 },
+    { name: "Special Ayb", price: 600.0 },
+    { name: "Special Kitfo", price: 1350.0 },
+    { name: "Ayib Besiga", price: 600.0 },
+    { name: "Dulet", price: 450.0 },
+    { name: "Full Agelgl", price: 1100.0 },
+  ],
+};
+
+export const MERCY_FRUIT_MENU: Record<string, MountainItem[]> = {
+  Juice: [
+    { name: "Fruit Punch", price: 560.0 },
+    { name: "Mango Juice", price: 260.0 },
+    { name: "Special Juice", price: 290.0 },
+    { name: "Avocado with strawberry juice", price: 540.0 },
+    { name: "Banana Juice", price: 240.0 },
+    { name: "Telba Juice", price: 290.0 },
+    { name: "Habab Juice", price: 300.0 },
+  ],
+  Breakfast: [
+    { name: "Full Fruit Punch", price: 920.0 },
+    { name: "half selata", price: 570.0 },
+    { name: "Half Fruit Punch", price: 570.0 },
+    { name: "Sambusa", price: 50.0 },
+  ],
+  Habeshan: [
+    { name: "Papaya Juice", price: 240.0 },
+  ],
+};
+
+export const TASO_ITALIAN_MENU: Record<string, MountainItem[]> = {
+  Lazagna: [
+    { name: "Special Lazagna", price: 950.0 },
+  ],
+  Cake: [
+    { name: "Norma ice cream", price: 150.0 },
+    { name: "Italian Biscuit", price: 100.0 },
+    { name: "Dry Cake Slice", price: 70.0 },
+  ],
+  Burger: [
+    { name: "Cheese Burger", price: 600.0 },
+    { name: "Special Burger", price: 650.0 },
+    { name: "Double Chesse Burger", price: 750.0 },
+    { name: "Beef Burgur", price: 550.0 },
+  ],
+  Pizza: [
+    { name: "Special Pizza", price: 850.0 },
+    { name: "Mini Margarita Pizza", price: 500.0 },
+  ],
+  "Ice Cream": [
+    { name: "Black Forest Cup", price: 430.0 },
+    { name: "Affogato Al Caffe", price: 550.0 },
+  ],
+  Sandwich: [
+    { name: "Banana Split", price: 600.0 },
+    { name: "French Fries", price: 450.0 },
+    { name: "Egg Sandwich", price: 400.0 },
+    { name: "Taso Sandwich", price: 700.0 },
+    { name: "Tuna Sandwich", price: 450.0 },
+  ],
+  Habeshan: [
+    { name: "Tuna Salad", price: 750.0 },
+    { name: "Mixed Salad", price: 500.0 },
+  ],
+  Breakfast: [
+    { name: "Normal Lazagna", price: 900.0 },
+  ],
+};
+
+export const COLORS_CAFE_MENU: Record<string, MountainItem[]> = {
+  Cake: [
+    { name: "None Fasting Baklava", price: 100.0 },
+  ],
+};
+
+export const MOONLIGHT_RESTORANT_MENU: Record<string, MountainItem[]> = {
+  Chicken: [
+    { name: "Chicken Combo", price: 900.0 },
+  ],
+};
+
+export const NOTA_LOUNGE_MENU: Record<string, MountainItem[]> = {
+  Burger: [
+    { name: "Normal Ertb", price: 100.0 },
+    { name: "Special Ertb", price: 120.0 },
+  ],
+};
+
+export const QUEEN_KITCHEN_MENU: Record<string, MountainItem[]> = {};
+
+
+export const SUNNY_BURGER_2_MENU: Record<string, MountainItem[]> = {
+  Burger: [
+    { name: "Doctor's Triple Treat", price: 900.0 },
+    { name: "Cheese Burger", price: 570.0 },
+    { name: "Texas style burger", price: 740.0 },
+    { name: "Sunny Ultra", price: 1650.0 },
+    { name: "Doctor Pill three tab", price: 1030.0 },
+  ],
+  Juice: [
+    { name: "Chocolate Shake", price: 270.0 },
+    { name: "Mango Juice", price: 200.0 },
+    { name: "Strawberry mojito", price: 200.0 },
+  ],
+  Pizza: [{ name: "Special Pizza", price: 920.0 }],
+  Sandwich: [
+    { name: "Egg Roll", price: 500.0 },
+    { name: "Egg Sandwich", price: 300.0 },
+  ],
+  Shawarma: [{ name: "Fasting Roll", price: 430.0 }],
 };
 
 export default function TelegramSimulator({
@@ -2071,6 +2325,15 @@ export default function TelegramSimulator({
     | "hibir_menu"
     | "mamas_cheko_menu"
     | "sunny_burger_2_menu"
+    | "rekik_coffee_menu"
+    | "emi_pizza_menu"
+    | "yahweh_nisse_menu"
+    | "mercy_fruit_menu"
+    | "taso_italian_menu"
+    | "colors_cafe_menu"
+    | "moonlight_restorant_menu"
+    | "nota_lounge_menu"
+    | "queen_kitchen_menu"
   >("main");
   const [webAppKeyboard, setWebAppKeyboard] = useState<
     | "main"
@@ -2120,6 +2383,15 @@ export default function TelegramSimulator({
     | "hibir_menu"
     | "mamas_cheko_menu"
     | "sunny_burger_2_menu"
+    | "rekik_coffee_menu"
+    | "emi_pizza_menu"
+    | "yahweh_nisse_menu"
+    | "mercy_fruit_menu"
+    | "taso_italian_menu"
+    | "colors_cafe_menu"
+    | "moonlight_restorant_menu"
+    | "nota_lounge_menu"
+    | "queen_kitchen_menu"
   >("stores_p1");
   const [mountainCategory, setMountainCategory] = useState<string>("Juice");
   const [mountainSelected, setMountainSelected] = useState<
@@ -2530,20 +2802,83 @@ export default function TelegramSimulator({
             setTgKeyboard("mamas_cheko_menu");
             setMountainCategory("Cake");
             setMenuPage(0);
-            setToastMessage(
-              `🍰 Welcome to Mama's Cheko Bar Premium Menu!`,
-            );
+            setToastMessage(`🍰 Welcome to Mama's Cheko Bar Premium Menu!`);
           } else if (
             arg === "Sunny burger #2" ||
             arg.toLowerCase().includes("sunny burger #2") ||
-            (arg.toLowerCase().includes("sunny") && (arg.includes("2") || arg.toLowerCase().includes("two")))
+            (arg.toLowerCase().includes("sunny") &&
+              (arg.includes("2") || arg.toLowerCase().includes("two")))
           ) {
             setTgKeyboard("sunny_burger_2_menu");
+            setMountainCategory("Burger");
+            setMenuPage(0);
+            setToastMessage(`☀️ Welcome to Sunny burger #2 Premium Menu!`);
+          } else if (
+            arg === "Rekik Coffee" ||
+            arg.toLowerCase().includes("rekik")
+          ) {
+            setTgKeyboard("rekik_coffee_menu");
+            setMountainCategory("Habeshan");
+            setMenuPage(0);
+            setToastMessage(`☕ Welcome to Rekik Coffee Premium Menu!`);
+          } else if (arg === "Emi Pizza" || arg.toLowerCase().includes("emi")) {
+            setTgKeyboard("emi_pizza_menu");
+            setMountainCategory("Pizza");
+            setMenuPage(0);
+            setToastMessage(`🍕 Welcome to Emi Pizza Premium Menu!`);
+          } else if (
+            arg === "Yahiw Nisse Cafe & Restaurant" ||
+            arg.toLowerCase().includes("yahiw") ||
+            arg.toLowerCase().includes("nisse") ||
+            arg.toLowerCase().includes("yahweh")
+          ) {
+            setTgKeyboard("yahweh_nisse_menu");
+            setMountainCategory("Habeshan");
+            setMenuPage(0);
+            setToastMessage(`🥘 Welcome to Yahiw Nisse Premium Menu!`);
+          } else if (
+            arg === "Mercy Fruit Salad" ||
+            arg.toLowerCase().includes("mercy")
+          ) {
+            setTgKeyboard("mercy_fruit_menu");
             setMountainCategory("Juice");
             setMenuPage(0);
-            setToastMessage(
-              `☀️ Welcome to Sunny burger #2 Premium Menu!`,
-            );
+            setToastMessage(`🍹 Welcome to Mercy Fruit Premium Menu!`);
+          } else if (
+            arg === "Taso Italian ice cream and Cafe" ||
+            arg.toLowerCase().includes("taso") ||
+            arg.toLowerCase().includes("italian")
+          ) {
+            setTgKeyboard("taso_italian_menu");
+            setMountainCategory("Pizza");
+            setMenuPage(0);
+            setToastMessage(`🍦 Welcome to Taso Italian Premium Menu!`);
+          } else if (
+            arg === "Colors Cafe" ||
+            arg.toLowerCase().includes("colors")
+          ) {
+            setTgKeyboard("colors_cafe_menu");
+            setMountainCategory("Cake");
+            setMenuPage(0);
+            setToastMessage(`🍰 Welcome to Colors Cafe Premium Menu!`);
+          } else if (
+            arg === "Moonlight Restorant" ||
+            arg.toLowerCase().includes("moonlight")
+          ) {
+            setTgKeyboard("moonlight_restorant_menu");
+            setMountainCategory("Chicken");
+            setMenuPage(0);
+            setToastMessage(`🌙 Welcome to Moonlight Restorant Premium Menu!`);
+          } else if (
+            arg === "Nota Lounge" ||
+            arg.toLowerCase().includes("nota")
+          ) {
+            setTgKeyboard("nota_lounge_menu");
+            setMountainCategory("Burger");
+            setMenuPage(0);
+            setToastMessage(`🍔 Welcome to Nota Lounge Premium Menu!`);
+          } else if (false) {
+            // Queen Kitchen premium menu disabled
           } else {
             setIsMenuOpen(true);
             setToastMessage(`🏪 Selected: ${arg}! Set as pick-up location.`);
@@ -2752,7 +3087,16 @@ export default function TelegramSimulator({
       | "antsokiya"
       | "hibir"
       | "mamas_cheko"
-      | "sunny_burger_2",
+      | "sunny_burger_2"
+      | "rekik_coffee"
+      | "emi_pizza"
+      | "yahweh_nisse"
+      | "mercy_fruit"
+      | "taso_italian"
+      | "colors_cafe"
+      | "moonlight_restorant"
+      | "nota_lounge"
+      | "queen_kitchen",
   ) => {
     const menuData =
       menuType === "mountain"
@@ -2845,13 +3189,43 @@ export default function TelegramSimulator({
                                                                                 : menuType ===
                                                                                     "antsokiya"
                                                                                   ? ANTSOKIYA_MENU
-                                                                                  : menuType === "hibir"
-                                                      ? HIBIR_MENU
-                                                      : menuType === "mamas_cheko"
-                                                        ? MAMAS_CHEKO_MENU
-                                                        : menuType === "sunny_burger_2"
-                                                          ? SUNNY_BURGER_2_MENU
-                                                          : YOM_BURGERIZZA_MENU;
+                                                                                  : menuType ===
+                                                                                      "hibir"
+                                                                                    ? HIBIR_MENU
+                                                                                    : menuType ===
+                                                                                        "mamas_cheko"
+                                                                                      ? MAMAS_CHEKO_MENU
+                                                                                      : menuType ===
+                                                                                          "sunny_burger_2"
+                                                                                        ? SUNNY_BURGER_2_MENU
+                                                                                        : menuType ===
+                                                                                            "rekik_coffee"
+                                                                                          ? REKIK_COFFEE_MENU
+                                                                                          : menuType ===
+                                                                                              "emi_pizza"
+                                                                                            ? EMI_PIZZA_MENU
+                                                                                            : menuType ===
+                                                                                                "yahweh_nisse"
+                                                                                              ? YAHWEH_NISSE_MENU
+                                                                                              : menuType ===
+                                                                                                  "mercy_fruit"
+                                                                                                ? MERCY_FRUIT_MENU
+                                                                                                : menuType ===
+                                                                                                    "taso_italian"
+                                                                                                  ? TASO_ITALIAN_MENU
+                                                                                                  : menuType ===
+                                                                                                      "colors_cafe"
+                                                                                                    ? COLORS_CAFE_MENU
+                                                                                                    : menuType ===
+                                                                                                        "moonlight_restorant"
+                                                                                                      ? MOONLIGHT_RESTORANT_MENU
+                                                                                                      : menuType ===
+                                                                                                          "nota_lounge"
+                                                                                                        ? NOTA_LOUNGE_MENU
+                                                                                                        : menuType ===
+                                                                                                            "queen_kitchen"
+                                                                                                          ? QUEEN_KITCHEN_MENU
+                                                                                                          : YOM_BURGERIZZA_MENU;
 
     const rawCategories =
       menuType === "yom"
@@ -3010,35 +3384,79 @@ export default function TelegramSimulator({
                                                               "Juice",
                                                               "Habeshan",
                                                             ]
-                                                          : menuType === "mamas_cheko"
-                                                            ? [
-                                                                "All",
-                                                                "Cake",
-                                                              ]
-                                                            : menuType === "sunny_burger_2"
-                                                               ? [
-                                                                   "All",
-                                                                   "Juice",
-                                                                   "Sandwich",
-                                                                   "Pizza",
-                                                                   "Shawarma",
-                                                                 ]
-                                                          : [
-                                                              "All",
-                                                              "Noodles",
-                                                              "Pizza",
-                                                              "Burger",
-                                                              "Juice",
-                                                              "Sandwich",
-                                                              "Shawarma",
-                                                              "Chicken",
-                                                              "Breakfast",
-                                                              "Coffee",
-                                                              "Pasta",
-                                                              "Soft Drink",
-                                                              "Cake",
-                                                              "Pastry",
-                                                            ];
+                                                          : menuType ===
+                                                              "mamas_cheko"
+                                                            ? ["All", "Cake"]
+                                                            : menuType ===
+                                                                "sunny_burger_2"
+                                                              ? [
+                                                                  "All",
+                                                                  "Burger",
+                                                                  "Juice",
+                                                                  "Sandwich",
+                                                                  "Pizza",
+                                                                  "Shawarma",
+                                                                ]
+                                                              : menuType ===
+                                                                  "rekik_coffee"
+                                                                ? [
+                                                                    "All",
+                                                                    "Habeshan",
+                                                                  ]
+                                                                : menuType ===
+                                                                    "emi_pizza"
+                                                                  ? [
+                                                                      "All",
+                                                                      "Pizza",
+                                                                      "Juice",
+                                                                      "Shawarma",
+                                                                      "Burger",
+                                                                      "Sandwich",
+                                                                      "Cake",
+                                                                    ]
+                                                                  : menuType ===
+                                                                      "yahweh_nisse"
+                                                                    ? [
+                                                                        "All",
+                                                                        "Habeshan",
+                                                                      ]
+                                                                    : menuType ===
+                                                                        "mercy_fruit"
+                                                                      ? [
+                                                                          "All",
+                                                                          "Juice",
+                                                                          "Breakfast",
+                                                                          "Habeshan",
+                                                                        ]
+                                                                      : menuType ===
+                                                                          "taso_italian"
+                                                                        ? [
+                                                                            "All",
+                                                                            "Lazagna",
+                                                                            "Cake",
+                                                                            "Burger",
+                                                                            "Pizza",
+                                                                            "Ice Cream",
+                                                                            "Sandwich",
+                                                                            "Habeshan",
+                                                                            "Breakfast",
+                                                                          ]
+                                                                        : menuType === "colors_cafe" ? ["All", "Cake"] : menuType === "moonlight_restorant" ? ["All", "Chicken"] : menuType === "nota_lounge" ? ["All", "Burger"] : menuType === "queen_kitchen" ? ["All"] : [
+                                                                      "All",
+                                                                      "Noodles",
+                                                                      "Pizza",
+                                                                      "Burger",
+                                                                      "Juice",
+                                                                      "Sandwich",
+                                                                      "Shawarma",
+                                                                      "Chicken",
+                                                                      "Breakfast",
+                                                                      "Coffee",
+                                                                      "Pasta",
+                                                                      "Soft Drink",
+                                                                      "Cake",
+                                                                      "Pastry",
+                                                                    ];
 
     const categories = rawCategories.filter(
       (cat) =>
@@ -3314,6 +3732,69 @@ export default function TelegramSimulator({
               ? "ከሳኒ በርገር #2 ይምረጡ (በገጽ 20 እቃዎች)፦"
               : "Select an item to add (20 per page):",
           };
+        case "rekik_coffee":
+          return {
+            title: "☕ Rekik Coffee Premium Menu",
+            desc: isAmharic
+              ? "ከረቂቅ ኮፊ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "emi_pizza":
+          return {
+            title: "🍕 Emi Pizza Premium Menu",
+            desc: isAmharic
+              ? "ከእሚ ፒዛ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "yahweh_nisse":
+          return {
+            title: "🥘 Yahiw Nisse Premium Menu",
+            desc: isAmharic
+              ? "ከያሂው ኒሴ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "mercy_fruit":
+          return {
+            title: "🍹 Mercy Fruit Premium Menu",
+            desc: isAmharic
+              ? "ከመርሲ ፍሩት ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "taso_italian":
+          return {
+            title: "🍦 Taso Italian Premium Menu",
+            desc: isAmharic
+              ? "ከታሶ ኢታሊያን ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "colors_cafe":
+          return {
+            title: "🍰 Colors Cafe Premium Menu",
+            desc: isAmharic
+              ? "ከከለርስ ካፌ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "moonlight_restorant":
+          return {
+            title: "🌙 Moonlight Restorant Premium Menu",
+            desc: isAmharic
+              ? "ከሙንላይት ሬስቶራንት ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "nota_lounge":
+          return {
+            title: "🍔 Nota Lounge Premium Menu",
+            desc: isAmharic
+              ? "ከኖታ ላውንጅ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "queen_kitchen":
+          return {
+            title: "👑 Queen Kitchen Premium Menu",
+            desc: isAmharic
+              ? "ከኩዊን ኪችን ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
         case "marti":
         default:
           return {
@@ -3409,13 +3890,29 @@ export default function TelegramSimulator({
                                                                           : menuType ===
                                                                               "antsokiya"
                                                                             ? "Antsokiya Traditional Food"
-                                                                            : menuType === "hibir"
-                                                                               ? "Hibir Cafe & Restorant"
-                                                                               : menuType === "mamas_cheko"
-                                                                                 ? "Mama's Cheko Bar"
-                                                                                 : menuType === "sunny_burger_2"
-                                                                                   ? "Sunny burger #2"
-                                                                                   : "YOM BURGERIZZA",
+                                                                            : menuType ===
+                                                                                "hibir"
+                                                                              ? "Hibir Cafe & Restorant"
+                                                                              : menuType ===
+                                                                                  "mamas_cheko"
+                                                                                ? "Mama's Cheko Bar"
+                                                                                : menuType ===
+                                                                                    "sunny_burger_2"
+                                                                                  ? "Sunny burger #2"
+                                                                                  : menuType ===
+                                                                                      "rekik_coffee"
+                                                                                    ? "Rekik Coffee"
+                                                                                    : menuType ===
+                                                                                        "emi_pizza"
+                                                                                      ? "Emi Pizza"
+                                                                                      : menuType ===
+                                                                                          "yahweh_nisse"
+                                                                                        ? "Yahiw Nisse Cafe & Restaurant"
+                                                                                        : menuType ===
+                                                                                            "mercy_fruit"
+                                                                                          ? "Mercy Fruit Salad"
+                                                                                          : menuType ===
+                                                                                              "taso_italian" ? "Taso Italian ice cream and Cafe" : menuType === "colors_cafe" ? "Colors Cafe" : menuType === "moonlight_restorant" ? "Moonlight Restorant" : menuType === "nota_lounge" ? "Nota Lounge" : menuType === "queen_kitchen" ? "Queen of the kitchen" : "YOM BURGERIZZA",
     );
 
     const getThemeColors = () => {
@@ -4330,6 +4827,15 @@ export default function TelegramSimulator({
     if (activeKbd === "hibir_menu") return "hibir";
     if (activeKbd === "mamas_cheko_menu") return "mamas_cheko";
     if (activeKbd === "sunny_burger_2_menu") return "sunny_burger_2";
+    if (activeKbd === "rekik_coffee_menu") return "rekik_coffee";
+    if (activeKbd === "emi_pizza_menu") return "emi_pizza";
+    if (activeKbd === "yahweh_nisse_menu") return "yahweh_nisse";
+    if (activeKbd === "mercy_fruit_menu") return "mercy_fruit";
+    if (activeKbd === "taso_italian_menu") return "taso_italian";
+    if (activeKbd === "colors_cafe_menu") return "colors_cafe";
+    if (activeKbd === "moonlight_restorant_menu") return "moonlight_restorant";
+    if (activeKbd === "nota_lounge_menu") return "nota_lounge";
+    if (activeKbd === "queen_kitchen_menu") return "queen_kitchen";
     return null;
   })();
 
@@ -4899,7 +5405,18 @@ export default function TelegramSimulator({
             tgKeyboard === "tewedaj_menu" ||
             tgKeyboard === "yellow_burger_menu" ||
             tgKeyboard === "antsokiya_menu" ||
-            tgKeyboard === "hibir_menu" ? (
+            tgKeyboard === "hibir_menu" ||
+            tgKeyboard === "mamas_cheko_menu" ||
+            tgKeyboard === "sunny_burger_2_menu" ||
+            tgKeyboard === "rekik_coffee_menu" ||
+            tgKeyboard === "emi_pizza_menu" ||
+            tgKeyboard === "yahweh_nisse_menu" ||
+            tgKeyboard === "colors_cafe_menu" ||
+            tgKeyboard === "moonlight_restorant_menu" ||
+            tgKeyboard === "nota_lounge_menu" ||
+            tgKeyboard === "queen_kitchen_menu" ||
+            tgKeyboard === "mercy_fruit_menu" ||
+            tgKeyboard === "taso_italian_menu" ? (
               renderInteractiveMenu(
                 false,
                 tgKeyboard === "mountain_hotel_menu"
@@ -4993,17 +5510,31 @@ export default function TelegramSimulator({
                                                                                       : tgKeyboard ===
                                                                                           "tewedaj_menu"
                                                                                         ? "tewedaj"
-                                                                                        : tgKeyboard === "hibir_menu"
-                                                                                            ? "hibir"
-                                                                                            : tgKeyboard === "yellow_burger_menu"
-                                                                                              ? "yellow_burger"
-                                                                                              : tgKeyboard === "antsokiya_menu"
-                                                                                                ? "antsokiya"
-                                                                                                : tgKeyboard === "mamas_cheko_menu"
-                                                                                                  ? "mamas_cheko"
-                                                                                                  : tgKeyboard === "sunny_burger_2_menu"
-                                                                                                    ? "sunny_burger_2"
-                                                                                                    : "yom",
+                                                                                        : tgKeyboard ===
+                                                                                            "hibir_menu"
+                                                                                          ? "hibir"
+                                                                                          : tgKeyboard ===
+                                                                                              "yellow_burger_menu"
+                                                                                            ? "yellow_burger"
+                                                                                            : tgKeyboard ===
+                                                                                                "antsokiya_menu"
+                                                                                              ? "antsokiya"
+                                                                                              : tgKeyboard ===
+                                                                                                  "mamas_cheko_menu"
+                                                                                                ? "mamas_cheko"
+                                                                                                : tgKeyboard ===
+                                                                                                    "sunny_burger_2_menu"
+                                                                                                  ? "sunny_burger_2"
+                                                                                                  : tgKeyboard ===
+                                                                                                      "rekik_coffee_menu"
+                                                                                                    ? "rekik_coffee"
+                                                                                                    : tgKeyboard ===
+                                                                                                        "emi_pizza_menu"
+                                                                                                      ? "emi_pizza"
+                                                                                                      : tgKeyboard ===
+                                                                                                          "yahweh_nisse_menu"
+                                                                                                        ? "yahweh_nisse"
+                                                                                                        : tgKeyboard === "colors_cafe_menu" ? "colors_cafe" : tgKeyboard === "moonlight_restorant_menu" ? "moonlight_restorant" : tgKeyboard === "nota_lounge_menu" ? "nota_lounge" : tgKeyboard === "queen_kitchen_menu" ? "queen_kitchen" : tgKeyboard === "mercy_fruit_menu" ? "mercy_fruit" : tgKeyboard === "taso_italian_menu" ? "taso_italian" : "yom",
               )
             ) : (
               <>
@@ -5520,7 +6051,11 @@ export default function TelegramSimulator({
                         webAppKeyboard === "antsokiya_menu" ||
                         webAppKeyboard === "hibir_menu" ||
                         webAppKeyboard === "mamas_cheko_menu" ||
-                        webAppKeyboard === "sunny_burger_2_menu" ? (
+                        webAppKeyboard === "sunny_burger_2_menu" ||
+                        webAppKeyboard === "rekik_coffee_menu" ||
+                        webAppKeyboard === "emi_pizza_menu" ||
+                        webAppKeyboard === "yahweh_nisse_menu" ||
+                        webAppKeyboard === "colors_cafe_menu" || webAppKeyboard === "moonlight_restorant_menu" || webAppKeyboard === "nota_lounge_menu" || webAppKeyboard === "queen_kitchen_menu" || webAppKeyboard === "mercy_fruit_menu" || webAppKeyboard === "taso_italian_menu" ? (
                           renderInteractiveMenu(
                             true,
                             webAppKeyboard === "mountain_hotel_menu"
@@ -5637,7 +6172,16 @@ export default function TelegramSimulator({
                                                                                                             : webAppKeyboard ===
                                                                                                                 "sunny_burger_2_menu"
                                                                                                               ? "sunny_burger_2"
-                                                                                                              : "yom",
+                                                                                                              : webAppKeyboard ===
+                                                                                                                  "rekik_coffee_menu"
+                                                                                                                ? "rekik_coffee"
+                                                                                                                : webAppKeyboard ===
+                                                                                                                    "emi_pizza_menu"
+                                                                                                                  ? "emi_pizza"
+                                                                                                                  : webAppKeyboard ===
+                                                                                                                      "yahweh_nisse_menu"
+                                                                                                                    ? "yahweh_nisse"
+                                                                                                                    : webAppKeyboard === "colors_cafe_menu" ? "colors_cafe" : webAppKeyboard === "moonlight_restorant_menu" ? "moonlight_restorant" : webAppKeyboard === "nota_lounge_menu" ? "nota_lounge" : webAppKeyboard === "queen_kitchen_menu" ? "queen_kitchen" : webAppKeyboard === "mercy_fruit_menu" ? "mercy_fruit" : webAppKeyboard === "taso_italian_menu" ? "taso_italian" : "yom",
                           )
                         ) : (
                           <>
@@ -5772,12 +6316,172 @@ export default function TelegramSimulator({
                                                   .toLowerCase()
                                                   .includes("sunny")
                                               ) {
+                                                if (
+                                                  store.includes("2") ||
+                                                  store
+                                                    .toLowerCase()
+                                                    .includes("two")
+                                                ) {
+                                                  setWebAppKeyboard(
+                                                    "sunny_burger_2_menu",
+                                                  );
+                                                  setMountainCategory("Burger");
+                                                  setMenuPage(0);
+                                                  setToastMessage(
+                                                    "☀️ Opening Sunny Burger #2 Premium Menu!",
+                                                  );
+                                                  setTimeout(
+                                                    () => setToastMessage(null),
+                                                    4000,
+                                                  );
+                                                  return;
+                                                }
                                                 setWebAppKeyboard("sunny_menu");
                                                 setMountainCategory("Burger");
                                                 setMenuPage(0);
                                                 setToastMessage(
                                                   "☀️ Opening Sunny Burger Premium Menu!",
                                                 );
+                                              } else if (
+                                                store === "Mama's Cheko Bar" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("mamas cheko") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("cheko")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "mamas_cheko_menu",
+                                                );
+                                                setMountainCategory("Cake");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍰 Opening Mama's Cheko Bar Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Rekik Coffee" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("rekik")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "rekik_coffee_menu",
+                                                );
+                                                setMountainCategory("Habeshan");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "☕ Opening Rekik Coffee Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Emi Pizza" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("emi")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "emi_pizza_menu",
+                                                );
+                                                setMountainCategory("Pizza");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍕 Opening Emi Pizza Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Yahiw Nisse Cafe & Restaurant" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("yahiw") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("nisse") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("yahweh")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "yahweh_nisse_menu",
+                                                );
+                                                setMountainCategory("Habeshan");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🥘 Opening Yahiw Nisse Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Mercy Fruit Salad" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("mercy")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "mercy_fruit_menu",
+                                                );
+                                                setMountainCategory("Juice");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍹 Opening Mercy Fruit Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Taso Italian ice cream and Cafe" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("taso") ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("italian")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "taso_italian_menu",
+                                                );
+                                                setMountainCategory("Pizza");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍦 Opening Taso Italian Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Colors Cafe" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("colors")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "colors_cafe_menu",
+                                                );
+                                                setMountainCategory("Cake");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍰 Opening Colors Cafe Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Moonlight Restorant" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("moonlight")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "moonlight_restorant_menu",
+                                                );
+                                                setMountainCategory("Chicken");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🌙 Opening Moonlight Restorant Premium Menu!",
+                                                );
+                                              } else if (
+                                                store === "Nota Lounge" ||
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("nota")
+                                              ) {
+                                                setWebAppKeyboard(
+                                                  "nota_lounge_menu",
+                                                );
+                                                setMountainCategory("Burger");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "🍔 Opening Nota Lounge Premium Menu!",
+                                                );
+                                              } else if (false) {
+                                                // Queen Kitchen premium webapp trigger disabled
                                               } else if (
                                                 store === "Rome 1960 Cafe" ||
                                                 store
@@ -6372,9 +7076,12 @@ export default function TelegramSimulator({
                                                   "🍔 Opening Yellow Burger & Pizza Premium Menu!",
                                                 );
                                               } else if (
-                                                store === "Hibir Cafe & Restorant" ||
+                                                store ===
+                                                  "Hibir Cafe & Restorant" ||
                                                 store === "Hibir" ||
-                                                store.toLowerCase().includes("hibir")
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("hibir")
                                               ) {
                                                 setWebAppKeyboard("hibir_menu");
                                                 setMountainCategory("Burger");
@@ -6383,11 +7090,16 @@ export default function TelegramSimulator({
                                                   "☕ Opening Hibir Cafe & Restorant Premium Menu!",
                                                 );
                                               } else if (
-                                                store === "Antsokiya Traditional Food" ||
+                                                store ===
+                                                  "Antsokiya Traditional Food" ||
                                                 store === "Antsokiya" ||
-                                                store.toLowerCase().includes("antsokiya")
+                                                store
+                                                  .toLowerCase()
+                                                  .includes("antsokiya")
                                               ) {
-                                                setWebAppKeyboard("antsokiya_menu");
+                                                setWebAppKeyboard(
+                                                  "antsokiya_menu",
+                                                );
                                                 setMountainCategory("Habeshan");
                                                 setMenuPage(0);
                                                 setToastMessage(
