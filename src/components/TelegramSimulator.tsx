@@ -45,6 +45,7 @@ interface TelegramSimulatorProps {
     pickupAddress: string;
   };
   onOpenProfileModal: () => void;
+  onRequestDevicePhone?: () => void;
   menuItems: MenuItem[];
   receiptPhoto?: string;
   onReceiptPhotoChange?: (photoUrl: string) => void;
@@ -2305,6 +2306,7 @@ export default function TelegramSimulator({
   activeOrder,
   customerProfile,
   onOpenProfileModal,
+  onRequestDevicePhone,
   menuItems,
   receiptPhoto,
   onReceiptPhotoChange,
@@ -2979,15 +2981,26 @@ export default function TelegramSimulator({
       setLocalPickupAddress(customerProfile.pickupAddress || "");
       setLocalPackageDetails("");
       setLocalEstimatedPrice(150);
-      setPhoneSharedStep("none");
+      setPhoneSharedStep(customerProfile.phone ? "real" : "none");
       setFormError(null);
     }
   }, [customerProfile, isMenuOpen]);
+
+  useEffect(() => {
+    if (customerProfile.phone) {
+      setLocalPhone(customerProfile.phone);
+      setPhoneSharedStep("real");
+    }
+  }, [customerProfile.phone]);
 
   // Simulated rapid fill sharing preferences using telegram authentication permission flow
   const handleShareMobileNumber = () => {
     const devicePhone = (customerProfile.phone || "").trim();
     if (!devicePhone) {
+      if (onRequestDevicePhone) {
+        onRequestDevicePhone();
+        return;
+      }
       setToastMessage(
         isAmharic
           ? "⚠️ እባክዎን በመጀመሪያ የደንበኛ መገለጫዎን (Profile) ላይ ስልክ ቁጥርዎን ያስገቡ!"
@@ -4643,6 +4656,10 @@ export default function TelegramSimulator({
                       onClick={() => {
                         const devicePhone = (customerProfile.phone || "").trim();
                         if (!devicePhone) {
+                          if (onRequestDevicePhone) {
+                            onRequestDevicePhone();
+                            return;
+                          }
                           setToastMessage(
                             isAmharic
                               ? "⚠️ እባክዎን በመጀመሪያ የደንበኛ መገለጫዎን (Profile) ላይ ስልክ ቁጥርዎን ያስገቡ!"
@@ -4760,6 +4777,10 @@ export default function TelegramSimulator({
                 const correctPhone = devicePhone || (localPhone || "").trim();
                 
                 if (!correctPhone) {
+                  if (onRequestDevicePhone) {
+                    onRequestDevicePhone();
+                    return;
+                  }
                   setToastMessage(
                     isAmharic
                       ? "⚠️ እባክዎን በመጀመሪያ የደንበኛ መገለጫዎን (Profile) ላይ ስልክ ቁጥርዎን ያስገቡ!"

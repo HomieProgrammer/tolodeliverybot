@@ -71,6 +71,14 @@ export default function App() {
   }, [customerProfile]);
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [showDevicePhonePrompt, setShowDevicePhonePrompt] = useState(false);
+  const [devicePhoneInput, setDevicePhoneInput] = useState("0912345678");
+  const [isReadingDeviceSIM, setIsReadingDeviceSIM] = useState(false);
+
+  const handleRequestDevicePhone = () => {
+    setDevicePhoneInput(customerProfile.phone || "0912345678");
+    setShowDevicePhonePrompt(true);
+  };
 
   // Bot configurations for direct Telegram operator alerts
   const [botToken, setBotToken] = useState(() => {
@@ -1572,6 +1580,7 @@ export default function App() {
               activeOrder={activeTrackingOrderDetails}
               customerProfile={customerProfile}
               onOpenProfileModal={() => setIsProfileModalOpen(true)}
+              onRequestDevicePhone={handleRequestDevicePhone}
               menuItems={menuItems}
               receiptPhoto={receiptPhoto}
               onReceiptPhotoChange={setReceiptPhoto}
@@ -1704,7 +1713,7 @@ export default function App() {
                     <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
                       Phone Number
                     </label>
-                    <div className="relative">
+                    <div className="relative flex items-center">
                       <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-3" />
                       <input
                         type="text"
@@ -1716,12 +1725,20 @@ export default function App() {
                           }))
                         }
                         placeholder="e.g. 0911234567"
-                        className={`w-full bg-slate-50 border rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 font-medium font-sans ${
+                        className={`w-full bg-slate-50 border rounded-xl pl-10 pr-24 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 font-medium font-sans ${
                           customerProfile.phone.trim() !== "" && customerProfile.phone.replace(/[^0-9]/g, "").length !== 10
                             ? "border-rose-500 ring-2 ring-rose-500/10 focus:ring-rose-500"
                             : "border-slate-200 focus:ring-[#E0560B]"
                         }`}
                       />
+                      <button
+                        type="button"
+                        onClick={handleRequestDevicePhone}
+                        className="absolute right-1.5 py-1 px-2.5 bg-orange-100 hover:bg-orange-200 text-[#E0560B] rounded-lg text-[10px] font-bold transition flex items-center gap-1 active:scale-95 border border-orange-200/50 cursor-pointer"
+                        title="Autofill from device registered SIM card"
+                      >
+                        ⚡ Share Phone
+                      </button>
                     </div>
                     {customerProfile.phone.trim() !== "" && customerProfile.phone.replace(/[^0-9]/g, "").length !== 10 && (
                       <p className="text-rose-600 text-[10px] font-bold mt-1 pl-1 font-sans animate-pulse">
@@ -1904,7 +1921,7 @@ export default function App() {
                             <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">
                               Phone Contact Number
                             </label>
-                            <div className="relative">
+                            <div className="relative flex items-center">
                               <Phone className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
                               <input
                                 type="text"
@@ -1916,9 +1933,17 @@ export default function App() {
                                   }))
                                 }
                                 placeholder="e.g. 0911234567"
-                                className={`w-full bg-white border rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-805 font-sans focus:outline-none focus:ring-2 focus:ring-[#E0560B] font-medium ${isPhoneInvalid && customerProfile.phone.trim() !== "" ? "border-rose-500 ring-2 ring-rose-500/10" : "border-slate-200"}`}
+                                className={`w-full bg-white border rounded-lg pl-8 pr-24 py-1.5 text-xs text-slate-805 font-sans focus:outline-none focus:ring-2 focus:ring-[#E0560B] font-medium ${isPhoneInvalid && customerProfile.phone.trim() !== "" ? "border-rose-500 ring-2 ring-rose-500/10" : "border-slate-200"}`}
                                 required
                               />
+                              <button
+                                type="button"
+                                onClick={handleRequestDevicePhone}
+                                className="absolute right-1 py-1 px-2.5 bg-orange-100 hover:bg-orange-200 text-[#E0560B] rounded-md text-[10px] font-bold transition flex items-center gap-1 active:scale-95 border border-orange-200/50 cursor-pointer"
+                                title="Autofill from device registered SIM card"
+                              >
+                                ⚡ Share Phone
+                              </button>
                             </div>
                             {isPhoneInvalid &&
                               customerProfile.phone.trim() !== "" && (
@@ -2650,6 +2675,102 @@ export default function App() {
                   </button>
                 </div>
               )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* NATIVE DEVICE AUTOFILL PROMPT */}
+      <AnimatePresence>
+        {showDevicePhonePrompt && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-100 p-5 space-y-4 relative"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-orange-100 text-[#E0560B] rounded-xl flex items-center justify-center">
+                  <Smartphone className="w-5 h-5 animate-bounce text-[#E0560B]" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-xs text-slate-900 font-sans">
+                    Device Autofill Request
+                  </h4>
+                  <p className="text-[10px] text-slate-500 font-sans">
+                    Tollo Delivery wants to retrieve your phone number.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 rounded-xl p-3 border border-slate-150 space-y-2">
+                <label className="block text-[9.5px] font-bold text-slate-500 uppercase tracking-wide font-sans">
+                  Detected Device SIM Card Number
+                </label>
+                <div className="flex gap-2 items-center bg-white border border-slate-200 rounded-lg px-2 py-1">
+                  <span className="text-sm">🇪🇹</span>
+                  <input
+                    type="tel"
+                    value={devicePhoneInput}
+                    onChange={(e) => setDevicePhoneInput(e.target.value)}
+                    className="flex-1 bg-transparent text-xs font-semibold focus:outline-none text-slate-800 font-sans"
+                    placeholder="e.g. 0911223344"
+                  />
+                </div>
+                <p className="text-[9px] text-slate-400 font-sans leading-relaxed">
+                  Select or edit the correct registered phone number to autofill instantly on this device.
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowDevicePhonePrompt(false)}
+                  disabled={isReadingDeviceSIM}
+                  className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold py-2 rounded-lg transition active:scale-95 disabled:opacity-50 cursor-pointer font-sans"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsReadingDeviceSIM(true);
+                    setTimeout(() => {
+                      setIsReadingDeviceSIM(false);
+                      setShowDevicePhonePrompt(false);
+                      setCustomerProfile((prev) => ({
+                        ...prev,
+                        phone: devicePhoneInput,
+                      }));
+                      // Show success in messages
+                      setMessages((prev) => [
+                        ...prev,
+                        {
+                          id: "sys_" + Date.now(),
+                          sender: "system",
+                          text: `📱 Phone shared automatically from device SIM: ${devicePhoneInput}`,
+                          timestamp: new Date().toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }),
+                        },
+                      ]);
+                    }, 850);
+                  }}
+                  disabled={isReadingDeviceSIM || !devicePhoneInput.trim()}
+                  className="flex-1 bg-[#E0560B] hover:bg-[#9A3412] text-white text-xs font-bold py-2 rounded-lg transition active:scale-95 disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer font-sans"
+                >
+                  {isReadingDeviceSIM ? (
+                    <>
+                      <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      Retrieving...
+                    </>
+                  ) : (
+                    "Allow & Share"
+                  )}
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
