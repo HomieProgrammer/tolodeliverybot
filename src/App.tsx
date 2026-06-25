@@ -1716,9 +1716,18 @@ export default function App() {
                           }))
                         }
                         placeholder="e.g. 0911234567"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#E0560B] font-medium font-sans"
+                        className={`w-full bg-slate-50 border rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 font-medium font-sans ${
+                          customerProfile.phone.trim() !== "" && customerProfile.phone.replace(/[^0-9]/g, "").length !== 10
+                            ? "border-rose-500 ring-2 ring-rose-500/10 focus:ring-rose-500"
+                            : "border-slate-200 focus:ring-[#E0560B]"
+                        }`}
                       />
                     </div>
+                    {customerProfile.phone.trim() !== "" && customerProfile.phone.replace(/[^0-9]/g, "").length !== 10 && (
+                      <p className="text-rose-600 text-[10px] font-bold mt-1 pl-1 font-sans animate-pulse">
+                        ⚠️ Phone number must be exactly 10 digits (e.g., 0911234567).
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -2132,8 +2141,17 @@ export default function App() {
                               placeholder="e.g. 0911234567"
                               value={payerPhone}
                               onChange={(e) => setPayerPhone(e.target.value)}
-                              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-850 font-mono focus:outline-none focus:ring-1 focus:ring-sky-500"
+                              className={`w-full bg-white border rounded-lg px-3 py-1.5 text-xs text-slate-850 font-mono focus:outline-none focus:ring-1 ${
+                                payerPhone.trim() !== "" && payerPhone.replace(/[^0-9]/g, "").length !== 10
+                                  ? "border-rose-500 text-rose-600 focus:ring-rose-500 focus:border-rose-500 bg-rose-50/10"
+                                  : "border-slate-200 focus:ring-sky-500"
+                              }`}
                             />
+                            {payerPhone.trim() !== "" && payerPhone.replace(/[^0-9]/g, "").length !== 10 && (
+                              <p className="text-rose-600 text-[9.5px] font-bold mt-1 font-sans animate-pulse">
+                                ⚠️ Phone number must be exactly 10 digits!
+                              </p>
+                            )}
                             <p className="text-[9.5px] text-sky-650 mt-1 font-sans font-medium">
                               Pays directly to our official corporate telebirr
                               merchant account. Your phone will receive an
@@ -2151,8 +2169,17 @@ export default function App() {
                               placeholder="e.g. 0911234567"
                               value={payerPhone}
                               onChange={(e) => setPayerPhone(e.target.value)}
-                              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-850 font-mono focus:outline-none focus:ring-1 focus:ring-amber-500"
+                              className={`w-full bg-white border rounded-lg px-3 py-1.5 text-xs text-slate-850 font-mono focus:outline-none focus:ring-1 ${
+                                payerPhone.trim() !== "" && payerPhone.replace(/[^0-9]/g, "").length !== 10
+                                  ? "border-rose-500 text-rose-600 focus:ring-rose-500 focus:border-rose-500 bg-rose-50/10"
+                                  : "border-slate-200 focus:ring-amber-500"
+                              }`}
                             />
+                            {payerPhone.trim() !== "" && payerPhone.replace(/[^0-9]/g, "").length !== 10 && (
+                              <p className="text-rose-600 text-[9.5px] font-bold mt-1 font-sans animate-pulse">
+                                ⚠️ Mobile number must be exactly 10 digits!
+                              </p>
+                            )}
                             <p className="text-[9.5px] text-amber-650 mt-1 font-sans font-medium">
                               Using Commercial Bank of Ethiopia mobile money to
                               transfer directly to the official corporate CBE

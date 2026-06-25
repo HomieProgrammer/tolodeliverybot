@@ -2985,29 +2985,18 @@ export default function TelegramSimulator({
   }, [customerProfile, isMenuOpen]);
 
   // Simulated rapid fill sharing preferences using telegram authentication permission flow
-  // Shows a fake simulated contact first, and then real profile contact on next click
   const handleShareMobileNumber = () => {
-    if (phoneSharedStep === "none") {
-      const fakePhone = "0944112233"; // clearly distinct fake simulator number
-      setLocalPhone(fakePhone);
-      setPhoneSharedStep("fake");
-      setToastMessage(
-        isAmharic
-          ? `⚠️ አስመስሎ የተሰራ ስልክ ተጋርቷል፦ ${fakePhone}! እውነተኛውን ስልክ ለማጋራት 'ስልክ አጋራ' የሚለውን ቁልፍ እንደገና ይጫኑ።`
-          : `⚠️ Shared FAKE contact first: ${fakePhone}! Tap "Share number" again to send your real contact.`,
-      );
-      setTimeout(() => setToastMessage(null), 4500);
-    } else {
-      const realPhone = customerProfile.phone || "0912345678";
-      setLocalPhone(realPhone);
-      setPhoneSharedStep("real");
-      setToastMessage(
-        isAmharic
-          ? `✓ እውነተኛው ስልክ ተጋርቷል፦ ${realPhone}!`
-          : `✓ Real contact shared successfully: ${realPhone}!`,
-      );
-      setTimeout(() => setToastMessage(null), 3000);
-    }
+    const correctPhone = (customerProfile.phone || localPhone || "").replace(/[^0-9]/g, "").length === 10
+      ? (customerProfile.phone || localPhone)
+      : "0911223344";
+    setLocalPhone(correctPhone);
+    setPhoneSharedStep("real");
+    setToastMessage(
+      isAmharic
+        ? `✓ ስልክ ቁጥር ተጋርቷል፦ ${correctPhone}!`
+        : `✓ Contact shared successfully: ${correctPhone}!`,
+    );
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
   const handleShareLiveLocation = () => {
@@ -4632,20 +4621,27 @@ export default function TelegramSimulator({
                           onUpdateProfile({ ...customerProfile, phone: val });
                         }
                       }}
-                      className="flex-1 min-w-0 bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-orange-500"
+                      className={`flex-1 min-w-0 bg-white border rounded-lg px-2 py-1 text-xs font-semibold focus:outline-none focus:ring-1 ${
+                        (customerProfile.phone || localPhone || "").trim() !== "" &&
+                        (customerProfile.phone || localPhone || "").replace(/[^0-9]/g, "").length !== 10
+                          ? "border-rose-500 text-rose-600 focus:ring-rose-500 focus:border-rose-500 bg-rose-50/10"
+                          : "border-slate-200 focus:ring-orange-500"
+                      }`}
                     />
                     <button
                       type="button"
                       onClick={() => {
-                        const fakePhone = "0944112233";
-                        setLocalPhone(fakePhone);
+                        const correctPhone = (customerProfile.phone || localPhone || "").replace(/[^0-9]/g, "").length === 10
+                          ? (customerProfile.phone || localPhone)
+                          : "0911223344";
+                        setLocalPhone(correctPhone);
                         if (onUpdateProfile) {
-                          onUpdateProfile({ ...customerProfile, phone: fakePhone });
+                          onUpdateProfile({ ...customerProfile, phone: correctPhone });
                         }
                         setToastMessage(
                           isAmharic
-                            ? `✓ የሙከራ ስልክ ቁጥር ተጋርቷል: ${fakePhone}`
-                            : `✓ Simulated contact shared: ${fakePhone}`
+                            ? `✓ ስልክ ቁጥር ተጋርቷል: ${correctPhone}`
+                            : `✓ Contact shared: ${correctPhone}`
                         );
                         setTimeout(() => setToastMessage(null), 3000);
                       }}
@@ -4655,6 +4651,14 @@ export default function TelegramSimulator({
                       <span>📱</span> {isAmharic ? "አጋራ" : "Share"}
                     </button>
                   </div>
+                  {(customerProfile.phone || localPhone || "").trim() !== "" &&
+                    (customerProfile.phone || localPhone || "").replace(/[^0-9]/g, "").length !== 10 && (
+                      <p className="text-rose-600 text-[9.5px] font-bold mt-1 font-sans animate-pulse">
+                        {isAmharic
+                          ? "⚠️ ስልክ ቁጥር በትክክል 10 አሃዝ መሆን አለበት!"
+                          : "⚠️ Phone number must be exactly 10 digits!"}
+                      </p>
+                    )}
                 </div>
 
                 <div>
@@ -4731,17 +4735,19 @@ export default function TelegramSimulator({
             <button
               type="button"
               onClick={() => {
-                const fakeName = "Abebe Kebede";
-                const fakePhone = "0944112233";
-                const fallbackGps = "Shared GPS Location (9.0122° N, 38.7500° E)";
-                setLocalName(fakeName);
-                setLocalPhone(fakePhone);
+                const correctName = (customerProfile.name || localName || "").trim() || "Abebe Kebede";
+                const correctPhone = (customerProfile.phone || localPhone || "").replace(/[^0-9]/g, "").length === 10
+                  ? (customerProfile.phone || localPhone)
+                  : "0911223344";
+                const fallbackGps = (customerProfile.address || localAddress || "").trim() || "Shared GPS Location (9.0122° N, 38.7500° E)";
+                setLocalName(correctName);
+                setLocalPhone(correctPhone);
                 setLocalAddress(fallbackGps);
                 if (onUpdateProfile) {
                   onUpdateProfile({
                     ...customerProfile,
-                    name: fakeName,
-                    phone: fakePhone,
+                    name: correctName,
+                    phone: correctPhone,
                     address: fallbackGps
                   });
                 }
