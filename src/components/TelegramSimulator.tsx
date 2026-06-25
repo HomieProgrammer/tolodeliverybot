@@ -45,7 +45,6 @@ interface TelegramSimulatorProps {
     pickupAddress: string;
   };
   onOpenProfileModal: () => void;
-  onRequestDevicePhone?: () => void;
   menuItems: MenuItem[];
   receiptPhoto?: string;
   onReceiptPhotoChange?: (photoUrl: string) => void;
@@ -2306,7 +2305,6 @@ export default function TelegramSimulator({
   activeOrder,
   customerProfile,
   onOpenProfileModal,
-  onRequestDevicePhone,
   menuItems,
   receiptPhoto,
   onReceiptPhotoChange,
@@ -2969,9 +2967,6 @@ export default function TelegramSimulator({
   const [localPickupAddress, setLocalPickupAddress] = useState("");
   const [localPackageDetails, setLocalPackageDetails] = useState("");
   const [localEstimatedPrice, setLocalEstimatedPrice] = useState(150);
-  const [phoneSharedStep, setPhoneSharedStep] = useState<
-    "none" | "fake" | "real"
-  >("none");
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -2981,7 +2976,6 @@ export default function TelegramSimulator({
       setLocalPickupAddress(customerProfile.pickupAddress || "");
       setLocalPackageDetails("");
       setLocalEstimatedPrice(150);
-      setPhoneSharedStep(customerProfile.phone ? "real" : "none");
       setFormError(null);
     }
   }, [customerProfile, isMenuOpen]);
@@ -2989,38 +2983,8 @@ export default function TelegramSimulator({
   useEffect(() => {
     if (customerProfile.phone) {
       setLocalPhone(customerProfile.phone);
-      setPhoneSharedStep("real");
     }
   }, [customerProfile.phone]);
-
-  // Simulated rapid fill sharing preferences using telegram authentication permission flow
-  const handleShareMobileNumber = () => {
-    const devicePhone = (customerProfile.phone || "").trim();
-    if (!devicePhone) {
-      if (onRequestDevicePhone) {
-        onRequestDevicePhone();
-        return;
-      }
-      setToastMessage(
-        isAmharic
-          ? "⚠️ እባክዎን በመጀመሪያ የደንበኛ መገለጫዎን (Profile) ላይ ስልክ ቁጥርዎን ያስገቡ!"
-          : "⚠️ Please set your phone number in your Customer Profile first!"
-      );
-      setTimeout(() => setToastMessage(null), 4000);
-      if (onOpenProfileModal) {
-        onOpenProfileModal();
-      }
-      return;
-    }
-    setLocalPhone(devicePhone);
-    setPhoneSharedStep("real");
-    setToastMessage(
-      isAmharic
-        ? `✓ ስልክ ቁጥር ተጋርቷል፦ ${devicePhone}!`
-        : `✓ Contact shared successfully: ${devicePhone}!`,
-    );
-    setTimeout(() => setToastMessage(null), 3000);
-  };
 
   const handleShareLiveLocation = () => {
     if (navigator.geolocation) {
@@ -4632,62 +4596,24 @@ export default function TelegramSimulator({
                   <label className="block text-[10px] font-bold text-slate-500 mb-1">
                     {isAmharic ? "📞 ስልክ ቁጥር" : "📞 Phone Number"}
                   </label>
-                  <div className="flex gap-1">
-                    <input
-                      type="tel"
-                      placeholder="e.g. 0911234567"
-                      value={customerProfile.phone || localPhone}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        setLocalPhone(val);
-                        if (onUpdateProfile) {
-                          onUpdateProfile({ ...customerProfile, phone: val });
-                        }
-                      }}
-                      className={`flex-1 min-w-0 bg-white border rounded-lg px-2 py-1 text-xs font-semibold focus:outline-none focus:ring-1 ${
-                        (customerProfile.phone || localPhone || "").trim() !== "" &&
-                        (customerProfile.phone || localPhone || "").replace(/[^0-9]/g, "").length !== 10
-                          ? "border-rose-500 text-rose-600 focus:ring-rose-500 focus:border-rose-500 bg-rose-50/10"
-                          : "border-slate-200 focus:ring-orange-500"
-                      }`}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const devicePhone = (customerProfile.phone || "").trim();
-                        if (!devicePhone) {
-                          if (onRequestDevicePhone) {
-                            onRequestDevicePhone();
-                            return;
-                          }
-                          setToastMessage(
-                            isAmharic
-                              ? "⚠️ እባክዎን በመጀመሪያ የደንበኛ መገለጫዎን (Profile) ላይ ስልክ ቁጥርዎን ያስገቡ!"
-                              : "⚠️ Please set your phone number in your Customer Profile first!"
-                          );
-                          setTimeout(() => setToastMessage(null), 4000);
-                          if (onOpenProfileModal) {
-                            onOpenProfileModal();
-                          }
-                          return;
-                        }
-                        setLocalPhone(devicePhone);
-                        if (onUpdateProfile) {
-                          onUpdateProfile({ ...customerProfile, phone: devicePhone });
-                        }
-                        setToastMessage(
-                          isAmharic
-                            ? `✓ ስልክ ቁጥር ተጋርቷል: ${devicePhone}`
-                            : `✓ Contact shared: ${devicePhone}`
-                        );
-                        setTimeout(() => setToastMessage(null), 3000);
-                      }}
-                      className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 rounded-lg text-[10px] font-bold border border-slate-200 transition active:scale-95 flex items-center gap-0.5 shrink-0 cursor-pointer"
-                      title={isAmharic ? "ስልክ ቁጥር አጋራ" : "Share Contact"}
-                    >
-                      <span>📱</span> {isAmharic ? "አጋራ" : "Share"}
-                    </button>
-                  </div>
+                  <input
+                    type="tel"
+                    placeholder="e.g. 0911234567"
+                    value={customerProfile.phone || localPhone}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setLocalPhone(val);
+                      if (onUpdateProfile) {
+                        onUpdateProfile({ ...customerProfile, phone: val });
+                      }
+                    }}
+                    className={`w-full bg-white border rounded-lg px-2 py-1 text-xs font-semibold focus:outline-none focus:ring-1 ${
+                      (customerProfile.phone || localPhone || "").trim() !== "" &&
+                      (customerProfile.phone || localPhone || "").replace(/[^0-9]/g, "").length !== 10
+                        ? "border-rose-500 text-rose-600 focus:ring-rose-500 focus:border-rose-500 bg-rose-50/10"
+                        : "border-slate-200 focus:ring-orange-500"
+                    }`}
+                  />
                   {(customerProfile.phone || localPhone || "").trim() !== "" &&
                     (customerProfile.phone || localPhone || "").replace(/[^0-9]/g, "").length !== 10 && (
                       <p className="text-rose-600 text-[9.5px] font-bold mt-1 font-sans animate-pulse">
@@ -4767,60 +4693,6 @@ export default function TelegramSimulator({
                 </div>
               </div>
             </div>
-
-            {/* Quick Combined Autofill Button requested specifically by the user */}
-            <button
-              type="button"
-              onClick={() => {
-                const correctName = (customerProfile.name || localName || "").trim() || "Abebe Kebede";
-                const devicePhone = (customerProfile.phone || "").trim();
-                const correctPhone = devicePhone || (localPhone || "").trim();
-                
-                if (!correctPhone) {
-                  if (onRequestDevicePhone) {
-                    onRequestDevicePhone();
-                    return;
-                  }
-                  setToastMessage(
-                    isAmharic
-                      ? "⚠️ እባክዎን በመጀመሪያ የደንበኛ መገለጫዎን (Profile) ላይ ስልክ ቁጥርዎን ያስገቡ!"
-                      : "⚠️ Please set your phone number in your Customer Profile first!"
-                  );
-                  setTimeout(() => setToastMessage(null), 4000);
-                  if (onOpenProfileModal) {
-                    onOpenProfileModal();
-                  }
-                  return;
-                }
-                
-                const fallbackGps = (customerProfile.address || localAddress || "").trim() || "Shared GPS Location (9.0122° N, 38.7500° E)";
-                setLocalName(correctName);
-                setLocalPhone(correctPhone);
-                setLocalAddress(fallbackGps);
-                if (onUpdateProfile) {
-                  onUpdateProfile({
-                    ...customerProfile,
-                    name: correctName,
-                    phone: correctPhone,
-                    address: fallbackGps
-                  });
-                }
-                setToastMessage(
-                  isAmharic
-                    ? "✓ ስም፣ ስልክ እና GPS አድራሻ በአንድ ላይ ተጋርተዋል!"
-                    : "✓ Name, phone, and GPS location shared in one-tap!"
-                );
-                setTimeout(() => setToastMessage(null), 3000);
-              }}
-              className="w-full bg-orange-50 hover:bg-orange-100 text-[#E0560B] border border-orange-200 py-1.5 rounded-lg text-[10.5px] font-extrabold flex items-center justify-center gap-1.5 transition active:scale-[0.98] cursor-pointer"
-            >
-              <span>👤📱</span>
-              <span>
-                {isAmharic
-                  ? "ሁሉንም መረጃዎች በአንድ ቁልፍ ያጋሩ (Share All Info)"
-                  : "Share Name, Phone & GPS Location instantly"}
-              </span>
-            </button>
           </div>
         )}
 
