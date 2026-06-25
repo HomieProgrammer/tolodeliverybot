@@ -13,7 +13,7 @@ export default function ExplanationAlert({ onAutoPlaceOrder }: ExplanationAlertP
   ];
 
   return (
-    <div id="explanation-card" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-6">
+    <div id="explanation-card" className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-2">
       <div className="flex items-start gap-3">
         <div className="p-2 bg-orange-50 text-[#E0560B] rounded-lg">
           <Lightbulb className="w-6 h-6" />

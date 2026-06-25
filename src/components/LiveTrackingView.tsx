@@ -11,6 +11,7 @@ import {
   Play,
   Pause,
   FastForward,
+  Lock,
 } from "lucide-react";
 import { Order, OrderStatus } from "../types";
 
@@ -81,7 +82,7 @@ export default function LiveTrackingView({
   };
 
   useEffect(() => {
-    if (!order || !isPlaying) return;
+    if (!order || !isPlaying || !order.isPaymentVerified) return;
 
     const interval = setInterval(() => {
       let nextProgress = order.progress + 1 * speedMultiplier;
@@ -149,8 +150,8 @@ export default function LiveTrackingView({
       {/* Header Info */}
       <div className="bg-slate-900 text-white p-4 flex flex-wrap justify-between items-center gap-3">
         <div>
-          <span className="text-xs uppercase bg-[#E0560B] text-white font-semibold px-2.5 py-1 rounded-full">
-            REAL-TIME SYSTEM GPS ACTIVE
+          <span className={`text-xs uppercase font-semibold px-2.5 py-1 rounded-full ${!order.isPaymentVerified ? "bg-amber-600 text-white" : "bg-[#E0560B] text-white"}`}>
+            {!order.isPaymentVerified ? "🔒 Prepayment Approval Pending" : "REAL-TIME SYSTEM GPS ACTIVE"}
           </span>
           <h3 className="text-md font-bold mt-1 tracking-tight">
             Tracking Order ID: #{order.id}
@@ -161,40 +162,49 @@ export default function LiveTrackingView({
             <span className="text-xs text-slate-400 block font-normal">
               Simulated Delivery Timer
             </span>
-            <span className="font-mono text-xl font-bold tracking-wider text-green-400">
-              {order.status === "completed"
-                ? "ARRIVED 🎉"
-                : `${etaLeft} mins left`}
+            <span className={`font-mono text-xl font-bold tracking-wider ${!order.isPaymentVerified ? "text-amber-500" : "text-green-400"}`}>
+              {!order.isPaymentVerified
+                ? "PAUSED (HOLD)"
+                : order.status === "completed"
+                  ? "ARRIVED 🎉"
+                  : `${etaLeft} mins left`}
             </span>
           </div>
           {/* Controls */}
-          <div className="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="p-1 px-2 text-xs rounded transition hover:bg-slate-755 flex items-center gap-1 cursor-pointer"
-              title={isPlaying ? "Pause tracking" : "Resume tracking"}
-            >
-              {isPlaying ? (
-                <Pause className="w-3.5 h-3.5 text-amber-400" />
-              ) : (
-                <Play className="w-3.5 h-3.5 text-green-450" />
-              )}
-            </button>
-            <button
-              onClick={() =>
-                setSpeedMultiplier((prev) =>
-                  prev === 1 ? 3 : prev === 3 ? 6 : 1,
-                )
-              }
-              className="p-1 px-2 text-xs rounded transition hover:bg-slate-755 flex items-center gap-1 cursor-pointer"
-              title="Toggle Multiplier"
-            >
-              <FastForward className="w-3.5 h-3.5" />
-              <span className="text-[10px] font-mono font-bold font-semibold uppercase">
-                {speedMultiplier}x
-              </span>
-            </button>
-          </div>
+          {order.isPaymentVerified ? (
+            <div className="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
+              <button
+                onClick={() => setIsPlaying(!isPlaying)}
+                className="p-1 px-2 text-xs rounded transition hover:bg-slate-755 flex items-center gap-1 cursor-pointer"
+                title={isPlaying ? "Pause tracking" : "Resume tracking"}
+              >
+                {isPlaying ? (
+                  <Pause className="w-3.5 h-3.5 text-amber-400" />
+                ) : (
+                  <Play className="w-3.5 h-3.5 text-green-450" />
+                )}
+              </button>
+              <button
+                onClick={() =>
+                  setSpeedMultiplier((prev) =>
+                    prev === 1 ? 3 : prev === 3 ? 6 : 1,
+                  )
+                }
+                className="p-1 px-2 text-xs rounded transition hover:bg-slate-755 flex items-center gap-1 cursor-pointer"
+                title="Toggle Multiplier"
+              >
+                <FastForward className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-mono font-bold font-semibold uppercase">
+                  {speedMultiplier}x
+                </span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 bg-amber-950/45 border border-amber-500/30 text-amber-300 rounded-lg px-2.5 py-1 text-[10.5px] font-mono font-extrabold animate-pulse">
+              <Lock className="w-3 h-3 text-amber-450 shrink-0" strokeWidth={2.5} />
+              <span>LOCKED</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -439,9 +449,11 @@ export default function LiveTrackingView({
         </svg>
 
         {/* Real-time Stage Overlay Card */}
-        <div className="absolute top-4 left-4 right-4 bg-white/95 backdrop-blur-sm border border-slate-200/80 p-3.5 rounded-xl shadow-lg flex items-center gap-3">
-          <div className="p-2.5 bg-rose-50 rounded-lg text-rose-650 shrink-0">
-            {order.status === "preparing" ? (
+        <div className="absolute top-4 left-4 right-4 bg-white/95 backdrop-blur-sm border border-slate-200/80 p-3.5 rounded-xl shadow-lg flex items-center gap-3 border-l-4 border-l-amber-500">
+          <div className={`p-2.5 rounded-lg shrink-0 ${!order.isPaymentVerified ? "bg-amber-50 text-amber-600 animate-pulse" : "bg-rose-50 text-rose-650"}`}>
+            {!order.isPaymentVerified ? (
+              <Lock className="w-5 h-5" />
+            ) : order.status === "preparing" ? (
               <Soup className="w-5 h-5 animate-pulse" />
             ) : order.status === "completed" ? (
               <CheckCircle className="w-5 h-5 text-green-600" />

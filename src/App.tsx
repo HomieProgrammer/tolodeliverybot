@@ -198,6 +198,15 @@ export default function App() {
       if (activeOrder) {
         if (activeOrder.isPaymentVerified) {
           setPaymentStep("success");
+
+          // Send native HTML5 push notification message
+          if ("Notification" in window && Notification.permission === "granted") {
+            new Notification(isAmharic ? "ቶሎ ክፍያ ጸድቋል (Tollo Payment Approved)" : "Tollo Payment Approved", {
+              body: isAmharic
+                ? `ለትዕዛዝ #${paymentDraftOrderId} ያደረጉት ቅድመ ክፍያ በተሳካ ሁኔታ ጸድቋል! 🎉`
+                : `Your Cozy Advance Payment for Order #${paymentDraftOrderId} has been verified and approved! 🎉`,
+            });
+          }
         } else if (activeOrder.status === "cancelled") {
           // If the admin rejected/cancelled it, notify and go back to details
           alert(
@@ -207,7 +216,7 @@ export default function App() {
         }
       }
     }
-  }, [orders, paymentDraftOrderId, paymentStep]);
+  }, [orders, paymentDraftOrderId, paymentStep, isAmharic]);
 
   // View Control: On mobile, users can toggle panes if side-by-side is crowded
   const [currentPane, setCurrentPane] = useState<
@@ -266,8 +275,8 @@ export default function App() {
         sender: "bot",
         type: "start_flow",
         text: isClosed
-          ? "እርቦዎታል? ቶሎ ይክፈቱ!\n\n-------------------------\n\nHungry? Open tollo\n\n🔴 [CLOSED / ተዘግቷል]\nየሥራ ሰዓታችን ከምሽቱ 2:00 (20:00) ያበቃል። እባክዎን ነገ ጠዋት ከ12:00 ጀምሮ ይሞክሩ። / Our operations end at 20:00 PM. Please check back tomorrow."
-          : "እርቦዎታል? ቶሎ ይክፈቱ!\n\n-------------------------\n\nHungry? Open tollo",
+          ? "እርቦዎታል? ቶሎ ይክፈቱ!\n-------------------------\nHungry? Open tollo\n🔴 [CLOSED / ተዘግቷል]\nየሥራ ሰዓታችን ከምሽቱ 2:00 (20:00) ያበቃል። እባክዎን ነገ ጠዋት ከ12:00 ጀምሮ ይሞክሩ። / Our operations end at 20:00 PM. Please check back tomorrow."
+          : "እርቦዎታል? ቶሎ ይክፈቱ!\n-------------------------\nHungry? Open tollo",
         buttons: [
           {
             label: "🍔 ቶሎ ማዘዣ ክፈት (Open Tollo App)",
@@ -282,6 +291,10 @@ export default function App() {
         timestamp: timeStr,
       },
     ]);
+
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().catch(err => console.log("Notification permission error", err));
+    }
   }, []);
 
   // Update Item Details inside Catalog
@@ -859,9 +872,6 @@ export default function App() {
             // Dispatch real-time Telegram alert message to operator
             if (
               botToken &&
-              !botToken.includes(
-                "8473700859:AAHsKy9mDLPIh5bR-8mO33tpO1530YkJqEk",
-              ) &&
               operatorChatId
             ) {
               const trackingUrl = `${window.location.origin}/?order=${orderDraftId}`;
@@ -1242,10 +1252,18 @@ export default function App() {
       },
     ]);
 
+    // Send native HTML5 push notification message
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification(isAmharic ? "ቶሎ ቅድመ ክፍያ (Cozy Advance Payment)" : "Cozy Advance Payment Portal", {
+        body: isAmharic
+          ? `የቅድመ ክፍያ ማረጋገጫ ለትዕዛዝ #${draftId} ተልኳል! ባለቤቱ ሲያረጋግጡት ሹፌር ይመደባል።`
+          : `Your Cozy Advance Payment screenshot for Order #${draftId} has been successfully submitted and is awaiting admin approval!`,
+      });
+    }
+
     // Dispatch real-time Telegram alert message to operator
     if (
       botToken &&
-      !botToken.includes("8473700859:AAHsKy9mDLPIh5bR-8mO33tpO1530YkJqEk") &&
       operatorChatId
     ) {
       const itemsListText = targetOrder
@@ -1259,15 +1277,16 @@ export default function App() {
 
       const trackingUrl = `${window.location.origin}/?order=${draftId}`;
       const alertPayload =
-        `🔔 *Tolo Delivery (Payment Pending)* 🔔\n\n` +
+        `🔔 *Tolo Delivery (Payment Submitted)* 🔔\n\n` +
+        `🆔 *Order ID:* #${draftId}\n` +
         `👤 *Customer Name:* ${customerProfile.name}\n` +
         `📞 *Phone Number:* ${customerProfile.phone}\n` +
-        `📍 *Pickup Location:* ${customerProfile.pickupAddress || "Tolo Store"}\n` +
-        `📍 *Delivery Address:* ${customerProfile.address}\n\n` +
-        `💳 *Amount Sent:* ${advancePaid.toFixed(2)} Birr\n` +
-        `💵 *Method:* ${methodLabel}\n` +
+        `💳 *Payment Amount:* ${advancePaid.toFixed(2)} Birr\n` +
         `🧾 *Reference ID:* ${txId}\n` +
-        `🆔 *Order ID:* #${draftId}\n\n` +
+        `📝 *Receipt Submission Status:* Submitted (Pending Verification)\n\n` +
+        `📍 *Pickup Location:* ${customerProfile.pickupAddress || "Tolo Store"}\n` +
+        `📍 *Delivery Address:* ${customerProfile.address}\n` +
+        `💵 *Method:* ${methodLabel}\n\n` +
         `⚠️ *Action:* Please log in to your Kitchen Dashboard to verify payment and assign a driver.`;
 
       fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -1301,6 +1320,7 @@ export default function App() {
         });
     }
 
+    setReceiptPhoto("");
     setActiveTrackingOrderId(draftId);
     setPaymentDraftOrderId(null);
     setCurrentPane("tracking");
@@ -1395,6 +1415,14 @@ export default function App() {
         text: `💳 *TOLO ADVANCE DEPOSIT APPROVED* ✅\n\nYour 1/3 advance payment confirmation screenshot or picture for Order *#${orderId}* has been successfully approved by the owner (https://t.me/Cephasimon).\n\n🛵 *NEXT STEP:* The administrator is currently assigning a specialized rider to dispatch your order immediately. Live GPS tracking will activate as soon as the rider accepts the delivery ticket!`,
         timestamp: timestampStr,
       },
+      {
+        id: "msg_sys_verify_alert_" + Date.now(),
+        sender: "system",
+        text: isAmharic
+          ? `📢 *ማሳወቂያ፦* ክፍያዎ በተሳካ ሁኔታ አልፏል። ትዕዛዝዎ ወደ ኩሽና ተልኳል!`
+          : `📢 *NOTIFICATION:* Your Cozy Advance Payment has successfully passed! Order #${orderId} is now queued for kitchen preparation.`,
+        timestamp: timestampStr,
+      },
     ]);
   };
 
@@ -1453,7 +1481,6 @@ export default function App() {
 
     if (
       botToken &&
-      !botToken.includes("8473700859:AAHsKy9mDLPIh5bR-8mO33tpO1530YkJqEk") &&
       operatorChatId
     ) {
       fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -1578,7 +1605,7 @@ export default function App() {
         <ExplanationAlert onAutoPlaceOrder={handleSendMessage} />
 
         {/* Responsive Layout Layout grid: Dual screen on desktop, tabbed switch on mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-2">
           {/* LEFT PANEL: Telegram Simulator - ALWAYS visible on lg desktop, toggled on mobile */}
           <div
             className={`col-span-1 lg:col-span-5 ${currentPane === "consumer" ? "block" : "hidden lg:block"}`}
