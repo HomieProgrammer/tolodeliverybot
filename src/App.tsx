@@ -72,11 +72,11 @@ export default function App() {
 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [showDevicePhonePrompt, setShowDevicePhonePrompt] = useState(false);
-  const [devicePhoneInput, setDevicePhoneInput] = useState("0912345678");
+  const [devicePhoneInput, setDevicePhoneInput] = useState("");
   const [isReadingDeviceSIM, setIsReadingDeviceSIM] = useState(false);
 
   const handleRequestDevicePhone = () => {
-    setDevicePhoneInput(customerProfile.phone || "0912345678");
+    setDevicePhoneInput(customerProfile.phone || "");
     setShowDevicePhonePrompt(true);
   };
 
@@ -911,14 +911,18 @@ export default function App() {
             setReceiptPhoto(""); // Reset the state screenshot so subsequent custom orders don't bleed-over
           } else {
             // Fallback draft mode
-            setMessages((prev) => [
-              ...prev,
+            const promptNeeded =
+              !activePhone.trim() ||
+              activePhone.replace(/[^0-9]/g, "").length !== 10 ||
+              !activeAddress.trim();
+
+            const responseMsgs: ChatMessage[] = [
               {
                 id: "msg_bot_" + Date.now(),
-                sender: "bot",
+                sender: "bot" as const,
                 text: `Awesome choice! Calculated your customer custom food ticket successfully:`,
                 timestamp: botTimestamp,
-                type: "order_summary",
+                type: "order_summary" as const,
                 orderSummary: {
                   items: draftItems,
                   subtotal,
@@ -927,14 +931,22 @@ export default function App() {
                   orderId: orderDraftId,
                 },
               },
-              {
+            ];
+
+            if (promptNeeded) {
+              responseMsgs.push({
                 id: "msg_bot_profile_prompt_" + Date.now(),
-                sender: "bot",
+                sender: "bot" as const,
                 text: isAmharic
                   ? "📞 *እባክዎን ማድረሻውን ለማጠናቀቅ ስልክ ቁጥርዎን እና መድረሻ ቦታዎን እዚህ ይላኩልን!* 📍\n\nምሳሌ፦ `ስልክ፦ 0911223344፣ መድረሻ፦ ቦሌ ማተሚያ`"
                   : "📞 *Please drop your phone number and drop-off location here to complete your delivery!* 📍\n\nExample: `phone: 0911223344, address: Bole Matemiya`",
                 timestamp: botTimestamp,
-              },
+              });
+            }
+
+            setMessages((prev) => [
+              ...prev,
+              ...responseMsgs,
             ]);
 
             const tempOrder: Order = {
@@ -1019,20 +1031,24 @@ export default function App() {
 
             const orderDraftId = "draft_" + Math.floor(Math.random() * 100000);
 
-            // Add draft order to hidden queue for confirmation
+             // Add draft order to hidden queue for confirmation
             const responseText =
               result.unrecognizedItems.length > 0
                 ? `I mapped your food choices!\n\n⚠️ *Excluded raw items:* I omitted "${result.unrecognizedItems.join(", ")}" as they aren't provided in our ready-catalogue.\n\nHere is your checkout proposal:`
                 : `Awesome choice! Calculated your ready-made items cart successfully:`;
 
-            setMessages((prev) => [
-              ...prev,
+            const promptNeeded =
+              !activePhone.trim() ||
+              activePhone.replace(/[^0-9]/g, "").length !== 10 ||
+              !activeAddress.trim();
+
+            const responseMsgs: ChatMessage[] = [
               {
                 id: "msg_bot_" + Date.now(),
-                sender: "bot",
+                sender: "bot" as const,
                 text: responseText,
                 timestamp: botTimestamp,
-                type: "order_summary",
+                type: "order_summary" as const,
                 orderSummary: {
                   items: draftItems,
                   subtotal,
@@ -1041,14 +1057,22 @@ export default function App() {
                   orderId: orderDraftId,
                 },
               },
-              {
+            ];
+
+            if (promptNeeded) {
+              responseMsgs.push({
                 id: "msg_bot_profile_prompt_" + Date.now(),
-                sender: "bot",
+                sender: "bot" as const,
                 text: isAmharic
                   ? "📞 *እባክዎን ማድረሻውን ለማጠናቀቅ ስልክ ቁጥርዎን እና መድረሻ ቦታዎን እዚህ ይላኩልን!* 📍\n\nምሳሌ፦ `ስልክ፦ 0911223344፣ መድረሻ፦ ቦሌ ማተሚያ`"
                   : "📞 *Please drop your phone number and drop-off location here to complete your delivery!* 📍\n\nExample: `phone: 0911223344, address: Bole Matemiya`",
                 timestamp: botTimestamp,
-              },
+              });
+            }
+
+            setMessages((prev) => [
+              ...prev,
+              ...responseMsgs,
             ]);
 
             // Save raw message inside temporary store to confirm later with dynamic profile details of record
