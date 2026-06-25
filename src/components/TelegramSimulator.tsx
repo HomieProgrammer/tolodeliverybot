@@ -2986,15 +2986,25 @@ export default function TelegramSimulator({
 
   // Simulated rapid fill sharing preferences using telegram authentication permission flow
   const handleShareMobileNumber = () => {
-    const correctPhone = (customerProfile.phone || localPhone || "").replace(/[^0-9]/g, "").length === 10
-      ? (customerProfile.phone || localPhone)
-      : "0911223344";
-    setLocalPhone(correctPhone);
+    const devicePhone = (customerProfile.phone || "").trim();
+    if (!devicePhone) {
+      setToastMessage(
+        isAmharic
+          ? "⚠️ እባክዎን በመጀመሪያ የደንበኛ መገለጫዎን (Profile) ላይ ስልክ ቁጥርዎን ያስገቡ!"
+          : "⚠️ Please set your phone number in your Customer Profile first!"
+      );
+      setTimeout(() => setToastMessage(null), 4000);
+      if (onOpenProfileModal) {
+        onOpenProfileModal();
+      }
+      return;
+    }
+    setLocalPhone(devicePhone);
     setPhoneSharedStep("real");
     setToastMessage(
       isAmharic
-        ? `✓ ስልክ ቁጥር ተጋርቷል፦ ${correctPhone}!`
-        : `✓ Contact shared successfully: ${correctPhone}!`,
+        ? `✓ ስልክ ቁጥር ተጋርቷል፦ ${devicePhone}!`
+        : `✓ Contact shared successfully: ${devicePhone}!`,
     );
     setTimeout(() => setToastMessage(null), 3000);
   };
@@ -4631,17 +4641,27 @@ export default function TelegramSimulator({
                     <button
                       type="button"
                       onClick={() => {
-                        const correctPhone = (customerProfile.phone || localPhone || "").replace(/[^0-9]/g, "").length === 10
-                          ? (customerProfile.phone || localPhone)
-                          : "0911223344";
-                        setLocalPhone(correctPhone);
+                        const devicePhone = (customerProfile.phone || "").trim();
+                        if (!devicePhone) {
+                          setToastMessage(
+                            isAmharic
+                              ? "⚠️ እባክዎን በመጀመሪያ የደንበኛ መገለጫዎን (Profile) ላይ ስልክ ቁጥርዎን ያስገቡ!"
+                              : "⚠️ Please set your phone number in your Customer Profile first!"
+                          );
+                          setTimeout(() => setToastMessage(null), 4000);
+                          if (onOpenProfileModal) {
+                            onOpenProfileModal();
+                          }
+                          return;
+                        }
+                        setLocalPhone(devicePhone);
                         if (onUpdateProfile) {
-                          onUpdateProfile({ ...customerProfile, phone: correctPhone });
+                          onUpdateProfile({ ...customerProfile, phone: devicePhone });
                         }
                         setToastMessage(
                           isAmharic
-                            ? `✓ ስልክ ቁጥር ተጋርቷል: ${correctPhone}`
-                            : `✓ Contact shared: ${correctPhone}`
+                            ? `✓ ስልክ ቁጥር ተጋርቷል: ${devicePhone}`
+                            : `✓ Contact shared: ${devicePhone}`
                         );
                         setTimeout(() => setToastMessage(null), 3000);
                       }}
@@ -4736,9 +4756,22 @@ export default function TelegramSimulator({
               type="button"
               onClick={() => {
                 const correctName = (customerProfile.name || localName || "").trim() || "Abebe Kebede";
-                const correctPhone = (customerProfile.phone || localPhone || "").replace(/[^0-9]/g, "").length === 10
-                  ? (customerProfile.phone || localPhone)
-                  : "0911223344";
+                const devicePhone = (customerProfile.phone || "").trim();
+                const correctPhone = devicePhone || (localPhone || "").trim();
+                
+                if (!correctPhone) {
+                  setToastMessage(
+                    isAmharic
+                      ? "⚠️ እባክዎን በመጀመሪያ የደንበኛ መገለጫዎን (Profile) ላይ ስልክ ቁጥርዎን ያስገቡ!"
+                      : "⚠️ Please set your phone number in your Customer Profile first!"
+                  );
+                  setTimeout(() => setToastMessage(null), 4000);
+                  if (onOpenProfileModal) {
+                    onOpenProfileModal();
+                  }
+                  return;
+                }
+                
                 const fallbackGps = (customerProfile.address || localAddress || "").trim() || "Shared GPS Location (9.0122° N, 38.7500° E)";
                 setLocalName(correctName);
                 setLocalPhone(correctPhone);
