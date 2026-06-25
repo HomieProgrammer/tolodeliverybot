@@ -254,6 +254,8 @@ export default function App() {
     loadMenu();
 
     // Welcome messages for Telegram /start onboarding flow
+    const currentHour = new Date().getHours();
+    const isClosed = currentHour >= 20 || currentHour < 6;
     const timeStr = new Date().toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
@@ -263,7 +265,9 @@ export default function App() {
         id: "msg_welcome_1",
         sender: "bot",
         type: "start_flow",
-        text: "🚀 እንኳን ወደ ቶሎ | Tollo Delivery በሰላም መጡ! 👋\n\nየምግብ፣ የሸቀጣሸቀጥ፣ የዕቃዎችና የፈጣን መልዕክት ማድረሻ አገልግሎት።\nበቀላሉ ይዘዙ፣ አስተማማኝ አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ፣ በታማኝነት ይክፈሉ።\n\n-------------------------\n\n🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\nOrder quickly, track deliveries in real time, and pay securely.",
+        text: isClosed
+          ? "እርቦዎታል? ቶሎ ይክፈቱ!\n\n-------------------------\n\nHungry? Open tollo\n\n🔴 [CLOSED / ተዘግቷል]\nየሥራ ሰዓታችን ከምሽቱ 2:00 (20:00) ያበቃል። እባክዎን ነገ ጠዋት ከ12:00 ጀምሮ ይሞክሩ። / Our operations end at 20:00 PM. Please check back tomorrow."
+          : "እርቦዎታል? ቶሎ ይክፈቱ!\n\n-------------------------\n\nHungry? Open tollo",
         buttons: [
           {
             label: "🍔 ቶሎ ማዘዣ ክፈት (Open Tollo App)",
@@ -337,6 +341,36 @@ export default function App() {
     // 1.5 Support and Mini App Onboarding Interceptor (Requirement 5 & 6)
     const normalizedText = text.toLowerCase().trim();
     console.log("STEP 1");
+
+    const currentHour = new Date().getHours();
+    const isClosed = currentHour >= 20 || currentHour < 6;
+
+    if (isClosed) {
+      const isSystemAction =
+        normalizedText === "help" ||
+        normalizedText === "/start" ||
+        normalizedText === "start" ||
+        text === "CONTACT_SUPPORT_TRIGGERED_ACTION" ||
+        normalizedText === "change language";
+
+      if (!isSystemAction) {
+        setTimeout(() => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: "msg_closed_notice_" + Date.now(),
+              sender: "bot",
+              text: isAmharic
+                ? "⚠️ *ቶሎ ማዘዣ ተዘግቷል!* 🔴\n\nየሥራ ሰዓታችን ከምሽቱ 2:00 (20:00) ያበቃል። እባክዎን ነገ ጠዋት ከ12:00 ጀምሮ ይሞክሩ። ለእገዛ መጠየቂያ 'help' ወይም 'Contact Support' ይጫኑ።"
+                : "⚠️ *Tollo Delivery is currently Closed!* 🔴\n\nOur daily operations end at 20:00 PM (8:00 PM). Please check back tomorrow morning after 06:00 AM. For assistance, type 'help' or click 'Contact Support'.",
+              timestamp: timestampStr,
+            },
+          ]);
+          setIsParsing(false);
+        }, 650);
+        return;
+      }
+    }
 
     if (normalizedText === "help") {
       setTimeout(() => {
@@ -517,7 +551,9 @@ export default function App() {
             sender: "bot",
             type: "start_flow",
             text: isStartCommand
-              ? "🚀 እንኳን ወደ ቶሎ | Tollo Delivery በሰላም መጡ! 👋\n\nየምግብ፣ የሸቀጣሸቀጥ፣ የዕቃዎችና የፈጣን መልዕክት ማድረሻ አገልግሎት።\nበቀላሉ ይዘዙ፣ አስተማማኝ አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ፣ በታማኝነት ይክፈሉ።\n\n-------------------------\n\n🚀 Welcome to ቶሎ | Tollo Delivery\n\nFast food, grocery, parcel, and courier delivery services.\nOrder quickly, track deliveries in real time, and pay securely."
+              ? (isClosed
+                  ? "እርቦዎታል? ቶሎ ይክፈቱ!\n\n-------------------------\n\nHungry? Open tollo\n\n🔴 [CLOSED / ተዘግቷል]\nየሥራ ሰዓታችን ከምሽቱ 2:00 (20:00) ያበቃል። እባክዎን ነገ ጠዋት ከ12:00 ጀምሮ ይሞክሩ። / Our operations end at 20:00 PM. Please check back tomorrow."
+                  : "እርቦዎታል? ቶሎ ይክፈቱ!\n\n-------------------------\n\nHungry? Open tollo")
               : "🍔 *ቶሎ ማዘዣ ረዳት (Tollo Mini App)*\n\nእባክዎን ከታች ያለውን የ 'Open Tollo App' ቁልፍ በመጫን ትዕዛዝዎን ይፈጽሙ፣ የማድረሻ ቦታዎችዎን ያስተካክሉ ወይም አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ!\n\nTo place your order, browse our full live menu, track active deliveries, or manage your delivery parameters, please use our secure ቶሎ | Tollo Delivery Mini App directly inside Telegram by clicking the button below!",
             buttons: [
               {
@@ -737,15 +773,15 @@ export default function App() {
           (acc, curr) => acc + curr.totalPrice,
           0,
         );
-        const deliveryFee = 2.5;
+        const deliveryFee = 100.00;
         const total = subtotal + deliveryFee;
         const orderDraftId = "draft_" + Math.floor(Math.random() * 100000);
 
         setTimeout(() => {
           if (receiptPhoto) {
             // Immediately register/submit completed payment details with status "payment_pending"
-            const advancePaid = subtotal / 3;
-            const remainingBalance = (subtotal * 2) / 3 + deliveryFee;
+            const advancePaid = total; // Full payment
+            const remainingBalance = 0.00; // Zero remaining balance
             const txId = `TXN-${Math.floor(100000 + Math.random() * 900000)}`;
 
             const tempOrder: Order = {
@@ -796,16 +832,16 @@ export default function App() {
                 sender: "user",
                 senderName: activeName,
                 text: isAmharic
-                  ? `👤 *ከደንበኛ የተላከ፦* ${activeName}\n📞 *ስልክ፦* ${activePhone}\n📍 *መነሻ፦* ${activePickupAddress || "የቶሎ ማእድ ቤት"}\n📍 *መድረሻ፦* ${activeAddress}\n\nየክፍያ ማረጋገጫ (Screenshot) ለትዕዛዝ #${orderDraftId} ልኬያለሁ። እባክዎን ያረጋግጡልኝ! (${advancePaid.toFixed(2)} Birr)`
-                  : `👤 *Submitted by:* ${activeName}\n📞 *Phone:* ${activePhone}\n📍 *Pickup:* ${activePickupAddress || "Tolo Main Kitchen"}\n📍 *Drop-off:* ${activeAddress}\n\nI have sent my payment verification screenshot for Order #${orderDraftId}. Please verify and approve my receipt! (${advancePaid.toFixed(2)} Birr)`,
+                  ? `👤 *ከደንበኛ የተላከ፦* ${activeName}\n📞 *ስልክ፦* ${activePhone}\n📍 *መነሻ፦* ${activePickupAddress || "የቶሎ ማእድ ቤት"}\n📍 *መድረሻ፦* ${activeAddress}\n\nሙሉ የክፍያ ማረጋገጫ (Screenshot) ለትዕዛዝ #${orderDraftId} ልኬያለሁ። እባክዎን ያረጋግጡልኝ! (${advancePaid.toFixed(2)} Birr)`
+                  : `👤 *Submitted by:* ${activeName}\n📞 *Phone:* ${activePhone}\n📍 *Pickup:* ${activePickupAddress || "Tolo Main Kitchen"}\n📍 *Drop-off:* ${activeAddress}\n\nI have sent my full payment verification screenshot for Order #${orderDraftId}. Please verify and approve my receipt! (${advancePaid.toFixed(2)} Birr)`,
                 timestamp: botTimestamp,
               },
               {
                 id: "msg_bot_paid_receipt_" + Date.now(),
                 sender: "bot",
                 text: isAmharic
-                  ? `💳 *የቶሎ ማድረሻ ክፍያ ማረጋገጫ ተልኳል ለ #${orderDraftId}* ✅\n\n👤 *ደንበኛ:* ${activeName}\n📞 *ስልክ:* ${activePhone}\n📍 *መነሻ ቦታ:* ${activePickupAddress || "(ከተዘጋጀው የቶሎ ማእድ ቤት)"}\n📍 *መድረሻ ቦታ:* ${activeAddress}\n\n*የቅድሚያ ክፍያ (1/3):* ${advancePaid.toFixed(2)} Birr\n*ቀሪ እዳ (በማድረሻ ወቅት የሚከፈል):* ${remainingBalance.toFixed(2)} Birr\n*የክፍያ መንገድ:* Mobile Wallet / CBE Bank\n*መለያ ቁጥር (Ref ID):* ${txId}\n\n📷 *የማረጋገጫ ፎቶ ለባለቤቱ ተልኳል:* [https://t.me/${operatorUsername || "Cephasimon"}]\n\n⚠️ *የማረጋገጫ ሂደት በመጠባበቅ ላይ:* የእርስዎ የክፍያ ማረጋገጫ ፎቶ ለባለቤቱ (https://t.me/${operatorUsername || "Cephasimon"}) በአስተማማኝ ሁኔታ ተልኳል። ባለቤቱ ልክ ክፍያውን ሲያረጋግጥ አሽከርካሪ ይመደባል እንዲሁም የቀጥታ መከታተያ ካርታ (Live GPS) ይጀምራል!`
-                  : `💳 *TOLO DELIVERY PAYMENT SUBMITTED for #${orderDraftId}* ✅\n\n👤 *Customer:* ${activeName}\n📞 *Contact Phone:* ${activePhone}\n📍 *Pick-Up From:* ${activePickupAddress || "(Ready from ToLo Kitchen)"}\n📍 *Drop-Off To:* ${activeAddress}\n\n*Advance Payment (1/3 of cost):* ${advancePaid.toFixed(2)} Birr\n*Remaining Balance (Due After Delivery):* ${remainingBalance.toFixed(2)} Birr\n*Method:* Mobile Wallet / CBE Bank\n*Receipt Reference:* ${txId}\n\n📷 *Confirmation Photo Sent To Owner:* [https://t.me/${operatorUsername || "Cephasimon"}]\n\n⚠️ *Verification Required:* Your receipt photo has been securely sent to the owner (https://t.me/${operatorUsername || "Cephasimon"}) for approval. Once he approves, a driver will be assigned immediately and live GPS tracking will begin!`,
+                  ? `💳 *የቶሎ ማድረሻ ክፍያ ማረጋገጫ ተልኳል ለ #${orderDraftId}* ✅\n\n👤 *ደንበኛ:* ${activeName}\n📞 *ስልክ:* ${activePhone}\n📍 *መነሻ ቦታ:* ${activePickupAddress || "(ከተዘጋጀው የቶሎ ማእድ ቤት)"}\n📍 *መድረሻ ቦታ:* ${activeAddress}\n\n*የተከፈለው ሙሉ ሂሳብ (Full Payment with 100BR Delivery):* ${advancePaid.toFixed(2)} Birr\n*ቀሪ እዳ (Remaining Balance):* ${remainingBalance.toFixed(2)} Birr\n*የክፍያ መንገድ:* Mobile Wallet / CBE Bank\n*መለያ ቁጥር (Ref ID):* ${txId}\n\n📷 *የማረጋገጫ ፎቶ ለባለቤቱ ተልኳል:* [https://t.me/${operatorUsername || "Cephasimon"}]\n\n⚠️ *የማረጋገጫ ሂደት በመጠባበቅ ላይ:* የእርስዎ የክፍያ ማረጋገጫ ፎቶ ለባለቤቱ (https://t.me/${operatorUsername || "Cephasimon"}) በአስተማማኝ ሁኔታ ተልኳል። ባለቤቱ ልክ ክፍያውን ሲያረጋግጥ አሽከርካሪ ይመደባል እንዲሁም የቀጥታ መከታተያ ካርታ (Live GPS) ይጀምራል!`
+                  : `💳 *TOLO DELIVERY PAYMENT SUBMITTED for #${orderDraftId}* ✅\n\n👤 *Customer:* ${activeName}\n📞 *Contact Phone:* ${activePhone}\n📍 *Pick-Up From:* ${activePickupAddress || "(Ready from ToLo Kitchen)"}\n📍 *Drop-Off To:* ${activeAddress}\n\n*Full Payment Paid (with 100BR Delivery):* ${advancePaid.toFixed(2)} Birr\n*Remaining Balance:* ${remainingBalance.toFixed(2)} Birr\n*Method:* Mobile Wallet / CBE Bank\n*Receipt Reference:* ${txId}\n\n📷 *Confirmation Photo Sent To Owner:* [https://t.me/${operatorUsername || "Cephasimon"}]\n\n⚠️ *Verification Required:* Your receipt photo has been securely sent to the owner (https://t.me/${operatorUsername || "Cephasimon"}) for approval. Once he approves, a driver will be assigned immediately and live GPS tracking will begin!`,
                 timestamp: botTimestamp,
                 type: "tracking_link",
                 trackingOrderId: orderDraftId,
@@ -882,6 +918,14 @@ export default function App() {
                   total,
                   orderId: orderDraftId,
                 },
+              },
+              {
+                id: "msg_bot_profile_prompt_" + Date.now(),
+                sender: "bot",
+                text: isAmharic
+                  ? "📞 *እባክዎን ማድረሻውን ለማጠናቀቅ ስልክ ቁጥርዎን እና መድረሻ ቦታዎን እዚህ ይላኩልን!* 📍\n\nምሳሌ፦ `ስልክ፦ 0911223344፣ መድረሻ፦ ቦሌ ማተሚያ`"
+                  : "📞 *Please drop your phone number and drop-off location here to complete your delivery!* 📍\n\nExample: `phone: 0911223344, address: Bole Matemiya`",
+                timestamp: botTimestamp,
               },
             ]);
 
@@ -962,8 +1006,8 @@ export default function App() {
               (acc, curr) => acc + curr.totalPrice,
               0,
             );
-            const deliveryFee = 2.5; // cozy town flat rate
-            const total = subtotal + deliveryFee;
+             const deliveryFee = 100.00; // cozy town flat rate
+             const total = subtotal + deliveryFee;
 
             const orderDraftId = "draft_" + Math.floor(Math.random() * 100000);
 
@@ -988,6 +1032,14 @@ export default function App() {
                   total,
                   orderId: orderDraftId,
                 },
+              },
+              {
+                id: "msg_bot_profile_prompt_" + Date.now(),
+                sender: "bot",
+                text: isAmharic
+                  ? "📞 *እባክዎን ማድረሻውን ለማጠናቀቅ ስልክ ቁጥርዎን እና መድረሻ ቦታዎን እዚህ ይላኩልን!* 📍\n\nምሳሌ፦ `ስልክ፦ 0911223344፣ መድረሻ፦ ቦሌ ማተሚያ`"
+                  : "📞 *Please drop your phone number and drop-off location here to complete your delivery!* 📍\n\nExample: `phone: 0911223344, address: Bole Matemiya`",
+                timestamp: botTimestamp,
               },
             ]);
 
@@ -1076,9 +1128,9 @@ export default function App() {
 
     const targetOrder = orders.find((o) => o.id === draftId);
     const orderSubtotal = targetOrder ? targetOrder.subtotal : 0;
-    const advancePaid = orderSubtotal / 3;
-    const orderDeliveryFee = targetOrder ? targetOrder.deliveryFee : 2.5;
-    const remainingBalance = (orderSubtotal * 2) / 3 + orderDeliveryFee;
+    const orderDeliveryFee = targetOrder ? targetOrder.deliveryFee : 100.00;
+    const advancePaid = orderSubtotal + orderDeliveryFee;
+    const remainingBalance = 0.00;
 
     const txId =
       paymentType === "cbe_bank"
@@ -1142,16 +1194,16 @@ export default function App() {
         sender: "user",
         senderName: customerProfile.name,
         text: isAmharic
-          ? `👤 *ከደንበኛ የተላከ፦* ${customerProfile.name}\n📞 *ስልክ፦* ${customerProfile.phone}\n📍 *መነሻ፦* ${customerProfile.pickupAddress || "የቶሎ ማእድ ቤት"}\n📍 *መድረሻ፦* ${customerProfile.address}\n\nየክፍያ ማረጋገጫ (Screenshot) አስገብቻለሁ። እባክዎን አረጋግጠው ይላኩልኝ! (${advancePaid.toFixed(2)} Birr)`
-          : `👤 *Submitted by:* ${customerProfile.name}\n📞 *Phone:* ${customerProfile.phone}\n📍 *Pickup:* ${customerProfile.pickupAddress || "Tolo Main Kitchen"}\n📍 *Drop-off:* ${customerProfile.address}\n\nI have sent my payment verification screenshot for Order #${draftId}. Please verify and approve my receipt! (${advancePaid.toFixed(2)} Birr)`,
+          ? `👤 *ከደንበኛ የተላከ፦* ${customerProfile.name}\n📞 *ስልክ፦* ${customerProfile.phone}\n📍 *መነሻ፦* ${customerProfile.pickupAddress || "የቶሎ ማእድ ቤት"}\n📍 *መድረሻ፦* ${customerProfile.address}\n\nሙሉ የክፍያ ማረጋገጫ (Screenshot) አስገብቻለሁ። እባክዎን አረጋግጠው ይላኩልኝ! (${advancePaid.toFixed(2)} Birr)`
+          : `👤 *Submitted by:* ${customerProfile.name}\n📞 *Phone:* ${customerProfile.phone}\n📍 *Pickup:* ${customerProfile.pickupAddress || "Tolo Main Kitchen"}\n📍 *Drop-off:* ${customerProfile.address}\n\nI have sent my full payment verification screenshot for Order #${draftId}. Please verify and approve my receipt! (${advancePaid.toFixed(2)} Birr)`,
         timestamp: timestampStr,
       },
       {
         id: "msg_bot_paid_receipt_" + Date.now(),
         sender: "bot",
         text: isAmharic
-          ? `💳 *የቶሎ ማድረሻ ክፍያ ማረጋገጫ ተልኳል ለ #${draftId}* ✅\n\n👤 *ደንበኛ:* ${customerProfile.name}\n📞 *ስልክ:* ${customerProfile.phone}\n📍 *መነሻ ቦታ:* ${customerProfile.pickupAddress || "(ከተዘጋጀው የቶሎ ማእድ ቤት)"}\n📍 *መድረሻ ቦታ:* ${customerProfile.address}\n\n*የቅድሚያ ክፍያ (1/3):* ${advancePaid.toFixed(2)} Birr\n*ቀሪ እዳ (በማድረሻ ወቅት የሚከፈል):* ${remainingBalance.toFixed(2)} Birr\n*የክፍያ መንገድ:* ${methodLabel}\n*መለያ ቁጥር (Ref ID):* ${txId}\n\n📷 *የማረጋገጫ ፎቶ ለባለቤቱ ተልኳል:* [https://t.me/${operatorUsername || "Cephasimon"}]\n\n⚠️ *የማረጋገጫ ሂደት በመጠባበቅ ላይ:* የእርስዎ የክፍያ ማረጋገጫ ፎቶ ለባለቤቱ (https://t.me/${operatorUsername || "Cephasimon"}) በአስተማማኝ ሁኔታ ተልኳል። ባለቤቱ ልክ ክፍያውን ሲያረጋግጥ አሽከርካሪ ይመደባል እንዲሁም የቀጥታ መከታተያ ካርታ (Live GPS) ይጀምራል!`
-          : `💳 *TOLO DELIVERY PAYMENT SUBMITTED for #${draftId}* ✅\n\n👤 *Customer:* ${customerProfile.name}\n📞 *Contact Phone:* ${customerProfile.phone}\n📍 *Pick-Up From:* ${customerProfile.pickupAddress || "(Ready from Tolo Kitchen)"}\n📍 *Drop-Off To:* ${customerProfile.address}\n\n*Advance Payment (1/3 of cost):* ${advancePaid.toFixed(2)} Birr\n*Remaining Balance (Due After Delivery):* ${remainingBalance.toFixed(2)} Birr\n*Method:* ${methodLabel}\n*Receipt Reference:* ${txId}\n\n📷 *Confirmation Photo Sent To Owner:* [https://t.me/${operatorUsername || "Cephasimon"}]\n\n⚠️ *Verification Required:* Your receipt photo has been securely sent to the owner (https://t.me/${operatorUsername || "Cephasimon"}) for approval. Once he approves, a driver will be assigned immediately and live GPS tracking will begin!`,
+          ? `💳 *የቶሎ ማድረሻ ክፍያ ማረጋገጫ ተልኳል ለ #${draftId}* ✅\n\n👤 *ደንበኛ:* ${customerProfile.name}\n📞 *ስልክ:* ${customerProfile.phone}\n📍 *መነሻ ቦታ:* ${customerProfile.pickupAddress || "(ከተዘጋጀው የቶሎ ማእድ ቤት)"}\n📍 *መድረሻ ቦታ:* ${customerProfile.address}\n\n*የተከፈለው ሙሉ ሂሳብ (Full Payment with 100BR Delivery):* ${advancePaid.toFixed(2)} Birr\n*ቀሪ እዳ (Remaining Balance):* ${remainingBalance.toFixed(2)} Birr\n*የክፍያ መንገድ:* ${methodLabel}\n*መለያ ቁጥር (Ref ID):* ${txId}\n\n📷 *የማረጋገጫ ፎቶ ለባለቤቱ ተልኳል:* [https://t.me/${operatorUsername || "Cephasimon"}]\n\n⚠️ *የማረጋገጫ ሂደት በመጠባበቅ ላይ:* የእርስዎ የክፍያ ማረጋገጫ ፎቶ ለባለቤቱ (https://t.me/${operatorUsername || "Cephasimon"}) በአስተማማኝ ሁኔታ ተልኳል። ባለቤቱ ልክ ክፍያውን ሲያረጋግጥ አሽከርካሪ ይመደባል እንዲሁም የቀጥታ መከታተያ ካርታ (Live GPS) ይጀምራል!`
+          : `💳 *TOLO DELIVERY PAYMENT SUBMITTED for #${draftId}* ✅\n\n👤 *Customer:* ${customerProfile.name}\n📞 *Contact Phone:* ${customerProfile.phone}\n📍 *Pick-Up From:* ${customerProfile.pickupAddress || "(Ready from Tolo Kitchen)"}\n📍 *Drop-Off To:* ${customerProfile.address}\n\n*Full Payment Paid (with 100BR Delivery):* ${advancePaid.toFixed(2)} Birr\n*Remaining Balance:* ${remainingBalance.toFixed(2)} Birr\n*Method:* ${methodLabel}\n*Receipt Reference:* ${txId}\n\n📷 *Confirmation Photo Sent To Owner:* [https://t.me/${operatorUsername || "Cephasimon"}]\n\n⚠️ *Verification Required:* Your receipt photo has been securely sent to the owner (https://t.me/${operatorUsername || "Cephasimon"}) for approval. Once he approves, a driver will be assigned immediately and live GPS tracking will begin!`,
         timestamp: timestampStr,
         type: "tracking_link",
         trackingOrderId: draftId,
@@ -1526,6 +1578,7 @@ export default function App() {
               isAmharic={isAmharic}
               onLanguageChange={setIsAmharic}
               orders={orders}
+              onUpdateProfile={(profile) => setCustomerProfile(profile)}
             />
           </div>
 
@@ -2242,12 +2295,10 @@ export default function App() {
                         const mealPrice = currentOrder
                           ? currentOrder.subtotal
                           : 0;
-                        const advancePrice = mealPrice / 3;
-                        const remainingMeal = (mealPrice * 2) / 3;
                         const shippingFee = currentOrder
                           ? currentOrder.deliveryFee
-                          : 2.5;
-                        const payableOnDelivery = remainingMeal + shippingFee;
+                          : 100.00;
+                        const totalToPay = mealPrice + shippingFee;
 
                         return (
                           <div className="border-t border-dashed border-slate-200 pt-3 space-y-1.5 text-xs font-sans">
@@ -2257,39 +2308,29 @@ export default function App() {
                                 {mealPrice.toFixed(2)} Birr
                               </span>
                             </div>
-                            <p className="text-[10.5px] text-amber-700 bg-amber-50 border border-amber-200 p-2 rounded-lg leading-relaxed font-sans font-medium">
-                              📢 <strong>Price Holder Notice:</strong> This
-                              estimated total represents a pricing holder value
-                              only. For verification during authorization, you
-                              will only pay <strong>1/3 of this amount</strong>{" "}
-                              right now.
-                            </p>
-                            <div className="flex justify-between font-bold text-slate-800">
-                              <span className="text-emerald-700">
-                                Advance Deposit Required (1/3 of food):
-                              </span>
-                              <span className="font-mono text-emerald-700 font-extrabold text-sm">
-                                {advancePrice.toFixed(2)} Birr
-                              </span>
-                            </div>
                             <div className="flex justify-between text-slate-500">
-                              <span>
-                                Remaining Food Balance (Due At Delivery):
-                              </span>
-                              <span className="font-mono">
-                                {remainingMeal.toFixed(2)} Birr
-                              </span>
-                            </div>
-                            <div className="flex justify-between text-slate-500">
-                              <span>Delivery Fee (Paid After Delivery):</span>
+                              <span>Delivery Fee (Flat Rate):</span>
                               <span className="font-mono">
                                 {shippingFee.toFixed(2)} Birr
                               </span>
                             </div>
-                            <div className="flex justify-between font-semibold text-slate-900 border-t border-dashed border-slate-200 pt-1 text-[#E0560B]">
-                              <span>Total Due Upon Delivery:</span>
-                              <span className="font-mono font-bold">
-                                {payableOnDelivery.toFixed(2)} Birr
+                            <p className="text-[10.5px] text-emerald-700 bg-emerald-50 border border-emerald-200 p-2 rounded-lg leading-relaxed font-sans font-medium">
+                              📢 <strong>Full Prepayment Policy:</strong> To confirm, please authorize the <strong>full food price plus the 100BR delivery fee</strong> as a secure cashless prepayment.
+                            </p>
+                            <div className="flex justify-between font-bold text-slate-800 border-t border-dashed border-slate-200 pt-1">
+                              <span className="text-emerald-700">
+                                Total Cashless Prepayment Required:
+                              </span>
+                              <span className="font-mono text-emerald-700 font-extrabold text-sm">
+                                {totalToPay.toFixed(2)} Birr
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-slate-500">
+                              <span>
+                                Remaining Balance Due (Upon Delivery):
+                              </span>
+                              <span className="font-mono font-bold text-slate-700">
+                                0.00 Birr
                               </span>
                             </div>
                           </div>
@@ -2537,32 +2578,28 @@ export default function App() {
                         const mealPrice = currentOrder
                           ? currentOrder.subtotal
                           : 0;
-                        const advancePrice = mealPrice / 3;
                         const deliveryFeeVal = currentOrder
                           ? currentOrder.deliveryFee
-                          : 2.5;
-                        const payableOnDelivery =
-                          (mealPrice * 2) / 3 + deliveryFeeVal;
+                          : 100.00;
+                        const totalPrepaid = mealPrice + deliveryFeeVal;
 
                         return (
                           <>
-                            <div className="flex justify-between text-emerald-700 font-bold border-t border-dashed border-slate-150 pt-1">
-                              <span>Advance Deposit paid:</span>
-                              <span>{advancePrice.toFixed(2)} Birr</span>
+                            <div className="flex justify-between text-slate-550 text-[10.5px] border-t border-dashed border-slate-150 pt-1">
+                              <span>Estimated Food Price:</span>
+                              <span>{mealPrice.toFixed(2)} Birr</span>
                             </div>
                             <div className="flex justify-between text-slate-550 text-[10.5px]">
-                              <span>Delivery Fee (Pay After):</span>
+                              <span>Delivery Fee (Flat Rate):</span>
                               <span>{deliveryFeeVal.toFixed(2)} Birr</span>
                             </div>
-                            <div className="flex justify-between text-slate-550 text-[10.5px]">
-                              <span>Remaining meal price:</span>
-                              <span>
-                                {((mealPrice * 2) / 3).toFixed(2)} Birr
-                              </span>
+                            <div className="flex justify-between text-emerald-700 font-bold">
+                              <span>Full Prepaid Amount:</span>
+                              <span>{totalPrepaid.toFixed(2)} Birr</span>
                             </div>
-                            <div className="flex justify-between text-slate-800 font-bold border-t border-slate-200 pt-1">
+                            <div className="flex justify-between text-slate-800 font-bold border-t border-slate-250 pt-1">
                               <span>Pending Balance Due Upon Delivery:</span>
-                              <span>{payableOnDelivery.toFixed(2)} Birr</span>
+                              <span>0.00 Birr</span>
                             </div>
                           </>
                         );

@@ -51,6 +51,7 @@ interface TelegramSimulatorProps {
   isAmharic: boolean;
   onLanguageChange: (val: boolean) => void;
   orders: Order[];
+  onUpdateProfile?: (profile: { name: string; phone: string; address: string; pickupAddress: string }) => void;
 }
 
 export interface StoreBrandTheme {
@@ -246,6 +247,18 @@ export const CENTRAL_RESTAURANT_THEMES: Record<string, StoreBrandTheme> = {
     primaryHover: "#7C3AED",
     primaryRgb: "139, 92, 246",
     brandingEmoji: "👑",
+  },
+  konjo_cake: {
+    primary: "#EC4899",
+    primaryHover: "#DB2777",
+    primaryRgb: "236, 72, 153",
+    brandingEmoji: "🍰",
+  },
+  jalebib_muslim: {
+    primary: "#10B981",
+    primaryHover: "#059669",
+    primaryRgb: "16, 185, 129",
+    brandingEmoji: "🍲",
   },
 };
 
@@ -2230,6 +2243,36 @@ export const NOTA_LOUNGE_MENU: Record<string, MountainItem[]> = {
 
 export const QUEEN_KITCHEN_MENU: Record<string, MountainItem[]> = {};
 
+export const KONJO_CAKE_MENU: Record<string, MountainItem[]> = {
+  Cake: [
+    { name: "Chocolate Tart 6 Piece", price: 230.0 },
+    { name: "Chocolate Tart 12 Piece", price: 420.0 },
+    { name: "Vanilla Boxegna 12 Piece", price: 480.0 },
+    { name: "Chocolate Tart 4 Piece", price: 150.0 },
+    { name: "Vanilla Boxegna 6 Piece", price: 330.0 },
+    { name: "Vanilla Tart 12 Piece", price: 600.0 },
+    { name: "Chocolate Custard 6 Piece", price: 330.0 },
+    { name: "Vanilla Boxegna 4 Piece", price: 150.0 },
+    { name: "Vanilla Tart 4 Piece", price: 150.0 },
+    { name: "Vanilla Tart 6 Piece", price: 230.0 },
+    { name: "Boxegna Chocolate 12 Piece", price: 420.0 },
+    { name: "Boxegna Chocolate 4 Piece", price: 150.0 },
+    { name: "Boxegna Chocolate 6 Piece", price: 230.0 },
+    { name: "Chocolate Custard 12 Piece", price: 420.0 },
+    { name: "Chocolate Custard 4 Piece", price: 150.0 },
+    { name: "Vanilla Custard 12 Piece", price: 420.0 },
+    { name: "Vanilla Custard 4 Piece", price: 150.0 },
+    { name: "Vanilla Custard 6 Piece", price: 230.0 },
+  ],
+};
+
+export const JALEBIB_MUSLIM_MENU: Record<string, MountainItem[]> = {
+  Habeshan: [
+    { name: "መረቅ ጥብስ", price: 480.0 },
+    { name: "Derek Tibs", price: 530.0 },
+  ],
+};
+
 
 export const SUNNY_BURGER_2_MENU: Record<string, MountainItem[]> = {
   Burger: [
@@ -2268,7 +2311,9 @@ export default function TelegramSimulator({
   isAmharic,
   onLanguageChange,
   orders,
+  onUpdateProfile,
 }: TelegramSimulatorProps) {
+  const isClosed = new Date().getHours() >= 20 || new Date().getHours() < 6;
   const [inputText, setInputText] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState<Record<string, number>>(
@@ -2334,6 +2379,8 @@ export default function TelegramSimulator({
     | "moonlight_restorant_menu"
     | "nota_lounge_menu"
     | "queen_kitchen_menu"
+    | "konjo_cake_menu"
+    | "jalebib_muslim_menu"
   >("main");
   const [webAppKeyboard, setWebAppKeyboard] = useState<
     | "main"
@@ -2392,6 +2439,8 @@ export default function TelegramSimulator({
     | "moonlight_restorant_menu"
     | "nota_lounge_menu"
     | "queen_kitchen_menu"
+    | "konjo_cake_menu"
+    | "jalebib_muslim_menu"
   >("stores_p1");
   const [mountainCategory, setMountainCategory] = useState<string>("Juice");
   const [mountainSelected, setMountainSelected] = useState<
@@ -2877,6 +2926,25 @@ export default function TelegramSimulator({
             setMountainCategory("Burger");
             setMenuPage(0);
             setToastMessage(`🍔 Welcome to Nota Lounge Premium Menu!`);
+          } else if (
+            arg === "Konjo Cake" ||
+            arg.toLowerCase().includes("konjo")
+          ) {
+            setTgKeyboard("konjo_cake_menu");
+            setMountainCategory("Cake");
+            setMenuPage(0);
+            setToastMessage(`🍰 Welcome to Konjo Cake Premium Menu!`);
+          } else if (
+            arg === "ጃለቢብ የሙስሊም ሬስቶራንት" ||
+            arg.toLowerCase().includes("ጃለቢብ") ||
+            arg.toLowerCase().includes("jalebib") ||
+            arg.toLowerCase().includes("jelebib") ||
+            arg.toLowerCase().includes("muslim")
+          ) {
+            setTgKeyboard("jalebib_muslim_menu");
+            setMountainCategory("Habeshan");
+            setMenuPage(0);
+            setToastMessage(`🍲 Welcome to ጃለቢብ የሙስሊም ሬስቶራንት Premium Menu!`);
           } else if (false) {
             // Queen Kitchen premium menu disabled
           } else {
@@ -2930,7 +2998,7 @@ export default function TelegramSimulator({
       );
       setTimeout(() => setToastMessage(null), 4500);
     } else {
-      const realPhone = "";
+      const realPhone = customerProfile.phone || "0912345678";
       setLocalPhone(realPhone);
       setPhoneSharedStep("real");
       setToastMessage(
@@ -3096,7 +3164,9 @@ export default function TelegramSimulator({
       | "colors_cafe"
       | "moonlight_restorant"
       | "nota_lounge"
-      | "queen_kitchen",
+      | "queen_kitchen"
+      | "konjo_cake"
+      | "jalebib_muslim",
   ) => {
     const menuData =
       menuType === "mountain"
@@ -3222,10 +3292,13 @@ export default function TelegramSimulator({
                                                                                                       : menuType ===
                                                                                                           "nota_lounge"
                                                                                                         ? NOTA_LOUNGE_MENU
-                                                                                                        : menuType ===
-                                                                                                            "queen_kitchen"
-                                                                                                          ? QUEEN_KITCHEN_MENU
-                                                                                                          : YOM_BURGERIZZA_MENU;
+                                                                                                        : menuType === "queen_kitchen"
+                                                                                                            ? QUEEN_KITCHEN_MENU
+                                                                                                            : menuType === "konjo_cake"
+                                                                                                              ? KONJO_CAKE_MENU
+                                                                                                              : menuType === "jalebib_muslim"
+                                                                                                                ? JALEBIB_MUSLIM_MENU
+                                                                                                                : YOM_BURGERIZZA_MENU;
 
     const rawCategories =
       menuType === "yom"
@@ -3441,7 +3514,7 @@ export default function TelegramSimulator({
                                                                             "Habeshan",
                                                                             "Breakfast",
                                                                           ]
-                                                                        : menuType === "colors_cafe" ? ["All", "Cake"] : menuType === "moonlight_restorant" ? ["All", "Chicken"] : menuType === "nota_lounge" ? ["All", "Burger"] : menuType === "queen_kitchen" ? ["All"] : [
+                                                                        : menuType === "colors_cafe" ? ["All", "Cake"] : menuType === "moonlight_restorant" ? ["All", "Chicken"] : menuType === "nota_lounge" ? ["All", "Burger"] : menuType === "queen_kitchen" ? ["All"] : menuType === "konjo_cake" ? ["All", "Cake"] : menuType === "jalebib_muslim" ? ["All", "Habeshan"] : [
                                                                       "All",
                                                                       "Noodles",
                                                                       "Pizza",
@@ -3795,6 +3868,20 @@ export default function TelegramSimulator({
               ? "ከኩዊን ኪችን ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
               : "Select an item to add (20 per page):",
           };
+        case "konjo_cake":
+          return {
+            title: "🍰 Konjo Cake Premium Menu",
+            desc: isAmharic
+              ? "ከኮንጆ ኬክ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
+        case "jalebib_muslim":
+          return {
+            title: "🍲 ጃለቢብ የሙስሊም ሬስቶራንት Premium Menu",
+            desc: isAmharic
+              ? "ከጃለቢብ የሙስሊም ሬስቶራንት ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
+              : "Select an item to add (20 per page):",
+          };
         case "marti":
         default:
           return {
@@ -3912,7 +3999,7 @@ export default function TelegramSimulator({
                                                                                             "mercy_fruit"
                                                                                           ? "Mercy Fruit Salad"
                                                                                           : menuType ===
-                                                                                              "taso_italian" ? "Taso Italian ice cream and Cafe" : menuType === "colors_cafe" ? "Colors Cafe" : menuType === "moonlight_restorant" ? "Moonlight Restorant" : menuType === "nota_lounge" ? "Nota Lounge" : menuType === "queen_kitchen" ? "Queen of the kitchen" : "YOM BURGERIZZA",
+                                                                                              "taso_italian" ? "Taso Italian ice cream and Cafe" : menuType === "colors_cafe" ? "Colors Cafe" : menuType === "moonlight_restorant" ? "Moonlight Restorant" : menuType === "nota_lounge" ? "Nota Lounge" : menuType === "queen_kitchen" ? "Queen of the kitchen" : menuType === "konjo_cake" ? "Konjo Cake" : menuType === "jalebib_muslim" ? "ጃለቢብ የሙስሊም ሬስቶራንት" : "YOM BURGERIZZA",
     );
 
     const getThemeColors = () => {
@@ -4124,6 +4211,16 @@ export default function TelegramSimulator({
     };
 
     const handleSubmitOrderMenu = () => {
+      if (isClosed) {
+        setToastMessage(
+          isAmharic
+            ? "⚠️ ቶሎ ማዘዣ ተዘግቷል! የሥራ ሰዓታችን ከምሽቱ 2:00 (20:00) ያበቃል።"
+            : "⚠️ Tollo Delivery is closed! Our operating hours are before 20:00 PM."
+        );
+        setTimeout(() => setToastMessage(null), 4000);
+        return;
+      }
+
       if (totalSelectedCount === 0) {
         setToastMessage("⚠️ Please select at least one item first!");
         setTimeout(() => setToastMessage(null), 3000);
@@ -4137,10 +4234,30 @@ export default function TelegramSimulator({
         return `${qty} ${name} (${itemPrice.toFixed(2)} Birr)`;
       });
 
-      const nameText = customerProfile.name || localName || "Valued Customer";
-      const phoneText = customerProfile.phone || localPhone || "0911223344";
-      const dropAddress =
-        customerProfile.address || localAddress || "Default Delivery Area";
+      const nameText = customerProfile.name || localName;
+      const phoneText = customerProfile.phone || localPhone;
+      const dropAddress = customerProfile.address || localAddress;
+
+      if (!nameText.trim() || nameText.trim() === "Valued Customer" || !phoneText.trim() || !dropAddress.trim()) {
+        setToastMessage(
+          isAmharic
+            ? "⚠️ እባክዎን ማዘዙን ከመቀጠልዎ በፊት ስምዎን፣ ስልክ ቁጥርዎን እና መድረሻ አድራሻዎን ያስገቡ ወይም ያጋሩ!"
+            : "⚠️ Please enter your name, phone number, and drop-off address before submitting!"
+        );
+        setTimeout(() => setToastMessage(null), 4000);
+        return;
+      }
+
+      const cleanPhone = phoneText.replace(/[^0-9]/g, "");
+      if (cleanPhone.length !== 10) {
+        setToastMessage(
+          isAmharic
+            ? "⚠️ እባክዎን በትክክል 10 አሃዝ ያለው ስልክ ቁጥር ያስገቡ (ለምሳሌ 0911234567)!"
+            : "⚠️ Phone contact number must have exactly 10 digits (e.g., 0911234567)!"
+        );
+        setTimeout(() => setToastMessage(null), 4000);
+        return;
+      }
       const pickupAddress =
         menuType === "mountain"
           ? "Mountain Hotel"
@@ -4463,6 +4580,187 @@ export default function TelegramSimulator({
             <span className="font-black font-mono tracking-tight text-white text-[12.5px]">
               Total: {totalPrice.toFixed(2)} Br
             </span>
+          </div>
+        )}
+
+        {/* Delivery Parameter Inputs right inside the ordering flow before submitting */}
+        {totalSelectedCount > 0 && (
+          <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-3 mt-2 text-slate-700 font-sans shadow-3xs space-y-2.5 animate-fadeIn shrink-0">
+            <div className="flex justify-between items-center border-b border-slate-200/60 pb-1.5">
+              <span className="font-extrabold text-[11px] text-slate-600 uppercase tracking-wide flex items-center gap-1">
+                <span>📍</span> {isAmharic ? "የማድረሻ መረጃ (ስም፣ ስልክ እና አድራሻ)" : "Delivery Details (Name, Phone & Address)"}
+              </span>
+              <span className="text-[10px] text-orange-600 font-bold">
+                {isAmharic ? "*መሞላት ያለበት" : "*Required"}
+              </span>
+            </div>
+
+            <div className="space-y-2 text-xs">
+              <div>
+                <label className="block text-[10px] font-bold text-slate-500 mb-1">
+                  {isAmharic ? "👤 ሙሉ ስም" : "👤 Recipient Name"}
+                </label>
+                <input
+                  type="text"
+                  placeholder={isAmharic ? "ለምሳሌ፦ አበበ ከበደ" : "e.g. Abebe Kebede"}
+                  value={customerProfile.name || localName}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setLocalName(val);
+                    if (onUpdateProfile) {
+                      onUpdateProfile({ ...customerProfile, name: val });
+                    }
+                  }}
+                  className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-orange-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 mb-1">
+                    {isAmharic ? "📞 ስልክ ቁጥር" : "📞 Phone Number"}
+                  </label>
+                  <div className="flex gap-1">
+                    <input
+                      type="tel"
+                      placeholder="e.g. 0911234567"
+                      value={customerProfile.phone || localPhone}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setLocalPhone(val);
+                        if (onUpdateProfile) {
+                          onUpdateProfile({ ...customerProfile, phone: val });
+                        }
+                      }}
+                      className="flex-1 min-w-0 bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const fakePhone = "0944112233";
+                        setLocalPhone(fakePhone);
+                        if (onUpdateProfile) {
+                          onUpdateProfile({ ...customerProfile, phone: fakePhone });
+                        }
+                        setToastMessage(
+                          isAmharic
+                            ? `✓ የሙከራ ስልክ ቁጥር ተጋርቷል: ${fakePhone}`
+                            : `✓ Simulated contact shared: ${fakePhone}`
+                        );
+                        setTimeout(() => setToastMessage(null), 3000);
+                      }}
+                      className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 rounded-lg text-[10px] font-bold border border-slate-200 transition active:scale-95 flex items-center gap-0.5 shrink-0 cursor-pointer"
+                      title={isAmharic ? "ስልክ ቁጥር አጋራ" : "Share Contact"}
+                    >
+                      <span>📱</span> {isAmharic ? "አጋራ" : "Share"}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold text-slate-500 mb-1">
+                    {isAmharic ? "📍 መድረሻ ቦታ" : "📍 Drop-off Location"}
+                  </label>
+                  <div className="flex gap-1">
+                    <input
+                      type="text"
+                      placeholder={isAmharic ? "ምሳሌ፦ ቦሌ ማተሚያ" : "e.g. Bole Matemiya"}
+                      value={customerProfile.address || localAddress}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setLocalAddress(val);
+                        if (onUpdateProfile) {
+                          onUpdateProfile({ ...customerProfile, address: val });
+                        }
+                      }}
+                      className="flex-1 min-w-0 bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-orange-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (navigator.geolocation) {
+                          navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                              const lat = position.coords.latitude.toFixed(4);
+                              const lng = position.coords.longitude.toFixed(4);
+                              const gpsStr = `Shared GPS Location (${lat}° N, ${lng}° E)`;
+                              setLocalAddress(gpsStr);
+                              if (onUpdateProfile) {
+                                onUpdateProfile({ ...customerProfile, address: gpsStr });
+                              }
+                              setToastMessage(
+                                isAmharic
+                                  ? "✓ የቀጥታ GPS አድራሻ ተጋርቷል!"
+                                  : "✓ GPS location shared successfully!"
+                              );
+                              setTimeout(() => setToastMessage(null), 3000);
+                            },
+                            (error) => {
+                              const fallbackGps = "Shared GPS Location (9.0122° N, 38.7500° E)";
+                              setLocalAddress(fallbackGps);
+                              if (onUpdateProfile) {
+                                onUpdateProfile({ ...customerProfile, address: fallbackGps });
+                              }
+                              setToastMessage(
+                                isAmharic
+                                  ? "✓ የተቀመጠ GPS አድራሻ ተጋርቷል!"
+                                  : "✓ Location shared (default Addis Ababa GPS)!"
+                              );
+                              setTimeout(() => setToastMessage(null), 3000);
+                            }
+                          );
+                        } else {
+                          const fallbackGps = "Shared GPS Location (9.0122° N, 38.7500° E)";
+                          setLocalAddress(fallbackGps);
+                          if (onUpdateProfile) {
+                            onUpdateProfile({ ...customerProfile, address: fallbackGps });
+                          }
+                        }
+                      }}
+                      className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 rounded-lg text-[10px] font-bold border border-slate-200 transition active:scale-95 flex items-center gap-0.5 shrink-0 cursor-pointer"
+                      title={isAmharic ? "አድራሻ አጋራ (GPS)" : "Share Location"}
+                    >
+                      <span>📍</span> {isAmharic ? "አጋራ" : "GPS"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Combined Autofill Button requested specifically by the user */}
+            <button
+              type="button"
+              onClick={() => {
+                const fakeName = "Abebe Kebede";
+                const fakePhone = "0944112233";
+                const fallbackGps = "Shared GPS Location (9.0122° N, 38.7500° E)";
+                setLocalName(fakeName);
+                setLocalPhone(fakePhone);
+                setLocalAddress(fallbackGps);
+                if (onUpdateProfile) {
+                  onUpdateProfile({
+                    ...customerProfile,
+                    name: fakeName,
+                    phone: fakePhone,
+                    address: fallbackGps
+                  });
+                }
+                setToastMessage(
+                  isAmharic
+                    ? "✓ ስም፣ ስልክ እና GPS አድራሻ በአንድ ላይ ተጋርተዋል!"
+                    : "✓ Name, phone, and GPS location shared in one-tap!"
+                );
+                setTimeout(() => setToastMessage(null), 3000);
+              }}
+              className="w-full bg-orange-50 hover:bg-orange-100 text-[#E0560B] border border-orange-200 py-1.5 rounded-lg text-[10.5px] font-extrabold flex items-center justify-center gap-1.5 transition active:scale-[0.98] cursor-pointer"
+            >
+              <span>👤📱</span>
+              <span>
+                {isAmharic
+                  ? "ሁሉንም መረጃዎች በአንድ ቁልፍ ያጋሩ (Share All Info)"
+                  : "Share Name, Phone & GPS Location instantly"}
+              </span>
+            </button>
           </div>
         )}
 
@@ -4836,6 +5134,8 @@ export default function TelegramSimulator({
     if (activeKbd === "moonlight_restorant_menu") return "moonlight_restorant";
     if (activeKbd === "nota_lounge_menu") return "nota_lounge";
     if (activeKbd === "queen_kitchen_menu") return "queen_kitchen";
+    if (activeKbd === "konjo_cake_menu") return "konjo_cake";
+    if (activeKbd === "jalebib_muslim_menu") return "jalebib_muslim";
     return null;
   })();
 
@@ -4883,13 +5183,19 @@ export default function TelegramSimulator({
               </span>
             </div>
             <span className="text-xs text-blue-100/90 block font-light">
-              {isParsing
-                ? isAmharic
+              {isClosed ? (
+                isAmharic
+                  ? "🔴 ዝግ ነው • ከምሽቱ 2:00 (20:00) ጀምሮ"
+                  : "🔴 Closed • after 20:00 PM"
+              ) : isParsing ? (
+                isAmharic
                   ? "በመተንተን ላይ ነው..."
                   : "is typing..."
-                : isAmharic
+              ) : (
+                isAmharic
                   ? "በመስመር ላይ • ዝርዝር ይቀበላል"
-                  : "online • matches natural chat"}
+                  : "online • matches natural chat"
+              )}
             </span>
           </div>
         </div>
@@ -4955,6 +5261,17 @@ export default function TelegramSimulator({
         </div>
       </div>
 
+      {isClosed && (
+        <div className="bg-rose-500 text-white px-3 py-1.5 text-[11px] font-semibold text-center flex items-center justify-center gap-1.5 shrink-0 animate-fadeIn font-sans">
+          <span>🔴</span>
+          <span>
+            {isAmharic
+              ? "ቶሎ ማዘዣ ተዘግቷል! (ከምሽቱ 2:00 / 20:00 በኋላ)"
+              : "Tollo Delivery is currently closed (after 20:00 PM)"}
+          </span>
+        </div>
+      )}
+
       {/* Telegram Wallpaper Background & Message Feed */}
       <div
         className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#e7ebf0]"
@@ -4993,63 +5310,20 @@ export default function TelegramSimulator({
 
               {/* Message Bubble */}
               <div
-                className={
-                  msg.type === "start_flow"
-                    ? "max-w-[85%] w-full flex flex-col gap-2 font-sans select-none"
-                    : `max-w-[82%] rounded-2xl px-3.5 py-2.5 shadow-sm text-sm relative ${
-                        isUser
-                          ? "bg-[#effdde] text-slate-950 rounded-br-none border border-[#e2f1cd]"
-                          : "bg-white text-slate-950 rounded-bl-none border border-slate-100"
-                      }`
-                }
+                className={`max-w-[82%] rounded-2xl px-3.5 py-2.5 shadow-sm text-sm relative ${
+                  isUser
+                    ? "bg-[#effdde] text-slate-950 rounded-br-none border border-[#e2f1cd]"
+                    : "bg-white text-slate-950 rounded-bl-none border border-slate-100"
+                }`}
               >
                 {msg.type === "start_flow" ? (
                   <>
-                    {/* Isolated Welcome Card */}
-                    <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs leading-normal">
-                      {/* Amharic Part */}
-                      <div className="flex items-start gap-2.5">
-                        <span className="text-xl shrink-0 mt-0.5">🚀</span>
-                        <div className="flex-1 text-slate-800">
-                          <h3 className="font-extrabold text-[13.5px] leading-snug tracking-tight text-slate-900">
-                            እንኳን ወደ ቶሎ | Tollo Delivery በሰላም መጡ! 👋
-                          </h3>
-                          <p className="text-slate-705 text-[12.5px] font-semibold leading-relaxed mt-3">
-                            የምግብ፣ የሸቀጣሸቀጥ፣ የዕቃዎችና የፈጣን መልዕክት ማድረሻ አገልግሎት።
-                          </p>
-                          <p className="text-slate-705 text-[12.5px] font-semibold leading-relaxed mt-2">
-                            በቀላሉ ይዘዙ፣ አስተማማኝ አሽከርካሪዎችን በቀጥታ ካርታ ይከታተሉ፣ በታማኝነት
-                            ይክፈሉ።
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Dashed Line Separator */}
-                      <div className="text-slate-300 font-mono text-center my-4 tracking-widest text-xs select-none">
-                        -----------------------
-                      </div>
-
-                      {/* English Part */}
-                      <div className="flex items-start gap-2.5">
-                        <span className="text-xl shrink-0 mt-0.5">🚀</span>
-                        <div className="flex-1 text-slate-800 font-sans">
-                          <h3 className="font-extrabold text-[13.5px] leading-snug tracking-tight text-slate-900">
-                            Welcome to ቶሎ | Tollo Delivery
-                          </h3>
-                          <p className="text-slate-600 text-[12.5px] font-medium leading-relaxed mt-3">
-                            Fast food, grocery, parcel, and courier delivery
-                            services.
-                          </p>
-                          <p className="text-slate-600 text-[12.5px] font-medium leading-relaxed mt-2">
-                            Order quickly, track deliveries in real time, and
-                            pay securely.
-                          </p>
-                        </div>
-                      </div>
+                    <div className="whitespace-pre-line text-[13.5px] leading-relaxed text-slate-900 pr-4 font-sans select-text">
+                      {msg.text}
                     </div>
 
-                    {/* Action Buttons styled like the screenshot with soft background and blue text */}
-                    <div className="flex flex-col gap-2 mt-1 w-full">
+                    {/* Action Buttons styled like standard Telegram inline keyboard buttons */}
+                    <div className="flex flex-col gap-1 mt-2.5 w-full">
                       <button
                         type="button"
                         onClick={() => {
@@ -5058,7 +5332,7 @@ export default function TelegramSimulator({
                           setTimeout(() => setToastMessage(null), 3000);
                           setIsMenuOpen(true);
                         }}
-                        className="w-full bg-[#f1f6fb] hover:bg-[#e4effb] text-[#0088cc] font-extrabold text-[13px] py-3 px-4 rounded-xl text-center flex items-center justify-center gap-2 transition cursor-pointer shadow-3xs active:scale-98"
+                        className="w-full bg-[#f1f6fb] hover:bg-[#e4effb] text-[#0088cc] font-bold text-[11.5px] py-2 px-3 rounded-lg text-center flex items-center justify-center gap-1.5 transition cursor-pointer border border-blue-100/50 active:scale-98"
                       >
                         🍔 ቶሎ ማዘዣ ክፈት (Open Tollo App)
                       </button>
@@ -5070,7 +5344,7 @@ export default function TelegramSimulator({
                           onSendMessage("CONTACT_SUPPORT_TRIGGERED_ACTION");
                           setIsMenuOpen(false);
                         }}
-                        className="w-full bg-[#f1f6fb] hover:bg-[#e4effb] text-[#0088cc] font-extrabold text-[13px] py-3 px-4 rounded-xl text-center flex items-center justify-center gap-2 transition cursor-pointer shadow-3xs active:scale-98"
+                        className="w-full bg-[#f1f6fb] hover:bg-[#e4effb] text-[#0088cc] font-bold text-[11.5px] py-2 px-3 rounded-lg text-center flex items-center justify-center gap-1.5 transition cursor-pointer border border-blue-100/50 active:scale-98"
                       >
                         📞 እገዛ መጠየቂያ (Contact Support)
                       </button>
@@ -5129,50 +5403,41 @@ export default function TelegramSimulator({
                             {msg.orderSummary.subtotal.toFixed(2)} Birr
                           </span>
                         </div>
-                        <p className="text-[10px] text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1.5 rounded-lg leading-relaxed font-sans font-medium">
-                          ℹ️ <strong>Price Holder Alert:</strong> The listed
-                          price is a holder reference for placeholder billing.
-                          You only pay <strong>1/3</strong> of it now.
+                        <p className="text-[10px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-1.5 rounded-lg leading-relaxed font-sans font-medium">
+                          ℹ️ <strong>Direct Prepayment Required:</strong> You pay the <strong>full food price plus the 100BR delivery fee</strong> in advance.
                         </p>
                         <div className="flex justify-between font-semibold text-emerald-700 bg-emerald-55 px-1.5 py-0.5 rounded">
-                          <span>Advance Payment Required (1/3):</span>
+                          <span>Full Food Prepayment:</span>
                           <span>
-                            {(msg.orderSummary.subtotal / 3).toFixed(2)} Birr
+                            {msg.orderSummary.subtotal.toFixed(2)} Birr
                           </span>
                         </div>
                         <div className="flex justify-between">
-                          <span>Delivery Fee (Paid After Delivery):</span>
+                          <span>Delivery Fee (Flat Rate):</span>
                           <span>
                             {msg.orderSummary.deliveryFee.toFixed(2)} Birr
                           </span>
                         </div>
                         <div className="flex justify-between text-[11px] text-slate-500">
-                          <span>Remaining Balance (Due After Delivery):</span>
+                          <span>Remaining Balance (Due At Delivery):</span>
                           <span>
-                            {(
-                              (msg.orderSummary.subtotal * 2) / 3 +
-                              msg.orderSummary.deliveryFee
-                            ).toFixed(2)}{" "}
-                            Birr
+                            0.00 Birr
                           </span>
                         </div>
                         <div className="flex justify-between font-bold text-slate-900 border-t border-dashed border-slate-200 pt-1 text-xs">
-                          <span>Total order value:</span>
+                          <span>Total Amount to Pay:</span>
                           <span>{msg.orderSummary.total.toFixed(2)} Birr</span>
                         </div>
                       </div>
 
                       {/* Cashless Rule block */}
-                      <div className="bg-amber-50/80 border border-amber-250/50 rounded-lg p-2 mt-2 leading-relaxed text-[11px] text-amber-800 space-y-1 font-sans">
-                        <div className="flex items-center gap-1 font-bold text-amber-900">
-                          <ShieldCheck className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                          <span>💳 1/3 ADVANCE PAYMENT ONLY</span>
+                      <div className="bg-emerald-50/80 border border-emerald-250/50 rounded-lg p-2 mt-2 leading-relaxed text-[11px] text-emerald-800 space-y-1 font-sans">
+                        <div className="flex items-center gap-1 font-bold text-emerald-900">
+                          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <span>💳 FULL ADVANCE PAYMENT ONLY</span>
                         </div>
                         <p className="text-[10.5px]">
-                          To confirm your request, please authorize 1/3 of the
-                          food's estimated price as a cashless deposit. The
-                          delivery fee is payable as cash/transfer only after
-                          the item is successfully delivered.
+                          To confirm your request, please authorize the full food price plus the 100BR delivery fee as a secure cashless prepayment. Once verified, a driver will be assigned immediately!
                         </p>
                       </div>
                     </div>
@@ -5415,6 +5680,8 @@ export default function TelegramSimulator({
             tgKeyboard === "moonlight_restorant_menu" ||
             tgKeyboard === "nota_lounge_menu" ||
             tgKeyboard === "queen_kitchen_menu" ||
+            tgKeyboard === "konjo_cake_menu" ||
+            tgKeyboard === "jalebib_muslim_menu" ||
             tgKeyboard === "mercy_fruit_menu" ||
             tgKeyboard === "taso_italian_menu" ? (
               renderInteractiveMenu(
@@ -5534,7 +5801,7 @@ export default function TelegramSimulator({
                                                                                                       : tgKeyboard ===
                                                                                                           "yahweh_nisse_menu"
                                                                                                         ? "yahweh_nisse"
-                                                                                                        : tgKeyboard === "colors_cafe_menu" ? "colors_cafe" : tgKeyboard === "moonlight_restorant_menu" ? "moonlight_restorant" : tgKeyboard === "nota_lounge_menu" ? "nota_lounge" : tgKeyboard === "queen_kitchen_menu" ? "queen_kitchen" : tgKeyboard === "mercy_fruit_menu" ? "mercy_fruit" : tgKeyboard === "taso_italian_menu" ? "taso_italian" : "yom",
+                                                                                                        : tgKeyboard === "colors_cafe_menu" ? "colors_cafe" : tgKeyboard === "moonlight_restorant_menu" ? "moonlight_restorant" : tgKeyboard === "nota_lounge_menu" ? "nota_lounge" : tgKeyboard === "queen_kitchen_menu" ? "queen_kitchen" : tgKeyboard === "konjo_cake_menu" ? "konjo_cake" : tgKeyboard === "jalebib_muslim_menu" ? "jalebib_muslim" : tgKeyboard === "mercy_fruit_menu" ? "mercy_fruit" : tgKeyboard === "taso_italian_menu" ? "taso_italian" : "yom",
               )
             ) : (
               <>
@@ -5639,6 +5906,24 @@ export default function TelegramSimulator({
                       >
                         {isAmharic ? "የቅርብ ጊዜ ትዕዛዞች" : "Recent Orders"}
                       </button>
+
+                      {/* Row 5: Discounts, Download Our App */}
+                      <div className="grid grid-cols-2 gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => handleKeyboardAction("discounts")}
+                          className="bg-[#538761] hover:bg-[#437251] text-white font-semibold text-[12px] py-2.5 px-3 rounded-lg text-center flex items-center justify-center transition cursor-pointer shadow-xs border border-emerald-700/10 active:scale-98 leading-tight font-bold"
+                        >
+                          {isAmharic ? "ቅናሾች" : "Discounts"}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleKeyboardAction("download_app")}
+                          className="bg-[#538761] hover:bg-[#437251] text-white font-semibold text-[12px] py-2.5 px-3 rounded-lg text-center flex items-center justify-center transition cursor-pointer shadow-xs border border-emerald-700/10 active:scale-98 leading-tight font-bold"
+                        >
+                          {isAmharic ? "መተግበሪያችንን ያውርዱ" : "Download Our App"}
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="w-full flex flex-col gap-2 font-sans">
@@ -6055,7 +6340,7 @@ export default function TelegramSimulator({
                         webAppKeyboard === "rekik_coffee_menu" ||
                         webAppKeyboard === "emi_pizza_menu" ||
                         webAppKeyboard === "yahweh_nisse_menu" ||
-                        webAppKeyboard === "colors_cafe_menu" || webAppKeyboard === "moonlight_restorant_menu" || webAppKeyboard === "nota_lounge_menu" || webAppKeyboard === "queen_kitchen_menu" || webAppKeyboard === "mercy_fruit_menu" || webAppKeyboard === "taso_italian_menu" ? (
+                        webAppKeyboard === "colors_cafe_menu" || webAppKeyboard === "moonlight_restorant_menu" || webAppKeyboard === "nota_lounge_menu" || webAppKeyboard === "queen_kitchen_menu" || webAppKeyboard === "konjo_cake_menu" || webAppKeyboard === "jalebib_muslim_menu" || webAppKeyboard === "mercy_fruit_menu" || webAppKeyboard === "taso_italian_menu" ? (
                           renderInteractiveMenu(
                             true,
                             webAppKeyboard === "mountain_hotel_menu"
@@ -6181,7 +6466,7 @@ export default function TelegramSimulator({
                                                                                                                   : webAppKeyboard ===
                                                                                                                       "yahweh_nisse_menu"
                                                                                                                     ? "yahweh_nisse"
-                                                                                                                    : webAppKeyboard === "colors_cafe_menu" ? "colors_cafe" : webAppKeyboard === "moonlight_restorant_menu" ? "moonlight_restorant" : webAppKeyboard === "nota_lounge_menu" ? "nota_lounge" : webAppKeyboard === "queen_kitchen_menu" ? "queen_kitchen" : webAppKeyboard === "mercy_fruit_menu" ? "mercy_fruit" : webAppKeyboard === "taso_italian_menu" ? "taso_italian" : "yom",
+                                                                                                                    : webAppKeyboard === "colors_cafe_menu" ? "colors_cafe" : webAppKeyboard === "moonlight_restorant_menu" ? "moonlight_restorant" : webAppKeyboard === "nota_lounge_menu" ? "nota_lounge" : webAppKeyboard === "queen_kitchen_menu" ? "queen_kitchen" : webAppKeyboard === "konjo_cake_menu" ? "konjo_cake" : webAppKeyboard === "jalebib_muslim_menu" ? "jalebib_muslim" : webAppKeyboard === "mercy_fruit_menu" ? "mercy_fruit" : webAppKeyboard === "taso_italian_menu" ? "taso_italian" : "yom",
                           )
                         ) : (
                           <>
@@ -6468,20 +6753,57 @@ export default function TelegramSimulator({
                                                 );
                                               } else if (
                                                 store === "Nota Lounge" ||
-                                                store
-                                                  .toLowerCase()
-                                                  .includes("nota")
-                                              ) {
-                                                setWebAppKeyboard(
-                                                  "nota_lounge_menu",
-                                                );
-                                                setMountainCategory("Burger");
-                                                setMenuPage(0);
-                                                setToastMessage(
-                                                  "🍔 Opening Nota Lounge Premium Menu!",
-                                                );
-                                              } else if (false) {
-                                                // Queen Kitchen premium webapp trigger disabled
+                                                 store
+                                                   .toLowerCase()
+                                                   .includes("nota")
+                                               ) {
+                                                 setWebAppKeyboard(
+                                                   "nota_lounge_menu",
+                                                 );
+                                                 setMountainCategory("Burger");
+                                                 setMenuPage(0);
+                                                 setToastMessage(
+                                                   "🍔 Opening Nota Lounge Premium Menu!",
+                                                 );
+                                               } else if (
+                                                 store === "Konjo Cake" ||
+                                                 store
+                                                   .toLowerCase()
+                                                   .includes("konjo")
+                                               ) {
+                                                 setWebAppKeyboard(
+                                                   "konjo_cake_menu",
+                                                 );
+                                                 setMountainCategory("Cake");
+                                                 setMenuPage(0);
+                                                 setToastMessage(
+                                                   "🍰 Opening Konjo Cake Premium Menu!",
+                                                 );
+                                               } else if (
+                                                 store === "ጃለቢብ የሙስሊም ሬስቶራንት" ||
+                                                 store
+                                                   .toLowerCase()
+                                                   .includes("ጃለቢብ") ||
+                                                 store
+                                                   .toLowerCase()
+                                                   .includes("jalebib") ||
+                                                 store
+                                                   .toLowerCase()
+                                                   .includes("jelebib") ||
+                                                 store
+                                                   .toLowerCase()
+                                                   .includes("muslim")
+                                               ) {
+                                                 setWebAppKeyboard(
+                                                   "jalebib_muslim_menu",
+                                                 );
+                                                 setMountainCategory("Habeshan");
+                                                 setMenuPage(0);
+                                                 setToastMessage(
+                                                   "🍲 Opening ጃለቢብ የሙስሊም ሬስቶራንት Premium Menu!",
+                                                 );
+                                               } else if (false) {
+                                                 // Queen Kitchen premium webapp trigger disabled
                                               } else if (
                                                 store === "Rome 1960 Cafe" ||
                                                 store
