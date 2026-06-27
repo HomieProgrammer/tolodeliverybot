@@ -22,8 +22,9 @@ import {
   X,
   Lock,
   Unlock,
+  Bike,
 } from "lucide-react";
-import { MenuItem, Order, OrderStatus } from "../types";
+import { MenuItem, Order, OrderStatus, Driver } from "../types";
 
 interface AdminDashboardProps {
   menuItems: MenuItem[];
@@ -48,6 +49,8 @@ interface AdminDashboardProps {
   setCustomTunnelUrl: (val: string) => void;
   tunnelType: "workspace" | "ngrok";
   setTunnelType: (val: "workspace" | "ngrok") => void;
+  drivers: Driver[];
+  onUpdateDrivers: (drivers: Driver[]) => void;
 }
 
 export default function AdminDashboard({
@@ -69,9 +72,11 @@ export default function AdminDashboard({
   setCustomTunnelUrl,
   tunnelType,
   setTunnelType,
+  drivers,
+  onUpdateDrivers,
 }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<
-    "orders" | "metrics" | "bot-setup"
+    "orders" | "metrics" | "bot-setup" | "drivers"
   >("orders");
   const [passcode, setPasscode] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
@@ -236,6 +241,13 @@ export default function AdminDashboard({
                 className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === "metrics" ? "bg-[#E0560B] text-white font-bold" : "text-slate-300 hover:text-white"}`}
               >
                 Metrics
+              </button>
+              <button
+                id="tab-drivers"
+                onClick={() => setActiveTab("drivers")}
+                className={`py-1.5 px-3 rounded-md transition font-medium whitespace-nowrap cursor-pointer ${activeTab === "drivers" ? "bg-[#E0560B] text-white font-bold" : "text-slate-300 hover:text-white"}`}
+              >
+                Drivers ({drivers.length})
               </button>
               <button
                 id="tab-bot-setup"
@@ -473,16 +485,28 @@ export default function AdminDashboard({
 
                                   {order.paymentDetails?.receiptPhoto && (
                                     <div className="space-y-1 font-sans">
+                                      {(() => {
+                                        console.log(`[DIAGNOSTIC RENDER] Order ID: ${order.id}`);
+                                        console.log(`[DIAGNOSTIC RENDER] receiptPhoto.length: ${order.paymentDetails?.receiptPhoto?.length || 0}`);
+                                        console.log(`[DIAGNOSTIC RENDER] first 50 chars of order.paymentDetails.receiptPhoto: ${order.paymentDetails?.receiptPhoto?.substring(0, 50) || ""}`);
+                                        return null;
+                                      })()}
                                       <span className="text-[10px] font-bold text-[#E0560B] uppercase tracking-wider block">
                                         📷 Uploaded Proof Receipt (Screenshot):
                                       </span>
-                                      <div className="relative border border-slate-200 rounded-xl p-1 bg-slate-50 overflow-hidden max-h-[160px] flex justify-center items-center shadow-inner">
+                                      <div className="relative border border-slate-200 rounded-xl p-1 bg-slate-50 flex justify-center items-center shadow-inner w-full max-w-full">
                                         <img
                                           src={
                                             order.paymentDetails.receiptPhoto
                                           }
                                           alt="Payment proof screenshot"
-                                          className="max-h-[150px] rounded-lg object-contain cursor-zoom-in hover:scale-[1.02] transition"
+                                          className="rounded-lg cursor-zoom-in hover:scale-[1.02] transition"
+                                          style={{
+                                            width: "100%",
+                                            maxWidth: "100%",
+                                            height: "auto",
+                                            objectFit: "contain",
+                                          }}
                                           referrerPolicy="no-referrer"
                                         />
                                       </div>
@@ -614,7 +638,7 @@ export default function AdminDashboard({
                                                     ...prev,
                                                     [order.id]: {
                                                       name: "Almaz Demeke",
-                                                      id: "",
+                                                      id: "DRV-102",
                                                       phone: "0912112233",
                                                     },
                                                   }),
@@ -632,7 +656,7 @@ export default function AdminDashboard({
                                                     ...prev,
                                                     [order.id]: {
                                                       name: "Bekele Abebe",
-                                                      id: "",
+                                                      id: "DRV-405",
                                                       phone: "0916454545",
                                                     },
                                                   }),
@@ -643,6 +667,39 @@ export default function AdminDashboard({
                                               🛵 Bekele
                                             </button>
                                           </div>
+                                        </div>
+
+                                        {/* Registered Drivers list select */}
+                                        <div className="bg-white p-2 text-xs rounded border border-slate-200 space-y-1">
+                                          <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
+                                            Quick Assign Registered Rider
+                                          </span>
+                                          <select
+                                            onChange={(e) => {
+                                              const selected = drivers.find(d => d.id === e.target.value);
+                                              if (selected) {
+                                                setDriverAssignments(
+                                                  (prev) => ({
+                                                    ...prev,
+                                                    [order.id]: {
+                                                      name: selected.name,
+                                                      id: selected.id,
+                                                      phone: selected.phone,
+                                                    },
+                                                  }),
+                                                );
+                                              }
+                                            }}
+                                            value={assignState.id || ""}
+                                            className="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 p-1 rounded font-semibold cursor-pointer"
+                                          >
+                                            <option value="">-- Choose Driver --</option>
+                                            {drivers.map((d) => (
+                                              <option key={d.id} value={d.id}>
+                                                {d.name} ({d.status})
+                                              </option>
+                                            ))}
+                                          </select>
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -965,6 +1022,296 @@ export default function AdminDashboard({
                     local shop teller, ensuring unparalleled retention and
                     supreme simplicity for elderly or tech-averse locals!
                   </p>
+                </div>
+              </div>
+            )}
+
+            {/* DRIVERS MANAGEMENT TAB */}
+            {activeTab === "drivers" && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                  <div>
+                    <h4 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                      <Bike className="w-4 h-4 text-[#E0560B]" />
+                      Driver Directory & Performance Portal
+                    </h4>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Register dispatch partners, manage shift availability, configure motorcycle assets, and track payouts (40% client delivery fee).
+                    </p>
+                  </div>
+                  <div className="flex gap-4 font-mono text-xs">
+                    <div className="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-center">
+                      <span className="text-[10px] text-slate-400 block font-sans">Active Fleet</span>
+                      <strong className="text-slate-800 text-sm">
+                        {drivers.filter(d => d.status !== "Offline").length} / {drivers.length}
+                      </strong>
+                    </div>
+                    <div className="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-center">
+                      <span className="text-[10px] text-slate-400 block font-sans">Paid Fleet Cut</span>
+                      <strong className="text-[#E0560B] text-sm">
+                        {drivers.reduce((acc, d) => acc + d.totalEarnings, 0).toFixed(0)} Br
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  {/* LEFT: Driver Register Form */}
+                  <div className="lg:col-span-4 bg-white border border-slate-200 rounded-xl p-4 space-y-4 shadow-sm self-start">
+                    <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block border-b border-slate-100 pb-2">
+                      🆕 Register New Fleet Partner
+                    </span>
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        const form = e.currentTarget;
+                        const data = new FormData(form);
+                        const name = data.get("name") as string;
+                        const phone = data.get("phone") as string;
+                        const customId = data.get("driverId") as string;
+                        const plate = data.get("plate") as string;
+
+                        if (!name || !phone || !plate) {
+                          alert("Please fill in Name, Phone, and Plate number.");
+                          return;
+                        }
+
+                        const driverId = customId.trim() || "DRV-" + Math.floor(100 + Math.random() * 900);
+                        if (drivers.some(d => d.id === driverId)) {
+                          alert(`A driver with ID ${driverId} already exists.`);
+                          return;
+                        }
+
+                        const newDriver: Driver = {
+                          id: driverId,
+                          name,
+                          phone,
+                          plateNumber: plate,
+                          status: "Online" as const,
+                          totalEarnings: 0,
+                          todayEarnings: 0,
+                          totalDeliveries: 0,
+                          earningsHistory: []
+                        };
+
+                        onUpdateDrivers([...drivers, newDriver]);
+                        form.reset();
+                      }}
+                      className="space-y-3"
+                    >
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-bold block mb-1">
+                          Full Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="name"
+                          required
+                          placeholder="e.g. Samuel Kebede"
+                          className="w-full bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#E0560B] rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-bold block mb-1">
+                          Phone Number *
+                        </label>
+                        <input
+                          type="text"
+                          name="phone"
+                          required
+                          placeholder="e.g. 0912345678"
+                          className="w-full bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#E0560B] rounded-lg font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-bold block mb-1">
+                          Motorcycle License Plate *
+                        </label>
+                        <input
+                          type="text"
+                          name="plate"
+                          required
+                          placeholder="e.g. AA 3-A9876"
+                          className="w-full bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#E0560B] rounded-lg font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-slate-400 font-bold block mb-1">
+                          Driver ID (Optional - Auto-generated if empty)
+                        </label>
+                        <input
+                          type="text"
+                          name="driverId"
+                          placeholder="e.g. DRV-808"
+                          className="w-full bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#E0560B] rounded-lg font-mono"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        className="w-full bg-[#E0560B] hover:bg-[#9A3412] text-white rounded-xl py-2 px-4 text-xs font-bold font-sans cursor-pointer transition text-center"
+                      >
+                        Add Rider to Fleet
+                      </button>
+                    </form>
+                  </div>
+
+                  {/* RIGHT: Driver Accounts Directory & Assigned Orders */}
+                  <div className="lg:col-span-8 space-y-4">
+                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                      <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                        <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
+                          Registered Dispatch Partners
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          Count: {drivers.length}
+                        </span>
+                      </div>
+                      <div className="divide-y divide-slate-150 overflow-x-auto">
+                        {drivers.length === 0 ? (
+                          <div className="p-8 text-center text-slate-400 text-xs">
+                            No registered drivers in your dispatch fleet yet. Use the form to enroll one.
+                          </div>
+                        ) : (
+                          drivers.map((d) => {
+                            const activeOrder = orders.find(
+                              (o) =>
+                                o.driverId === d.id &&
+                                (o.status === "driver_accepted" ||
+                                  o.status === "preparing" ||
+                                  o.status === "driving"),
+                            );
+
+                            return (
+                              <div key={d.id} className="p-4 hover:bg-slate-50/40 transition">
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                                  {/* Info */}
+                                  <div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-bold text-slate-800 text-xs sm:text-sm">
+                                        {d.name}
+                                      </span>
+                                      <span className="text-[10px] bg-slate-100 text-slate-500 font-bold px-1.5 py-0.5 rounded border border-slate-200 font-mono">
+                                        ID: {d.id}
+                                      </span>
+                                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                        d.status === "Busy"
+                                          ? "bg-rose-50 text-rose-600 border border-rose-100"
+                                          : d.status === "Online"
+                                            ? "bg-green-50 text-green-600 border border-green-100"
+                                            : "bg-slate-100 text-slate-500 border border-slate-200"
+                                      }`}>
+                                        ● {d.status}
+                                      </span>
+                                    </div>
+                                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-[11px] text-slate-500">
+                                      <span>📞 <strong>{d.phone}</strong></span>
+                                      <span>🏍️ Plate: <strong>{d.plateNumber}</strong></span>
+                                    </div>
+                                  </div>
+
+                                  {/* Actions */}
+                                  <div className="flex items-center gap-2 self-stretch sm:self-auto justify-end">
+                                    <button
+                                      onClick={() => {
+                                        const updated = drivers.map((driver) => {
+                                          if (driver.id === d.id) {
+                                            const newStatus: "Online" | "Offline" | "Busy" = driver.status === "Offline" ? "Online" : "Offline";
+                                            return { ...driver, status: newStatus };
+                                          }
+                                          return driver;
+                                        });
+                                        onUpdateDrivers(updated);
+                                      }}
+                                      disabled={d.status === "Busy"}
+                                      className={`px-3 py-1 rounded text-[10px] font-bold transition cursor-pointer shrink-0 ${
+                                        d.status === "Offline"
+                                          ? "bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border border-emerald-200"
+                                          : "bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200"
+                                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                    >
+                                      {d.status === "Offline" ? "Go Online" : "Go Offline"}
+                                    </button>
+
+                                    <button
+                                      onClick={() => {
+                                        const proceed = confirm(`Are you sure you want to remove ${d.name} from the fleet?`);
+                                        if (proceed) {
+                                          onUpdateDrivers(drivers.filter(drv => drv.id !== d.id));
+                                        }
+                                      }}
+                                      className="px-2 py-1 text-slate-400 hover:text-red-500 hover:bg-red-50 border border-transparent hover:border-red-100 rounded text-[10px] font-bold transition shrink-0 cursor-pointer"
+                                      title="Remove Driver"
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Active Job */}
+                                {activeOrder && (
+                                  <div className="mt-2.5 bg-amber-50/50 border border-amber-200 rounded-lg p-2.5 flex justify-between items-center text-xs">
+                                    <div className="flex items-center gap-2">
+                                      <span className="animate-pulse w-2 h-2 rounded-full bg-amber-500" />
+                                      <span className="text-slate-600 font-medium">
+                                        Transporting Order <strong>#{activeOrder.id}</strong>
+                                      </span>
+                                      <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded uppercase tracking-wider font-mono">
+                                        {activeOrder.status}
+                                      </span>
+                                    </div>
+                                    <span className="text-[11px] text-slate-500 font-medium">
+                                      Handoff Fee: {activeOrder.deliveryFee} Br (Cut: {(activeOrder.deliveryFee * 0.40).toFixed(0)} Br)
+                                    </span>
+                                  </div>
+                                )}
+
+                                {/* Earnings stats metrics row */}
+                                <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 border-t border-slate-100 pt-2.5 font-mono text-[10.5px]">
+                                  <div className="bg-slate-50/50 p-1.5 rounded text-center">
+                                    <span className="text-[9px] text-slate-400 font-sans block">Today's Cut</span>
+                                    <strong className="text-slate-700">{d.todayEarnings.toFixed(0)} Br</strong>
+                                  </div>
+                                  <div className="bg-slate-50/50 p-1.5 rounded text-center">
+                                    <span className="text-[9px] text-slate-400 font-sans block">Total Cut</span>
+                                    <strong className="text-[#E0560B]">{d.totalEarnings.toFixed(0)} Br</strong>
+                                  </div>
+                                  <div className="bg-slate-50/50 p-1.5 rounded text-center">
+                                    <span className="text-[9px] text-slate-400 font-sans block">Total Deliveries</span>
+                                    <strong className="text-slate-700">{d.totalDeliveries} trips</strong>
+                                  </div>
+                                  <div className="bg-slate-50/50 p-1.5 rounded text-center">
+                                    <span className="text-[9px] text-slate-400 font-sans block">Avg Cut / Trip</span>
+                                    <strong className="text-slate-700">
+                                      {d.totalDeliveries > 0
+                                        ? (d.totalEarnings / d.totalDeliveries).toFixed(0)
+                                        : 0} Br
+                                    </strong>
+                                  </div>
+                                </div>
+
+                                {/* Earnings Ledger Details */}
+                                {d.earningsHistory.length > 0 && (
+                                  <div className="mt-2 text-[10px] text-slate-400 bg-slate-50/30 rounded p-2">
+                                    <span className="font-semibold text-slate-500 uppercase tracking-wide text-[9px] block mb-1">
+                                      📜 Dispatch Earnings Log ({d.earningsHistory.length}):
+                                    </span>
+                                    <div className="max-h-[80px] overflow-y-auto space-y-1 font-mono">
+                                      {d.earningsHistory.map((h, hidx) => (
+                                        <div key={hidx} className="flex justify-between items-center border-b border-dashed border-slate-100 pb-0.5">
+                                          <span>Trip #{h.orderId} - Fee {h.deliveryFee} Br (Cut 40%)</span>
+                                          <span className="text-[#E0560B] font-bold">+{h.amount.toFixed(0)} Br</span>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

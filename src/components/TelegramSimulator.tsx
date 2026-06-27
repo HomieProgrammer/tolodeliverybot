@@ -27,6 +27,7 @@ import {
   X,
   Image as ImageIcon,
   Search,
+  Compass,
 } from "lucide-react";
 import { ChatMessage, MenuItem, Order, OrderItem } from "../types";
 
@@ -52,6 +53,8 @@ interface TelegramSimulatorProps {
   onLanguageChange: (val: boolean) => void;
   orders: Order[];
   onUpdateProfile?: (profile: { name: string; phone: string; address: string; pickupAddress: string }) => void;
+  isMenuOpen?: boolean;
+  onMenuOpenChange?: (val: boolean) => void;
 }
 
 export interface StoreBrandTheme {
@@ -2312,10 +2315,22 @@ export default function TelegramSimulator({
   onLanguageChange,
   orders,
   onUpdateProfile,
+  isMenuOpen: propIsMenuOpen,
+  onMenuOpenChange,
 }: TelegramSimulatorProps) {
   const isClosed = new Date().getHours() >= 20 || new Date().getHours() < 6;
   const [inputText, setInputText] = useState("");
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  const [localMenuOpen, setLocalMenuOpen] = useState(true);
+  const isMenuOpen = propIsMenuOpen !== undefined ? propIsMenuOpen : localMenuOpen;
+  const setIsMenuOpen = (val: boolean | ((prev: boolean) => boolean)) => {
+    const newVal = typeof val === "function" ? val(isMenuOpen) : val;
+    if (onMenuOpenChange) {
+      onMenuOpenChange(newVal);
+    } else {
+      setLocalMenuOpen(newVal);
+    }
+  };
   const [selectedItems, setSelectedItems] = useState<Record<string, number>>(
     {},
   );
@@ -2452,6 +2467,8 @@ export default function TelegramSimulator({
     isOpen: boolean;
     storeName: "tina_faya" | "azi_hotel";
   } | null>(null);
+
+  const [miniAppTab, setMiniAppTab] = useState<"menu" | "track">("menu");
 
   const handleKeyboardAction = (action: string, arg?: string) => {
     switch (action) {
@@ -3085,6 +3102,212 @@ export default function TelegramSimulator({
     console.log("SENDING MESSAGE", unifiedOrderMessage);
     onSendMessage(unifiedOrderMessage);
     setIsMenuOpen(false);
+  };
+
+  const renderMiniAppTrackingView = () => {
+    // Find active order with driver assigned
+    const activeTrackOrder = orders.find((o) => o.isDriverAssigned && o.status !== "completed") || orders.find((o) => o.isDriverAssigned) || null;
+
+    if (!activeTrackOrder) {
+      return (
+        <div className="flex flex-col items-center justify-center py-12 px-6 text-center bg-white rounded-2xl border border-slate-200 shadow-3xs my-4">
+          <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 animate-pulse mb-4">
+            <Compass className="w-8 h-8" />
+          </div>
+          <h4 className="font-extrabold text-sm text-slate-800 uppercase tracking-tight">
+            {isAmharic ? "ምንም ንቁ ማድረስ የለም" : "No Active Deliveries"}
+          </h4>
+          <p className="text-[11px] text-slate-500 max-w-xs mt-2 leading-relaxed">
+            {isAmharic
+              ? "አዲስ ትዕዛዝ ፈጽመው የቅድሚያ ክፍያ ማረጋገጫ ሲያያይዙ እና ሹፌር ሲመደብ የቀጥታ የጂፒኤስ መከታተያ እዚህ ይጀምራል!"
+              : "Once your order is placed, verified, and assigned a driver, you can view real-time GPS telemetry and driver status right here in your Mini App!"}
+          </p>
+        </div>
+      );
+    }
+
+    // Calculate simulated progress coordinates
+    const progressPct = activeTrackOrder.status === "preparing" ? 0 : (activeTrackOrder.progress - 30) * (100 / 70);
+    const cappedProgress = Math.max(0, Math.min(100, progressPct));
+    
+    // Parse drop-off coordinates
+    let destLat = 9.0250;
+    let destLng = 38.7750;
+    if (activeTrackOrder.deliveryAddress && activeTrackOrder.deliveryAddress.includes("Shared GPS Location")) {
+      const match = activeTrackOrder.deliveryAddress.match(/Shared GPS Location \(([\d\.]+)° N,\s*([\d\.]+)° E\)/);
+      if (match) {
+        destLat = parseFloat(match[1]);
+        destLng = parseFloat(match[2]);
+      }
+    }
+    const startLat = 9.0122;
+    const startLng = 38.7500;
+    
+    const interpolationPct = cappedProgress / 100;
+    const currentLat = (startLat + (destLat - startLat) * interpolationPct).toFixed(5);
+    const currentLng = (startLng + (destLng - startLng) * interpolationPct).toFixed(5);
+
+    const etaLeft = Math.max(
+      1,
+      Math.ceil(activeTrackOrder.etaMinutes * (1 - activeTrackOrder.progress / 100)),
+    );
+
+    return (
+      <div className="space-y-4 animate-fadeIn my-2">
+        {/* Connection Telemetry Badge */}
+        <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200/60 rounded-xl p-3 shadow-3xs">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-duration-1000"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <div className="leading-tight">
+              <span className="text-[10px] font-extrabold text-emerald-800 uppercase block tracking-wider">
+                {isAmharic ? "የቀጥታ ጂፒኤስ ተገናኝቷል" : "GPS Satellite Link Connected"}
+              </span>
+              <span className="text-[9px] text-emerald-600 font-mono font-semibold">
+                Driver GPS Telemetry (Not IP Location)
+              </span>
+            </div>
+          </div>
+          <span className="bg-emerald-600 text-white font-mono font-bold text-[9px] px-2 py-0.5 rounded uppercase tracking-wide">
+            {isAmharic ? "ንቁ" : "Active"}
+          </span>
+        </div>
+
+        {/* Driver Profile & Quick Call Box */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs space-y-3.5">
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 bg-rose-50 border border-rose-100 rounded-full flex items-center justify-center text-rose-600 font-extrabold text-md shadow-2xs">
+                🏍️
+              </div>
+              <div className="leading-snug">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block font-mono">
+                  {isAmharic ? "ማድረሻ ባለሙያ (ሹፌር)" : "Assigned Delivery Partner"}
+                </span>
+                <span className="text-sm font-extrabold text-slate-800 block">
+                  {activeTrackOrder.driverName || "Rider Assigned"}
+                </span>
+                <span className="text-[11px] text-slate-500 font-mono font-medium">
+                  📞 {activeTrackOrder.driverPhone || "N/A"}
+                </span>
+              </div>
+            </div>
+            
+            {activeTrackOrder.driverPhone && (
+              <a
+                href={`tel:${activeTrackOrder.driverPhone}`}
+                className="bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-xl transition-all border border-slate-200 flex items-center justify-center cursor-pointer shadow-3xs"
+                title="Call driver"
+              >
+                <span className="text-xs">📞</span>
+              </a>
+            )}
+          </div>
+
+          {/* Delivery Coordinates & Status Row */}
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+            <div className="bg-slate-50 p-2 rounded-xl border border-slate-150">
+              <span className="text-[8px] text-slate-400 font-bold uppercase tracking-wider block font-mono">
+                {isAmharic ? "አሁን ያለበት መጋጠሚያ (GPS)" : "Driver GPS Location"}
+              </span>
+              <span className="text-[10px] font-mono font-extrabold text-slate-800 block mt-0.5 select-all">
+                {currentLat}° N, {currentLng}° E
+              </span>
+            </div>
+            <div className="bg-slate-50 p-2 rounded-xl border border-slate-150">
+              <span className="text-[8px] text-slate-400 font-bold uppercase tracking-wider block font-mono">
+                {isAmharic ? "ማድረሻ ሁኔታ / ETA" : "Delivery Status / ETA"}
+              </span>
+              <span className="text-[11px] font-extrabold text-[#E0560B] block mt-0.5 truncate uppercase">
+                {activeTrackOrder.status === "preparing"
+                  ? (isAmharic ? "ምግብ በዝግጅት ላይ" : "🍳 Cooking")
+                  : activeTrackOrder.status === "driving"
+                    ? (isAmharic ? "መንገድ ላይ 🚀" : "🛵 On Way • " + etaLeft + "m")
+                    : activeTrackOrder.status === "completed"
+                      ? (isAmharic ? "ደርሷል 🎉" : "✅ Arrived")
+                      : (isAmharic ? "በሂደት ላይ" : "Processing")}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* SVG Live Map inside the Mini App */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-2 shadow-2xs overflow-hidden">
+          <div className="flex justify-between items-center mb-1.5 px-2">
+            <span className="text-[9.5px] font-extrabold text-slate-500 uppercase tracking-wider font-sans">
+              📍 {isAmharic ? "የቀጥታ ስርጭት ካርታ" : "Live Delivery Map"}
+            </span>
+            <span className="text-[9px] font-mono bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded font-extrabold">
+              {Math.round(activeTrackOrder.progress)}% {isAmharic ? "የተጠናቀቀ" : "Done"}
+            </span>
+          </div>
+          
+          <div className="relative aspect-video rounded-xl bg-[#f4ebd0] border border-slate-150 overflow-hidden">
+            {/* Embedded SVG Map */}
+            <svg
+              viewBox="0 0 740 400"
+              className="w-full h-full bg-[#f4ebd0] select-none"
+            >
+              {/* Map Grid */}
+              <rect x="0" y="0" width="740" height="400" fill="#eae1c9" />
+              
+              {/* River & Parks */}
+              <rect x="40" y="240" width="120" height="120" rx="12" fill="#d2dec1" />
+              <rect x="420" y="40" width="220" height="130" rx="16" fill="#cbe3bc" stroke="#bac08f" strokeWidth="1" />
+              <path d="M -40,350 Q 180,310 320,380 T 700,280 T 800,320" fill="none" stroke="#add8e6" strokeWidth="26" strokeLinecap="round" />
+              
+              {/* Roads */}
+              <path d="M 40,80 H 700 M 40,140 H 700 M 40,220 H 700 M 40,320 H 700 M 120,40 V 360 M 340,40 V 360 M 500,40 V 360 M 620,40 V 360" fill="none" stroke="#fafafa" strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M 40,80 H 700 M 40,140 H 700 M 40,220 H 700 M 40,320 H 700 M 120,40 V 360 M 340,40 V 360 M 500,40 V 360 M 620,40 V 360" fill="none" stroke="#dad0be" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
+
+              {/* Kitchen Landmark */}
+              <circle cx="120" cy="140" r="12" fill="#E0560B" opacity="0.2" className="animate-pulse" />
+              <circle cx="120" cy="140" r="5" fill="#E0560B" />
+              
+              {/* Active Route Line */}
+              <path d="M 120,140 H 340 V 220 H 500 V 320 H 620" fill="none" stroke="#E0560B" strokeWidth="4" strokeLinecap="round" strokeDasharray="6 4" opacity="0.65" />
+
+              {/* Customer House */}
+              <circle cx="620" cy="320" r="12" fill="#10b981" opacity="0.2" className="animate-pulse" />
+              <circle cx="620" cy="320" r="5" fill="#10b981" />
+
+              {/* Scooter Driver marker */}
+              {activeTrackOrder.status !== "preparing" && (
+                <g transform={`translate(${120 + (620 - 120) * interpolationPct - 14}, ${140 + (320 - 140) * interpolationPct - 14})`}>
+                  <circle cx="14" cy="14" r="16" fill="#e11d48" className="animate-pulse" opacity="0.25" />
+                  <rect x="0" y="0" width="28" height="28" rx="14" fill="#e11d48" className="shadow-lg border border-white" />
+                  <g transform="translate(6, 6) scale(0.6)">
+                    <path d="M21 16H18V12H21V16ZM14.99 12H11.99V16H14.99V12ZM14.99 18H11.99V22H14.99V18ZM21 18H18V22H21V18ZM2.99 12H5.99V16H2.99V12ZM8.99 12H5.99V16H8.99V12ZM8.99 18H5.99V22H8.99V18ZM2.99 18H5.99V22H2.99V18ZM11 5V8.5L8.5 11H3.5C2.12 11 1 9.88 1 8.5C1 7.12 2.12 6 3.5 6H6.5L8.5 4H10.5V5ZM13 7H14.5V11C14.5 12.1 13.6 13 12.5 13H5C4.45 13 4 12.55 4 12C4 11.45 4.45 11 5 11H12V8C12.55 8 13 7.55 13 7Z" fill="#ffffff" />
+                  </g>
+                </g>
+              )}
+            </svg>
+            
+            {/* Miniature Map Overlay text */}
+            <div className="absolute bottom-2 left-2 bg-slate-900/80 backdrop-blur-xs text-white text-[8.5px] font-mono px-1.5 py-0.5 rounded-md flex items-center gap-1">
+              <span>📍 Route: Kitchen ➡️ Drop-off</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Consignee Recipient Details Card */}
+        <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
+          <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block font-mono">
+            {isAmharic ? "የትዕዛዝ መድረሻ መረጃ" : "Delivery Destination Address"}
+          </span>
+          <p className="text-xs font-bold text-slate-800 leading-normal">
+            📍 {activeTrackOrder.deliveryAddress}
+          </p>
+          <p className="text-[10px] text-slate-500 leading-relaxed italic">
+            💡 {isAmharic 
+              ? "የሹፌሩ የቀጥታ ጂፒኤስ መረጃ በእውነተኛ ሰዓት ይዘምናል። እባክዎን ስልክዎን ክፍት ያድርጉ!"
+              : "Driver coordinates are direct satellite telemetry updates. Please ensure your contact phone is reachable!"}
+          </p>
+        </div>
+      </div>
+    );
   };
 
   const renderInteractiveMenu = (
@@ -5083,7 +5306,7 @@ export default function TelegramSimulator({
   return (
     <div
       id="tg-simulator"
-      className="bg-[#f0f3f6] border border-slate-200 rounded-2xl overflow-hidden shadow-lg h-[620px] flex flex-col relative"
+      className={`bg-[#f0f3f6] flex flex-col relative w-full h-full min-h-0 ${isMenuOpen ? "border-none shadow-none rounded-none" : "border border-slate-200 rounded-2xl shadow-lg h-[620px]"}`}
     >
       <style
         dangerouslySetInnerHTML={{
@@ -5404,16 +5627,28 @@ export default function TelegramSimulator({
                   <div className="mt-2.5 space-y-2">
                     {linkedOrder?.paymentDetails?.receiptPhoto && (
                       <div className="bg-slate-55 border border-slate-200 rounded-xl p-2.5 space-y-1.5 shadow-3xs">
+                        {(() => {
+                          console.log(`[DIAGNOSTIC RENDER] Order ID: ${linkedOrder?.id}`);
+                          console.log(`[DIAGNOSTIC RENDER] receiptPhoto.length: ${linkedOrder?.paymentDetails?.receiptPhoto?.length || 0}`);
+                          console.log(`[DIAGNOSTIC RENDER] first 50 chars of order.paymentDetails.receiptPhoto: ${linkedOrder?.paymentDetails?.receiptPhoto?.substring(0, 50) || ""}`);
+                          return null;
+                        })()}
                         <span className="text-[10px] font-bold text-slate-700 uppercase tracking-wider block font-sans">
                           {isAmharic
                             ? "📷 የክፍያ ማረጋገጫ (Screenshot)፦"
                             : "📷 Submitted Payment Screenshot:"}
                         </span>
-                        <div className="relative border border-slate-150 rounded-lg p-1 bg-white overflow-hidden max-h-[140px] flex justify-center items-center">
+                        <div className="relative border border-slate-150 rounded-lg p-1 bg-white flex justify-center items-center w-full max-w-full">
                           <img
                             src={linkedOrder.paymentDetails.receiptPhoto}
                             alt="Payment receipt proof"
-                            className="max-h-[120px] rounded object-contain"
+                            className="rounded"
+                            style={{
+                              width: "100%",
+                              maxWidth: "100%",
+                              height: "auto",
+                              objectFit: "contain",
+                            }}
                             referrerPolicy="no-referrer"
                           />
                         </div>
@@ -6152,7 +6387,7 @@ export default function TelegramSimulator({
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 220 }}
-              className="absolute inset-x-0 bottom-0 top-[60px] bg-white z-40 flex flex-col rounded-t-2xl shadow-2xl border-t border-slate-200 overflow-hidden"
+              className={`absolute inset-x-0 bottom-0 bg-white z-40 flex flex-col overflow-hidden ${isMenuOpen ? "top-0 rounded-none border-none" : "top-[60px] rounded-t-2xl shadow-2xl border-t border-slate-200"}`}
             >
               {/* WebApp Topbar */}
               <div className="bg-[var(--brand-primary)] text-white px-4 py-3 flex justify-between items-center shrink-0">
@@ -6180,10 +6415,34 @@ export default function TelegramSimulator({
                 </button>
               </div>
 
+              {/* Mini App Tab Selection Bar */}
+              <div className="flex border-b border-slate-200 bg-white shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setMiniAppTab("menu")}
+                  className={`flex-1 py-3 text-xs font-extrabold text-center transition-all ${miniAppTab === "menu" ? "text-[#E0560B] border-b-2 border-[#E0560B] bg-orange-50/25" : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
+                >
+                  🛍️ {isAmharic ? "የምግብ ዝርዝር" : "Store Menu / Order"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMiniAppTab("track")}
+                  className={`flex-1 py-3 text-xs font-extrabold text-center transition-all flex items-center justify-center gap-1.5 ${miniAppTab === "track" ? "text-rose-600 border-b-2 border-rose-600 bg-rose-50/25" : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"}`}
+                >
+                  📍 {isAmharic ? "የቀጥታ መከታተያ" : "Live GPS Tracking"}
+                  {orders.some((o) => o.isDriverAssigned && o.status !== "completed") && (
+                    <span className="w-2 h-2 bg-rose-500 rounded-full animate-ping" />
+                  )}
+                </button>
+              </div>
+
               {/* Dynamic menu content container representing the Custom Web App Menu */}
               <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 flex flex-col justify-between">
-                <div>
-                  {webAppKeyboard === "main" ? null : (
+                {miniAppTab === "track" ? (
+                  renderMiniAppTrackingView()
+                ) : (
+                  <div>
+                    {webAppKeyboard === "main" ? null : (
                     <>
                       {/* Web App Branding Portal Box */}
                       <div className="bg-gradient-to-r from-[var(--brand-primary)] to-[var(--brand-primary-hover)] text-white rounded-2xl p-4 shadow-sm text-center mb-4 font-sans relative overflow-hidden">
@@ -7509,6 +7768,7 @@ export default function TelegramSimulator({
                     </>
                   )}
                 </div>
+                )}
 
                 <div className="p-4 bg-slate-100 rounded-xl border border-slate-200 mt-4 text-[10.5px] text-slate-550 italic font-medium font-sans text-center leading-relaxed">
                   💡{" "}

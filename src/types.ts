@@ -17,7 +17,24 @@ export interface OrderItem {
   customization?: string; // e.g. "no onion", "extra sauce"
 }
 
-export type OrderStatus = 'pending' | 'payment_pending' | 'preparing' | 'driving' | 'completed' | 'cancelled';
+export type OrderStatus = 'pending' | 'payment_pending' | 'preparing' | 'driving' | 'completed' | 'cancelled' | 'driver_accepted';
+
+export interface Driver {
+  id: string; // Driver ID
+  name: string; // Full Name
+  phone: string; // Phone Number
+  plateNumber: string; // Motorcycle Plate Number
+  status: 'Online' | 'Offline' | 'Busy'; // Status (Online/Offline/Busy)
+  totalEarnings: number;
+  totalDeliveries: number;
+  todayEarnings: number;
+  earningsHistory: Array<{
+    orderId: string;
+    amount: number;
+    timestamp: string;
+    deliveryFee: number;
+  }>;
+}
 
 export interface Order {
   id: string;

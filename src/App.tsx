@@ -12,6 +12,7 @@ import {
   HelpCircle,
   Smartphone,
   Sparkles,
+  Bike,
   Info,
   X,
   Lock,
@@ -34,11 +35,103 @@ import {
   ChatMessage,
   OrderStatus,
   ParsedResponse,
+  Driver,
 } from "./types";
 import TelegramSimulator from "./components/TelegramSimulator";
 import AdminDashboard from "./components/AdminDashboard";
 import LiveTrackingView from "./components/LiveTrackingView";
 import ExplanationAlert from "./components/ExplanationAlert";
+import DriverPortal from "./components/DriverPortal";
+
+const getTelebirrReceiptSVG = (amount: string, ref: string, timestamp: string) => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 550" width="100%" height="100%">
+    <rect width="100%" height="100%" fill="#eef2f6" rx="16"/>
+    <rect x="20" y="20" width="360" height="510" fill="#ffffff" rx="12" stroke="#cbd5e1" stroke-width="1.5" />
+    <path d="M 20 20 L 380 20 L 380 40 Q 380 50, 370 50 L 30 50 Q 20 50, 20 40 Z" fill="#0066cc" />
+    <text x="200" y="42" font-family="system-ui, sans-serif" font-size="16" font-weight="900" fill="#ffffff" text-anchor="middle">telebirr (ቴሌብር)</text>
+    
+    <text x="200" y="100" font-family="system-ui, sans-serif" font-size="20" font-weight="bold" fill="#0f172a" text-anchor="middle">Transaction Receipt</text>
+    <text x="200" y="120" font-family="system-ui, sans-serif" font-size="11" font-weight="500" fill="#10b981" text-anchor="middle" letter-spacing="1">SUCCESSFUL PAYMENT</text>
+    
+    <line x1="40" y1="150" x2="360" y2="150" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="6,4" />
+    
+    <text x="40" y="185" font-family="monospace" font-size="13" font-weight="bold" fill="#475569">MERCHANT NAME:</text>
+    <text x="360" y="185" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#0f172a" text-anchor="end">ToLo Delivery (ቶሎ)</text>
+    
+    <text x="40" y="225" font-family="monospace" font-size="13" font-weight="bold" fill="#475569">REFERENCE NO:</text>
+    <text x="360" y="225" font-family="monospace" font-size="13" font-weight="bold" fill="#1e3a8a" text-anchor="end">${ref}</text>
+    
+    <text x="40" y="265" font-family="monospace" font-size="13" font-weight="bold" fill="#475569">DATE &amp; TIME:</text>
+    <text x="360" y="265" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#334155" text-anchor="end">${timestamp}</text>
+    
+    <text x="40" y="305" font-family="monospace" font-size="13" font-weight="bold" fill="#475569">PAYMENT METHOD:</text>
+    <text x="360" y="305" font-family="system-ui, sans-serif" font-size="12" font-weight="extrabold" fill="#0066cc" text-anchor="end">telebirr Merchant Pay</text>
+    
+    <line x1="40" y1="340" x2="360" y2="340" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="6,4" />
+    
+    <rect x="40" y="365" width="320" height="75" fill="#eff6ff" rx="10" stroke="#bfdbfe" stroke-width="1" />
+    <text x="60" y="395" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#1e40af">Total Amount Paid</text>
+    <text x="340" y="415" font-family="system-ui, sans-serif" font-size="28" font-weight="900" fill="#1e3a8a" text-anchor="end">${amount} ETB</text>
+    
+    <circle cx="200" cy="485" r="30" fill="none" stroke="#10b981" stroke-width="2.5" stroke-dasharray="5,2" />
+    <text x="200" y="489" font-family="system-ui, sans-serif" font-size="10" font-weight="900" fill="#10b981" text-anchor="middle">APPROVED</text>
+  </svg>`;
+  return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svg)));
+};
+
+const getCbeReceiptSVG = (amount: string, ref: string, timestamp: string) => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 550" width="100%" height="100%">
+    <rect width="100%" height="100%" fill="#fdf2f8" rx="16"/>
+    <rect x="20" y="20" width="360" height="510" fill="#ffffff" rx="12" stroke="#fbcfe8" stroke-width="1.5" />
+    <path d="M 20 20 L 380 20 L 380 40 Q 380 50, 370 50 L 30 50 Q 20 50, 20 40 Z" fill="#8b5cf6" />
+    <text x="200" y="42" font-family="system-ui, sans-serif" font-size="16" font-weight="900" fill="#ffffff" text-anchor="middle">CBE Birr (የኢትዮጵያ ንግድ ባንክ)</text>
+    
+    <text x="200" y="100" font-family="system-ui, sans-serif" font-size="20" font-weight="bold" fill="#1e1b4b" text-anchor="middle">CBE Wallet Receipt</text>
+    <text x="200" y="120" font-family="system-ui, sans-serif" font-size="11" font-weight="500" fill="#8b5cf6" text-anchor="middle" letter-spacing="1">TRANSACTION COMPLETE</text>
+    
+    <line x1="40" y1="150" x2="360" y2="150" stroke="#f3e8ff" stroke-width="1.5" stroke-dasharray="6,4" />
+    
+    <text x="40" y="185" font-family="monospace" font-size="13" font-weight="bold" fill="#581c87">PAYEE ACCOUNT:</text>
+    <text x="360" y="185" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#1e1b4b" text-anchor="end">ToLo Delivery Merchant</text>
+    
+    <text x="40" y="225" font-family="monospace" font-size="13" font-weight="bold" fill="#581c87">REFERENCE ID:</text>
+    <text x="360" y="225" font-family="monospace" font-size="13" font-weight="bold" fill="#1e1b4b" text-anchor="end">${ref}</text>
+    
+    <text x="40" y="265" font-family="monospace" font-size="13" font-weight="bold" fill="#581c87">TRANSACTION DATE:</text>
+    <text x="360" y="265" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" fill="#1e1b4b" text-anchor="end">${timestamp}</text>
+    
+    <text x="40" y="305" font-family="monospace" font-size="13" font-weight="bold" fill="#581c87">STATUS:</text>
+    <text x="360" y="305" font-family="system-ui, sans-serif" font-size="12" font-weight="extrabold" fill="#15803d" text-anchor="end">SUCCESSFUL / CLEARED</text>
+    
+    <line x1="40" y1="340" x2="360" y2="340" stroke="#f3e8ff" stroke-width="1.5" stroke-dasharray="6,4" />
+    
+    <rect x="40" y="365" width="320" height="75" fill="#faf5ff" rx="10" stroke="#e9d5ff" stroke-width="1" />
+    <text x="60" y="395" font-family="system-ui, sans-serif" font-size="14" font-weight="bold" fill="#6b21a8">Total Sent Amount</text>
+    <text x="340" y="415" font-family="system-ui, sans-serif" font-size="28" font-weight="900" fill="#581c87" text-anchor="end">${amount} ETB</text>
+    
+    <circle cx="200" cy="485" r="30" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-dasharray="5,2" />
+    <text x="200" y="489" font-family="system-ui, sans-serif" font-size="10" font-weight="900" fill="#8b5cf6" text-anchor="middle">VERIFIED</text>
+  </svg>`;
+  return "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svg)));
+};
+
+export const ensureBase64DataURL = (
+  value: string | undefined,
+  amount: number | string = "350.00",
+  reference: string = "TXN-982172A",
+  method: string = "telebirr"
+): string => {
+  if (value && value.startsWith("data:image/")) {
+    return value;
+  }
+  const amountStr = typeof amount === "number" ? amount.toFixed(2) : amount;
+  const timestamp = new Date().toLocaleString();
+  if (method.toLowerCase().includes("cbe")) {
+    return getCbeReceiptSVG(amountStr, reference, timestamp);
+  } else {
+    return getTelebirrReceiptSVG(amountStr, reference, timestamp);
+  }
+};
 
 export default function App() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -181,7 +274,17 @@ export default function App() {
   >("telebirr");
   const [bankTxRef, setBankTxRef] = useState("CBE-TX-9281729A");
   const [payerPhone, setPayerPhone] = useState("");
-  const [receiptPhoto, setReceiptPhoto] = useState<string>("");
+  const [receiptPhoto, _setReceiptPhoto] = useState<string>("");
+  const setReceiptPhoto = (photoUrl: string) => {
+    console.log("[MOBILE/DESKTOP TRACE] setReceiptPhoto is invoked!");
+    console.log("[MOBILE/DESKTOP TRACE] Raw type & length of photoUrl:", photoUrl ? `${typeof photoUrl} (len: ${photoUrl.length})` : "empty");
+    if (photoUrl) {
+      console.log("[MOBILE/DESKTOP TRACE] Value starts with:", photoUrl.substring(0, 150) + "...");
+    } else {
+      console.log("[MOBILE/DESKTOP TRACE] Value is falsy/cleared");
+    }
+    _setReceiptPhoto(photoUrl);
+  };
   const [isAmharic, setIsAmharic] = useState<boolean>(true);
 
   // Sync payerPhone with profile phone only when opening the modal, and default to blank if it's default dummy phone
@@ -222,10 +325,61 @@ export default function App() {
     }
   }, [orders, paymentDraftOrderId, paymentStep, isAmharic]);
 
+  // Persistent Drivers management state
+  const [drivers, setDrivers] = useState<Driver[]>(() => {
+    try {
+      const saved = localStorage.getItem("tolo_drivers");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.error("Error reading drivers from local storage:", e);
+    }
+    // Seed default drivers
+    return [
+      {
+        id: "DRV-102",
+        name: "Almaz Demeke",
+        phone: "0912112233",
+        plateNumber: "AA-B33045",
+        status: "Online",
+        totalEarnings: 120.00,
+        totalDeliveries: 3,
+        todayEarnings: 0.00,
+        earningsHistory: [
+          { orderId: "1001", amount: 40.00, timestamp: "06/26/2026, 05:30 PM", deliveryFee: 100 },
+          { orderId: "1002", amount: 40.00, timestamp: "06/26/2026, 06:15 PM", deliveryFee: 100 },
+          { orderId: "1003", amount: 40.00, timestamp: "06/26/2026, 07:45 PM", deliveryFee: 100 },
+        ],
+      },
+      {
+        id: "DRV-405",
+        name: "Bekele Abebe",
+        phone: "0916454545",
+        plateNumber: "AA-C89112",
+        status: "Online",
+        totalEarnings: 80.00,
+        totalDeliveries: 2,
+        todayEarnings: 0.00,
+        earningsHistory: [
+          { orderId: "1004", amount: 40.00, timestamp: "06/26/2026, 04:00 PM", deliveryFee: 100 },
+          { orderId: "1005", amount: 40.00, timestamp: "06/26/2026, 08:30 PM", deliveryFee: 100 },
+        ],
+      },
+    ];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("tolo_drivers", JSON.stringify(drivers));
+  }, [drivers]);
+
   // View Control: On mobile, users can toggle panes if side-by-side is crowded
   const [currentPane, setCurrentPane] = useState<
-    "consumer" | "admin" | "tracking"
+    "consumer" | "admin" | "tracking" | "driver"
   >("consumer");
+
+  const [isMenuOpen, setIsMenuOpen] = useState(true);
 
   // Fetch menu from backend on load
   const loadMenu = async () => {
@@ -801,6 +955,11 @@ export default function App() {
             const remainingBalance = 0.00; // Zero remaining balance
             const txId = `TXN-${Math.floor(100000 + Math.random() * 900000)}`;
 
+            const finalReceiptPhoto = ensureBase64DataURL(receiptPhoto, advancePaid, txId, "Telebirr / CBE Birr");
+            console.log(`[DIAGNOSTIC SAVE] Order ID: ${orderDraftId}`);
+            console.log(`[DIAGNOSTIC SAVE] receiptPhoto.length: ${finalReceiptPhoto.length}`);
+            console.log(`[DIAGNOSTIC SAVE] first 50 chars of order.paymentDetails.receiptPhoto: ${finalReceiptPhoto.substring(0, 50)}`);
+
             const tempOrder: Order = {
               id: orderDraftId,
               rawText: text,
@@ -828,7 +987,7 @@ export default function App() {
                 method: "Telebirr / CBE Birr",
                 reference: txId,
                 timestamp: new Date().toLocaleString(),
-                receiptPhoto: receiptPhoto,
+                receiptPhoto: finalReceiptPhoto,
               },
             };
 
@@ -1193,6 +1352,17 @@ export default function App() {
           ? `CBE Birr Wallet [To: ${destinationDetail}]`
           : `Commercial Bank of Ethiopia (CBE) [To: ${destinationDetail}]`;
 
+    const finalReceiptPhoto = ensureBase64DataURL(
+      receiptPhoto,
+      advancePaid,
+      txId,
+      paymentType === "telebirr" ? "Telebirr" : "CBE"
+    );
+
+    console.log(`[DIAGNOSTIC SAVE] Order ID: ${draftId}`);
+    console.log(`[DIAGNOSTIC SAVE] receiptPhoto.length: ${finalReceiptPhoto.length}`);
+    console.log(`[DIAGNOSTIC SAVE] first 50 chars of order.paymentDetails.receiptPhoto: ${finalReceiptPhoto.substring(0, 50)}`);
+
     // Bind the final profile details exactly to this active order and mark status as "Payment Pending Verification"
     setOrders((prev) =>
       prev.map((o) => {
@@ -1220,9 +1390,7 @@ export default function App() {
                     : "CBE Bank Account",
               reference: txId,
               timestamp: new Date().toLocaleString(),
-              receiptPhoto:
-                receiptPhoto ||
-                "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=500&auto=format&fit=crop&q=60",
+              receiptPhoto: finalReceiptPhoto,
             },
           };
         }
@@ -1343,8 +1511,6 @@ export default function App() {
 
     setReceiptPhoto("");
     setActiveTrackingOrderId(draftId);
-    setPaymentDraftOrderId(null);
-    setCurrentPane("tracking");
   };
 
   // User discarded/cancelled the draft summary
@@ -1376,6 +1542,21 @@ export default function App() {
 
   // Track state progress on Map Component
   const handleStatusChange = (
+    orderId: string,
+    status: OrderStatus,
+    progress: number,
+  ) => {
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id === orderId) {
+          return { ...o, status, progress };
+        }
+        return o;
+      }),
+    );
+  };
+
+  const handleUpdateOrderStatus = (
     orderId: string,
     status: OrderStatus,
     progress: number,
@@ -1559,8 +1740,160 @@ export default function App() {
     ]);
   };
 
+  const handleDriverAcceptOrder = (orderId: string, driverId: string) => {
+    const timestampStr = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const driver = drivers.find((d) => d.id === driverId);
+    if (!driver) return;
+
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id === orderId) {
+          return {
+            ...o,
+            status: "driver_accepted" as OrderStatus,
+            isDriverAccepted: true,
+            progress: 25,
+            driverId: driver.id,
+            driverName: driver.name,
+            driverPhone: driver.phone,
+          };
+        }
+        return o;
+      }),
+    );
+
+    setDrivers((prev) =>
+      prev.map((d) => {
+        if (d.id === driverId) {
+          return { ...d, status: "Busy" as const };
+        }
+        return d;
+      }),
+    );
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: "msg_sys_accept_" + Date.now(),
+        sender: "bot",
+        text: `🛵 *RIDER ON WAY!* ✅\n\nYour driver *${driver.name}* (ID: ${driver.id}) has ACCEPTED the ticket and is currently at the partner store picking up your warm meals. Kitchen status: Preparing! Live GPS tracking is now online!`,
+        timestamp: timestampStr,
+        type: "tracking_link",
+        trackingOrderId: orderId,
+      },
+    ]);
+  };
+
+  const handleDriverRejectOrder = (orderId: string, driverId: string) => {
+    const timestampStr = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const driver = drivers.find((d) => d.id === driverId);
+
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id === orderId) {
+          return {
+            ...o,
+            status: "pending" as OrderStatus,
+            isDriverAssigned: false,
+            isDriverAccepted: false,
+            driverId: "",
+            driverName: "",
+            driverPhone: "",
+            progress: 15,
+          };
+        }
+        return o;
+      }),
+    );
+
+    setDrivers((prev) =>
+      prev.map((d) => {
+        if (d.id === driverId) {
+          return { ...d, status: "Online" as const };
+        }
+        return d;
+      }),
+    );
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: "msg_sys_reject_" + Date.now(),
+        sender: "system",
+        text: `⚠️ *RIDER DECLINED:* Driver *${driver?.name || "Rider"}* declined delivery ticket #${orderId}. Re-routing to available dispatcher queue...`,
+        timestamp: timestampStr,
+      },
+    ]);
+  };
+
+  const handleDriverCompleteOrder = (orderId: string, driverId: string, earnings: number) => {
+    const timestampStr = new Date().toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const dateStr = new Date().toLocaleString();
+    const order = orders.find((o) => o.id === orderId);
+    if (!order) return;
+
+    setOrders((prev) =>
+      prev.map((o) => {
+        if (o.id === orderId) {
+          return {
+            ...o,
+            status: "completed" as OrderStatus,
+            progress: 100,
+          };
+        }
+        return o;
+      }),
+    );
+
+    setDrivers((prev) =>
+      prev.map((d) => {
+        if (d.id === driverId) {
+          const updatedHistory = [
+            ...d.earningsHistory,
+            {
+              orderId,
+              amount: earnings,
+              timestamp: dateStr,
+              deliveryFee: order.deliveryFee || 100,
+            },
+          ];
+          return {
+            ...d,
+            status: "Online" as const,
+            totalEarnings: d.totalEarnings + earnings,
+            todayEarnings: d.todayEarnings + earnings,
+            totalDeliveries: d.totalDeliveries + 1,
+            earningsHistory: updatedHistory,
+          };
+        }
+        return d;
+      }),
+    );
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: "msg_sys_delivered_" + Date.now(),
+        sender: "bot",
+        text: `🎉 *DELIVERY COMPLETED!* 🛵\n\nYour driver *${order.driverName}* confirmed safe arrival and handoff of your order *#${orderId}*! Thank you for choosing ቶሎ/Tolo Delivery! Bon appétit! 🍽️`,
+        timestamp: timestampStr,
+      },
+    ]);
+  };
+
   const activeTrackingOrderDetails =
     orders.find((o) => o.id === activeTrackingOrderId) || null;
+
+  const showFullScreenMiniApp = isMenuOpen && currentPane === "consumer";
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-850 selection:bg-orange-100 flex flex-col justify-between">
@@ -1607,7 +1940,7 @@ export default function App() {
                   Live GPS Tracker (
                   {
                     orders.filter(
-                      (o) => o.status === "preparing" || o.status === "driving",
+                      (o) => o.status === "preparing" || o.status === "driving" || o.status === "driver_accepted",
                     ).length
                   }
                   )
@@ -1621,22 +1954,26 @@ export default function App() {
                 <Settings2 className="w-3.5 h-3.5 text-slate-600" />
                 <span>Kitchen Console</span>
               </button>
+              <button
+                id="pane-trigger-driver"
+                onClick={() => setCurrentPane("driver")}
+                className={`py-1.5 px-3 rounded-lg font-medium transition flex items-center gap-1.5 cursor-pointer ${currentPane === "driver" ? "bg-white text-slate-950 shadow-sm font-semibold" : "text-slate-500 hover:text-slate-800"}`}
+              >
+                <Bike className="w-3.5 h-3.5 text-amber-600" />
+                <span>Driver Portal</span>
+              </button>
             </div>
           </div>
         </div>
       </header>
 
       {/* Main Sandbox Workspace area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
+      <main className={`flex-1 w-full mx-auto min-h-0 ${showFullScreenMiniApp ? "max-w-none px-0 py-0 flex flex-col h-[calc(100vh-76px)] overflow-hidden" : "max-w-7xl px-4 py-6"}`}>
         {/* Strategic business overview block */}
-        <ExplanationAlert onAutoPlaceOrder={handleSendMessage} />
+        {!showFullScreenMiniApp && <ExplanationAlert onAutoPlaceOrder={handleSendMessage} />}
 
-        {/* Responsive Layout Layout grid: Dual screen on desktop, tabbed switch on mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-2">
-          {/* LEFT PANEL: Telegram Simulator - ALWAYS visible on lg desktop, toggled on mobile */}
-          <div
-            className={`col-span-1 lg:col-span-5 ${currentPane === "consumer" ? "block" : "hidden lg:block"}`}
-          >
+        {showFullScreenMiniApp ? (
+          <div className="w-full h-full flex flex-col min-h-0 flex-1">
             <TelegramSimulator
               messages={messages}
               isParsing={isParsing}
@@ -1657,15 +1994,57 @@ export default function App() {
               onLanguageChange={setIsAmharic}
               orders={orders}
               onUpdateProfile={(profile) => setCustomerProfile(profile)}
+              isMenuOpen={isMenuOpen}
+              onMenuOpenChange={setIsMenuOpen}
             />
           </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-2">
+            {/* LEFT PANEL: Telegram Simulator - ALWAYS visible on lg desktop, toggled on mobile */}
+            <div
+              className={`col-span-1 lg:col-span-5 ${currentPane === "consumer" ? "block" : "hidden lg:block"}`}
+            >
+              <TelegramSimulator
+                messages={messages}
+                isParsing={isParsing}
+                onSendMessage={handleSendMessage}
+                onConfirmOrder={handleConfirmOrder}
+                onCancelOrder={handleCancelOrder}
+                onSelectTrackOrder={(id) => {
+                  setActiveTrackingOrderId(id);
+                  setCurrentPane("tracking");
+                }}
+                activeOrder={activeTrackingOrderDetails}
+                customerProfile={customerProfile}
+                onOpenProfileModal={() => setIsProfileModalOpen(true)}
+                menuItems={menuItems}
+                receiptPhoto={receiptPhoto}
+                onReceiptPhotoChange={setReceiptPhoto}
+                isAmharic={isAmharic}
+                onLanguageChange={setIsAmharic}
+                orders={orders}
+                onUpdateProfile={(profile) => setCustomerProfile(profile)}
+                isMenuOpen={isMenuOpen}
+                onMenuOpenChange={setIsMenuOpen}
+              />
+            </div>
 
           {/* RIGHT PANEL: Live GPS simulator or Admin Console - toggled based on currentPane status */}
           <div
             className={`col-span-1 lg:col-span-12 lg:col-span-7 ${currentPane !== "consumer" ? "block" : "hidden lg:block"}`}
           >
-            {/* If tracking is primary or user confirmed order */}
-            {currentPane === "tracking" ||
+            {/* If driver pane is chosen */}
+            {currentPane === "driver" ? (
+              <DriverPortal
+                orders={orders}
+                drivers={drivers}
+                onAcceptOrder={handleDriverAcceptOrder}
+                onRejectOrder={handleDriverRejectOrder}
+                onCompleteOrder={handleDriverCompleteOrder}
+                onUpdateDrivers={setDrivers}
+                onUpdateOrderStatus={handleUpdateOrderStatus}
+              />
+            ) : currentPane === "tracking" ||
             (currentPane !== "admin" && orders.length > 0) ? (
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
@@ -1719,10 +2098,13 @@ export default function App() {
                 setCustomTunnelUrl={setCustomTunnelUrl}
                 tunnelType={tunnelType}
                 setTunnelType={setTunnelType}
+                drivers={drivers}
+                onUpdateDrivers={setDrivers}
               />
             )}
           </div>
         </div>
+        )}
       </main>
 
       {/* PROFILE SETUP MODAL DIALOG */}
@@ -2304,11 +2686,24 @@ export default function App() {
 
                           {receiptPhoto ? (
                             <div className="space-y-2">
-                              <div className="relative border border-slate-200 bg-white rounded-xl p-1.5 max-h-[140px] flex items-center justify-center overflow-hidden shadow-xs">
+                              <div className="relative border border-slate-200 bg-white rounded-xl p-1.5 flex items-center justify-center shadow-xs w-full max-w-full">
+                                {(() => {
+                                  console.log(
+                                    "[MOBILE/DESKTOP RENDER] App.tsx customer preview receiptPhoto is:",
+                                    receiptPhoto
+                                  );
+                                  return null;
+                                })()}
                                 <img
                                   src={receiptPhoto}
                                   alt="Payment Receipt"
-                                  className="max-h-[120px] rounded-lg object-contain"
+                                  className="rounded-lg"
+                                  style={{
+                                    width: "100%",
+                                    maxWidth: "100%",
+                                    height: "auto",
+                                    objectFit: "contain",
+                                  }}
                                   referrerPolicy="no-referrer"
                                 />
                                 <button
@@ -2363,7 +2758,7 @@ export default function App() {
                                     type="button"
                                     onClick={() =>
                                       setReceiptPhoto(
-                                        "https://images.unsplash.com/photo-1554415707-6e8cfc93fe23?w=500&auto=format&fit=crop&q=60",
+                                        ensureBase64DataURL("", "350.00", "TXN-982172A", "telebirr")
                                       )
                                     }
                                     className="text-[9.5px] bg-slate-50 hover:bg-white text-slate-800 font-bold border border-slate-205 px-2 py-1.5 rounded-lg text-center truncate cursor-pointer transition shadow-3xs"
@@ -2374,7 +2769,7 @@ export default function App() {
                                     type="button"
                                     onClick={() =>
                                       setReceiptPhoto(
-                                        "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=500&auto=format&fit=crop&q=60",
+                                        ensureBase64DataURL("", "350.00", "CBE-TX-92817", "cbe")
                                       )
                                     }
                                     className="text-[9.5px] bg-slate-50 hover:bg-white text-slate-800 font-bold border border-slate-205 px-2 py-1.5 rounded-lg text-center truncate cursor-pointer transition shadow-3xs"
@@ -2574,19 +2969,40 @@ export default function App() {
                     <span className="text-[9.5px] font-bold text-slate-500 uppercase tracking-wider block">
                       Attached Payment Picture:
                     </span>
-                    <div className="relative border border-slate-150 bg-white rounded-lg p-1 max-h-[85px] max-w-[140px] mx-auto flex items-center justify-center overflow-hidden shadow-2xs">
-                      {receiptPhoto ? (
-                        <img
-                          src={receiptPhoto}
-                          alt="Submitted Receipt Thumbnail"
-                          className="max-h-[75px] rounded object-contain"
-                          referrerPolicy="no-referrer"
-                        />
-                      ) : (
-                        <span className="text-[10px] text-slate-400 italic">
-                          No image attached
-                        </span>
-                      )}
+                    <div className="relative border border-slate-150 bg-white rounded-lg p-1 max-w-[140px] mx-auto flex items-center justify-center shadow-2xs w-full">
+                      {(() => {
+                        const targetOrder = orders.find((o) => o.id === paymentDraftOrderId);
+                        const specificReceiptPhoto = targetOrder?.paymentDetails?.receiptPhoto;
+                        if (!specificReceiptPhoto) {
+                          return (
+                            <span className="text-[10px] text-slate-400 italic">
+                              No image attached
+                            </span>
+                          );
+                        }
+                        return (
+                          <>
+                            {(() => {
+                              console.log(`[DIAGNOSTIC RENDER] Order ID: ${targetOrder?.id}`);
+                              console.log(`[DIAGNOSTIC RENDER] receiptPhoto.length: ${specificReceiptPhoto.length}`);
+                              console.log(`[DIAGNOSTIC RENDER] first 50 chars of order.paymentDetails.receiptPhoto: ${specificReceiptPhoto.substring(0, 50)}`);
+                              return null;
+                            })()}
+                            <img
+                              src={specificReceiptPhoto}
+                              alt="Submitted Receipt Thumbnail"
+                              className="rounded"
+                              style={{
+                                width: "100%",
+                                maxWidth: "100%",
+                                height: "auto",
+                                objectFit: "contain",
+                              }}
+                              referrerPolicy="no-referrer"
+                            />
+                          </>
+                        );
+                      })()}
                     </div>
                     <span className="text-[10px] text-slate-600 block leading-tight mt-1.5 font-bold">
                       Reference Code:{" "}

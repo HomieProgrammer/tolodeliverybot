@@ -142,6 +142,26 @@ export default function LiveTrackingView({
     Math.ceil(order.etaMinutes * (1 - order.progress / 100)),
   );
 
+  // Compute real-time driver GPS coordinates based on order status and progress
+  let destLat = 9.0250;
+  let destLng = 38.7750;
+  if (order.deliveryAddress && order.deliveryAddress.includes("Shared GPS Location")) {
+    const match = order.deliveryAddress.match(/Shared GPS Location \(([\d\.]+)° N,\s*([\d\.]+)° E\)/);
+    if (match) {
+      destLat = parseFloat(match[1]);
+      destLng = parseFloat(match[2]);
+    }
+  }
+  const startLat = 9.0122;
+  const startLng = 38.7500;
+  
+  const progressPct = order.status === "preparing" ? 0 : (order.progress - 30) * (100 / 70);
+  const cappedProgress = Math.max(0, Math.min(100, progressPct));
+  const interpolationPct = cappedProgress / 100;
+  
+  const currentLat = (startLat + (destLat - startLat) * interpolationPct).toFixed(5);
+  const currentLng = (startLng + (destLng - startLng) * interpolationPct).toFixed(5);
+
   return (
     <div
       id="active-tracker-container"
@@ -493,19 +513,24 @@ export default function LiveTrackingView({
       {/* Driver and Address Info */}
       <div className="bg-slate-50 border-t border-slate-100 p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-150">
-          <div className="w-10 h-10 bg-orange-50 rounded-full flex items-center justify-center text-[#E0560B] font-bold">
+          <div className="w-10 h-10 bg-orange-50 rounded-full flex items-center justify-center text-[#E0560B] font-bold shrink-0">
             {order.driverName ? order.driverName.charAt(0) : "?"}
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <span className="text-[10px] text-slate-400 block font-mono uppercase font-bold">
-              Assigned Rider
+              Assigned Rider & GPS Telemetry
             </span>
-            <span className="text-sm font-bold text-slate-800 block">
+            <span className="text-sm font-bold text-slate-800 block truncate">
               {order.driverName || "No driver assigned yet"}
             </span>
-            <span className="text-xs text-slate-500 font-mono italic">
+            <span className="text-xs text-slate-500 font-mono block italic">
               {order.driverPhone || "Awaiting administrative dispatch"}
             </span>
+            {order.isDriverAssigned && (
+              <span className="text-[10px] bg-emerald-50 text-emerald-750 font-mono font-bold px-1.5 py-0.5 rounded mt-1 inline-block border border-emerald-150">
+                📍 GPS Lat/Lng: {currentLat}° N, {currentLng}° E (Shared Device Link)
+              </span>
+            )}
           </div>
         </div>
 
