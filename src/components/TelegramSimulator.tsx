@@ -5206,13 +5206,14 @@ export default function TelegramSimulator({
 
       {/* Telegram Wallpaper Background & Message Feed */}
       <div
-        className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#e7ebf0]"
+        className="flex-1 overflow-y-auto p-4 bg-[#e7ebf0]"
         style={{
           backgroundImage: "radial-gradient(#d3dbcd 0.5px, transparent 0.5px)",
           backgroundSize: "10px 10px",
         }}
       >
-        {messages.map((msg) => {
+        <div className="min-h-full flex flex-col justify-end gap-3">
+          {messages.map((msg) => {
           const isUser = msg.sender === "user";
           const isBot = msg.sender === "bot";
           const isSystem = msg.sender === "system";
@@ -6049,6 +6050,7 @@ export default function TelegramSimulator({
         )}
 
         <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {/* Unified Single Action bot-keyboard button to set customer detail preferences, phone, location AND choice details */}

@@ -136,6 +136,7 @@ export default function App() {
       `Status: Awaiting Payment Verification`;
     console.log("TELEGRAM MESSAGE:", messageText);
 
+    console.log("BEFORE TELEGRAM FETCH");
     fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -144,7 +145,10 @@ export default function App() {
         text: messageText,
       }),
     })
-      .then((res) => res.json())
+      .then((response) => {
+        console.log(response);
+        return response.json();
+      })
       .then((data) => {
         if (data.ok) {
           console.log(
@@ -894,20 +898,25 @@ export default function App() {
                 `🆔 *Order ID:* #${orderDraftId}\n\n` +
                 `⚠️ *Action:* Please log in to your Kitchen Dashboard to verify payment and assign a driver.`;
 
+              console.log("BEFORE TELEGRAM FETCH");
               fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   chat_id: operatorChatId,
                   text: alertPayload,
-                  parse_mode: "Markdown",
                 }),
-              }).catch((netErr) => {
-                console.error(
-                  "Failed to post custom order notification to Telegram Bot API:",
-                  netErr,
-                );
-              });
+              })
+                .then((response) => {
+                  console.log(response);
+                  return response.json();
+                })
+                .catch((netErr) => {
+                  console.error(
+                    "Failed to post custom order notification to Telegram Bot API:",
+                    netErr,
+                  );
+                });
             }
 
             setReceiptPhoto(""); // Reset the state screenshot so subsequent custom orders don't bleed-over
@@ -1262,10 +1271,15 @@ export default function App() {
     }
 
     // Dispatch real-time Telegram alert message to operator
+    console.log("[DIAGNOSTIC] Checking Telegram credentials before sending payment notification...");
+    console.log("[DIAGNOSTIC] botToken length:", botToken ? botToken.length : 0);
+    console.log("[DIAGNOSTIC] operatorChatId:", operatorChatId);
+    
     if (
       botToken &&
       operatorChatId
     ) {
+      console.log("[DIAGNOSTIC] block entered! Both botToken and operatorChatId are truthy.");
       const itemsListText = targetOrder
         ? targetOrder.items
             .map(
@@ -1289,17 +1303,23 @@ export default function App() {
         `💵 *Method:* ${methodLabel}\n\n` +
         `⚠️ *Action:* Please log in to your Kitchen Dashboard to verify payment and assign a driver.`;
 
+      console.log('PAYMENT TELEGRAM ALERT SENT', draftId);
+      console.log("BEFORE TELEGRAM FETCH");
       fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: operatorChatId,
           text: alertPayload,
-          parse_mode: "Markdown",
         }),
       })
-        .then((r) => r.json())
+        .then((response) => {
+          console.log("[DIAGNOSTIC] Fetch complete. Status:", response.status, response.statusText);
+          return response.json();
+        })
         .then((data) => {
+          console.log('TELEGRAM RESPONSE', data);
+          console.log('[DIAGNOSTIC] Full Telegram API response JSON:', JSON.stringify(data, null, 2));
           if (data.ok) {
             console.log(
               "Successfully transmitted operator dispatch to chat ID:",
@@ -1313,6 +1333,7 @@ export default function App() {
           }
         })
         .catch((netErr) => {
+          console.error("[DIAGNOSTIC] Network error occurred during Telegram API call:", netErr);
           console.error(
             "Failed to post payload warning to Telegram Bot API:",
             netErr,
@@ -1483,6 +1504,7 @@ export default function App() {
       botToken &&
       operatorChatId
     ) {
+      console.log("BEFORE TELEGRAM FETCH");
       fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1491,9 +1513,14 @@ export default function App() {
           text: `🚖 *DRIVER TERMINAL NOTIFICATION* 📢\n\n${driverPayload}`,
           parse_mode: "Markdown",
         }),
-      }).catch((err) =>
-        console.error("Error dispatching to driver chat:", err),
-      );
+      })
+        .then((response) => {
+          console.log(response);
+          return response.json();
+        })
+        .catch((err) =>
+          console.error("Error dispatching to driver chat:", err),
+        );
     }
   };
 
