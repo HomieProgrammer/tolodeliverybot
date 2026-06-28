@@ -400,7 +400,7 @@ export default function AdminDashboard({
                   </div>
                 ) : (
                   <div className="space-y-6">
-                    {/* SECTION 1: PENDING PAYMENTS */}
+                    {/* QUEUE 1: PENDING PAYMENT VERIFICATION */}
                     {(() => {
                       const items = orders.filter(
                         (o) => o.status === "payment_pending",
@@ -413,7 +413,7 @@ export default function AdminDashboard({
                                 className={`w-2.5 h-2.5 rounded-full bg-amber-500 ${items.length > 0 ? "animate-ping" : ""}`}
                               />
                               <h5 className="font-bold text-xs text-slate-800 uppercase tracking-wider">
-                                1. Pending Payments ({items.length})
+                                1. Pending Payment Verification ({items.length})
                               </h5>
                             </div>
                             <span className="text-[10px] bg-amber-55 text-amber-700 font-mono font-bold px-2 py-0.5 rounded border border-amber-200 uppercase">
@@ -423,8 +423,7 @@ export default function AdminDashboard({
 
                           {items.length === 0 ? (
                             <p className="text-xs text-slate-400 py-2 italic font-sans">
-                              No customer receipts are currently awaiting
-                              verification.
+                              No customer receipts are currently awaiting verification.
                             </p>
                           ) : (
                             <div className="space-y-3">
@@ -485,12 +484,6 @@ export default function AdminDashboard({
 
                                   {order.paymentDetails?.receiptPhoto && (
                                     <div className="space-y-1 font-sans">
-                                      {(() => {
-                                        console.log(`[DIAGNOSTIC RENDER] Order ID: ${order.id}`);
-                                        console.log(`[DIAGNOSTIC RENDER] receiptPhoto.length: ${order.paymentDetails?.receiptPhoto?.length || 0}`);
-                                        console.log(`[DIAGNOSTIC RENDER] first 50 chars of order.paymentDetails.receiptPhoto: ${order.paymentDetails?.receiptPhoto?.substring(0, 50) || ""}`);
-                                        return null;
-                                      })()}
                                       <span className="text-[10px] font-bold text-[#E0560B] uppercase tracking-wider block">
                                         📷 Uploaded Proof Receipt (Screenshot):
                                       </span>
@@ -521,16 +514,14 @@ export default function AdminDashboard({
                                       className="text-[11px] bg-rose-50 hover:bg-rose-100 active:bg-rose-250 text-rose-700 border border-rose-205 font-bold py-2.5 px-3 rounded-xl shadow-3xs transition-all cursor-pointer flex items-center justify-center gap-1.5 font-sans"
                                       id={`btn-reject-${order.id}`}
                                     >
-                                      <X className="w-3.5 h-3.5" /> Cancel /
-                                      Reject Order
+                                      <X className="w-3.5 h-3.5" /> Cancel / Reject Order
                                     </button>
                                     <button
                                       onClick={() => onVerifyPayment(order.id)}
                                       className="text-[11px] bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-850 text-white font-bold py-2.5 px-3 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1.5 font-sans"
                                       id={`btn-approve-${order.id}`}
                                     >
-                                      <Check className="w-3.5 h-3.5 font-bold" />{" "}
-                                      Approve Order
+                                      <Check className="w-3.5 h-3.5 font-bold" /> Approve Order
                                     </button>
                                   </div>
                                 </div>
@@ -541,10 +532,10 @@ export default function AdminDashboard({
                       );
                     })()}
 
-                    {/* SECTION 2: DRIVER ASSIGNMENTS */}
+                    {/* QUEUE 2: AWAITING DRIVER ASSIGNMENT */}
                     {(() => {
                       const items = orders.filter(
-                        (o) => o.status === "pending" && o.isPaymentVerified,
+                        (o) => o.isPaymentVerified && !o.isDriverAssigned && o.status !== "completed" && o.status !== "cancelled",
                       );
                       return (
                         <div className="bg-slate-50/75 border border-slate-200 rounded-2xl p-4">
@@ -554,7 +545,7 @@ export default function AdminDashboard({
                                 className={`w-2.5 h-2.5 rounded-full bg-blue-500 ${items.length > 0 ? "animate-ping" : ""}`}
                               />
                               <h5 className="font-bold text-xs text-slate-800 uppercase tracking-wider">
-                                2. Driver Assignments ({items.length})
+                                2. Awaiting Driver Assignment ({items.length})
                               </h5>
                             </div>
                             <span className="text-[10px] bg-blue-55 text-blue-700 font-mono font-bold px-2 py-0.5 rounded border border-blue-200 uppercase">
@@ -618,188 +609,152 @@ export default function AdminDashboard({
                                     </div>
 
                                     {/* Form assignment fields */}
-                                    {!order.isDriverAssigned ? (
-                                      <div className="border border-slate-150 p-3 rounded-lg space-y-3 bg-slate-50/30">
-                                        <div className="flex justify-between items-center pb-1">
-                                          <span className="text-[10.5px] font-bold text-slate-700 uppercase tracking-wide">
-                                            Assign Driver:
+                                    <div className="border border-slate-150 p-3 rounded-lg space-y-3 bg-slate-50/30">
+                                      <div className="flex justify-between items-center pb-1">
+                                        <span className="text-[10.5px] font-bold text-slate-700 uppercase tracking-wide">
+                                          Assign Driver:
+                                        </span>
+
+                                        {/* Fast Presets button */}
+                                        <div className="flex flex-wrap gap-1.5">
+                                          <span className="text-[9px] text-slate-400 self-center font-mono">
+                                            Presets:
                                           </span>
-
-                                          {/* Fast Presets button */}
-                                          <div className="flex flex-wrap gap-1.5">
-                                            <span className="text-[9px] text-slate-400 self-center font-mono">
-                                              Presets:
-                                            </span>
-                                            <button
-                                              type="button"
-                                              onClick={() => {
-                                                setDriverAssignments(
-                                                  (prev) => ({
-                                                    ...prev,
-                                                    [order.id]: {
-                                                      name: "Almaz Demeke",
-                                                      id: "DRV-102",
-                                                      phone: "0912112233",
-                                                    },
-                                                  }),
-                                                );
-                                              }}
-                                              className="bg-orange-50 hover:bg-orange-100 text-[#E0560B] text-[9px] font-bold px-2 py-0.5 rounded border border-orange-200 transition cursor-pointer"
-                                            >
-                                              🚴 Almaz
-                                            </button>
-                                            <button
-                                              type="button"
-                                              onClick={() => {
-                                                setDriverAssignments(
-                                                  (prev) => ({
-                                                    ...prev,
-                                                    [order.id]: {
-                                                      name: "Bekele Abebe",
-                                                      id: "DRV-405",
-                                                      phone: "0916454545",
-                                                    },
-                                                  }),
-                                                );
-                                              }}
-                                              className="bg-orange-50 hover:bg-orange-100 text-[#E0560B] text-[9px] font-bold px-2 py-0.5 rounded border border-orange-200 transition cursor-pointer"
-                                            >
-                                              🛵 Bekele
-                                            </button>
-                                          </div>
-                                        </div>
-
-                                        {/* Registered Drivers list select */}
-                                        <div className="bg-white p-2 text-xs rounded border border-slate-200 space-y-1">
-                                          <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
-                                            Quick Assign Registered Rider
-                                          </span>
-                                          <select
-                                            onChange={(e) => {
-                                              const selected = drivers.find(d => d.id === e.target.value);
-                                              if (selected) {
-                                                setDriverAssignments(
-                                                  (prev) => ({
-                                                    ...prev,
-                                                    [order.id]: {
-                                                      name: selected.name,
-                                                      id: selected.id,
-                                                      phone: selected.phone,
-                                                    },
-                                                  }),
-                                                );
-                                              }
-                                            }}
-                                            value={assignState.id || ""}
-                                            className="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 p-1 rounded font-semibold cursor-pointer"
-                                          >
-                                            <option value="">-- Choose Driver --</option>
-                                            {drivers.map((d) => (
-                                              <option key={d.id} value={d.id}>
-                                                {d.name} ({d.status})
-                                              </option>
-                                            ))}
-                                          </select>
-                                        </div>
-
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                          <div>
-                                            <label className="text-[10px] text-slate-400 font-bold block mb-1">
-                                              Rider Name
-                                            </label>
-                                            <input
-                                              type="text"
-                                              placeholder="e.g. Almaz"
-                                              value={assignState.name}
-                                              onChange={(e) =>
-                                                setDriverAssignments(
-                                                  (prev) => ({
-                                                    ...prev,
-                                                    [order.id]: {
-                                                      ...assignState,
-                                                      name: e.target.value,
-                                                    },
-                                                  }),
-                                                )
-                                              }
-                                              className="w-full bg-white border border-slate-200 px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#E0560B] rounded"
-                                            />
-                                          </div>
-                                          <div>
-                                            <label className="text-[10px] text-slate-400 font-bold block mb-1">
-                                              Rider Phone
-                                            </label>
-                                            <input
-                                              type="text"
-                                              placeholder="e.g. +251 091..."
-                                              value={assignState.phone}
-                                              onChange={(e) =>
-                                                setDriverAssignments(
-                                                  (prev) => ({
-                                                    ...prev,
-                                                    [order.id]: {
-                                                      ...assignState,
-                                                      phone: e.target.value,
-                                                    },
-                                                  }),
-                                                )
-                                              }
-                                              className="w-full bg-white border border-slate-200 px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#E0560B] rounded font-mono"
-                                            />
-                                          </div>
-                                        </div>
-
-                                        <div className="flex justify-end pt-1">
                                           <button
                                             type="button"
-                                            disabled={!canSubmit}
-                                            onClick={() =>
-                                              onAssignDriver(
-                                                order.id,
-                                                assignState,
-                                              )
-                                            }
-                                            className="bg-[#E0560B] hover:bg-[#C24103] disabled:bg-slate-200 disabled:text-slate-400 text-white text-[10px] font-bold px-4 py-1.5 rounded transition cursor-pointer"
+                                            onClick={() => {
+                                              setDriverAssignments(
+                                                (prev) => ({
+                                                  ...prev,
+                                                  [order.id]: {
+                                                    name: "Almaz Demeke",
+                                                    id: "DRV-102",
+                                                    phone: "0912112233",
+                                                  },
+                                                }),
+                                              );
+                                            }}
+                                            className="bg-orange-50 hover:bg-orange-100 text-[#E0560B] text-[9px] font-bold px-2 py-0.5 rounded border border-orange-200 transition cursor-pointer"
                                           >
-                                            🚖 Assign & Notify Driver
+                                            🚴 Almaz
+                                          </button>
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              setDriverAssignments(
+                                                (prev) => ({
+                                                  ...prev,
+                                                  [order.id]: {
+                                                    name: "Bekele Abebe",
+                                                    id: "DRV-405",
+                                                    phone: "0916454545",
+                                                  },
+                                                }),
+                                              );
+                                            }}
+                                            className="bg-orange-50 hover:bg-orange-100 text-[#E0560B] text-[9px] font-bold px-2 py-0.5 rounded border border-orange-200 transition cursor-pointer"
+                                          >
+                                            🛵 Bekele
                                           </button>
                                         </div>
                                       </div>
-                                    ) : (
-                                      <div className="bg-orange-50/50 border border-orange-200/30 rounded-lg p-3 space-y-2 text-xs flex flex-col sm:flex-row justify-between items-start sm:items-center">
+
+                                      {/* Registered Drivers list select */}
+                                      <div className="bg-white p-2 text-xs rounded border border-slate-200 space-y-1">
+                                        <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
+                                          Quick Assign Registered Rider
+                                        </span>
+                                        <select
+                                          onChange={(e) => {
+                                            const selected = drivers.find(d => d.id === e.target.value);
+                                            if (selected) {
+                                              setDriverAssignments(
+                                                (prev) => ({
+                                                  ...prev,
+                                                  [order.id]: {
+                                                    name: selected.name,
+                                                    id: selected.id,
+                                                    phone: selected.phone,
+                                                  },
+                                                }),
+                                              );
+                                            }
+                                          }}
+                                          value={assignState.id || ""}
+                                          className="w-full bg-slate-50 border border-slate-200 text-xs text-slate-800 p-1 rounded font-semibold cursor-pointer"
+                                        >
+                                          <option value="">-- Choose Driver --</option>
+                                          {drivers.map((d) => (
+                                            <option key={d.id} value={d.id}>
+                                              {d.name} ({d.status})
+                                            </option>
+                                          ))}
+                                        </select>
+                                      </div>
+
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                         <div>
-                                          <span className="text-[10px] text-[#E0560B] block uppercase font-mono font-bold">
-                                            Assigned delivery partner:
-                                          </span>
-                                          <span className="text-slate-800 font-bold font-sans text-xs">
-                                            {order.driverName}
-                                            {order.driverId
-                                              ? ` (ID: ${order.driverId})`
-                                              : ""}
-                                          </span>
-                                          <span className="text-slate-500 block font-mono text-[11px]">
-                                            {order.driverPhone}
-                                          </span>
+                                          <label className="text-[10px] text-slate-400 font-bold block mb-1">
+                                            Rider Name
+                                          </label>
+                                          <input
+                                            type="text"
+                                            placeholder="e.g. Almaz"
+                                            value={assignState.name}
+                                            onChange={(e) =>
+                                              setDriverAssignments(
+                                                (prev) => ({
+                                                  ...prev,
+                                                  [order.id]: {
+                                                    ...assignState,
+                                                    name: e.target.value,
+                                                  },
+                                                }),
+                                              )
+                                            }
+                                            className="w-full bg-white border border-slate-200 px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#E0560B] rounded"
+                                          />
                                         </div>
-                                        <div className="shrink-0 mt-2 sm:mt-0">
-                                          {!order.isDriverAccepted ? (
-                                            <button
-                                              onClick={() =>
-                                                onDriverAccept(order.id)
-                                              }
-                                              className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold px-3 py-1.5 rounded transition cursor-pointer flex items-center gap-1 animate-pulse"
-                                            >
-                                              🛵 Simulated Driver: Accept
-                                              Delivery Ticket
-                                            </button>
-                                          ) : (
-                                            <span className="text-emerald-700 font-bold text-[11px] flex items-center gap-1 font-mono uppercase bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
-                                              ● Ticket Accepted
-                                            </span>
-                                          )}
+                                        <div>
+                                          <label className="text-[10px] text-slate-400 font-bold block mb-1">
+                                            Rider Phone
+                                          </label>
+                                          <input
+                                            type="text"
+                                            placeholder="e.g. +251 091..."
+                                            value={assignState.phone}
+                                            onChange={(e) =>
+                                              setDriverAssignments(
+                                                (prev) => ({
+                                                  ...prev,
+                                                  [order.id]: {
+                                                    ...assignState,
+                                                    phone: e.target.value,
+                                                  },
+                                                }),
+                                              )
+                                            }
+                                            className="w-full bg-white border border-slate-200 px-2.5 py-1 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#E0560B] rounded font-mono"
+                                          />
                                         </div>
                                       </div>
-                                    )}
+
+                                      <div className="flex justify-end pt-1">
+                                        <button
+                                          type="button"
+                                          disabled={!canSubmit}
+                                          onClick={() =>
+                                            onAssignDriver(
+                                              order.id,
+                                              assignState,
+                                            )
+                                          }
+                                          className="bg-[#E0560B] hover:bg-[#C24103] disabled:bg-slate-200 disabled:text-slate-400 text-white text-[10px] font-bold px-4 py-1.5 rounded transition cursor-pointer"
+                                        >
+                                          🚖 Assign & Notify Driver
+                                        </button>
+                                      </div>
+                                    </div>
                                   </div>
                                 );
                               })}
@@ -809,11 +764,98 @@ export default function AdminDashboard({
                       );
                     })()}
 
-                    {/* SECTION 3: ACTIVE DELIVERIES */}
+                    {/* QUEUE 3: DRIVER ACCEPTED / PREPARING */}
                     {(() => {
                       const items = orders.filter(
-                        (o) =>
-                          o.status === "preparing" || o.status === "driving",
+                        (o) => o.isPaymentVerified && o.isDriverAssigned && (o.status === "driver_accepted" || o.status === "preparing" || o.status === "pending"),
+                      );
+                      return (
+                        <div className="bg-slate-50/75 border border-slate-200 rounded-2xl p-4">
+                          <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-3">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`w-2.5 h-2.5 rounded-full bg-emerald-500 ${items.length > 0 ? "animate-ping" : ""}`}
+                              />
+                              <h5 className="font-bold text-xs text-slate-800 uppercase tracking-wider">
+                                3. Driver Accepted / Preparing ({items.length})
+                              </h5>
+                            </div>
+                            <span className="text-[10px] bg-emerald-50 text-emerald-700 font-mono font-bold px-2 py-0.5 rounded border border-emerald-200 uppercase">
+                              Food Prep / Accepted
+                            </span>
+                          </div>
+
+                          {items.length === 0 ? (
+                            <p className="text-xs text-slate-400 py-2 italic font-sans">
+                              No orders in preparing or driver accepted stage.
+                            </p>
+                          ) : (
+                            <div className="space-y-3">
+                              {items.map((order) => (
+                                <div
+                                  key={order.id}
+                                  className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-3xs space-y-3"
+                                >
+                                  <div className="flex justify-between items-start">
+                                    <div>
+                                      <span className="text-xs font-bold text-[#E0560B] font-mono">
+                                        Order ID: #{order.id}
+                                      </span>
+                                      <p className="text-[10.5px] text-slate-500 mt-0.5">
+                                        Consignee:{" "}
+                                        <strong>{order.customerName}</strong>{" "}
+                                        • Address: {order.deliveryAddress}
+                                      </p>
+                                    </div>
+                                    <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded font-mono">
+                                      {order.status}
+                                    </span>
+                                  </div>
+
+                                  <div className="bg-orange-50/50 border border-orange-200/30 rounded-lg p-3 space-y-2 text-xs flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                                    <div>
+                                      <span className="text-[10px] text-[#E0560B] block uppercase font-mono font-bold">
+                                        Assigned delivery partner:
+                                      </span>
+                                      <span className="text-slate-800 font-bold font-sans text-xs">
+                                        {order.driverName}
+                                        {order.driverId
+                                          ? ` (ID: ${order.driverId})`
+                                          : ""}
+                                      </span>
+                                      <span className="text-slate-500 block font-mono text-[11px]">
+                                        {order.driverPhone}
+                                      </span>
+                                    </div>
+                                    <div className="shrink-0 mt-2 sm:mt-0">
+                                      {!order.isDriverAccepted ? (
+                                        <button
+                                          onClick={() =>
+                                            onDriverAccept(order.id)
+                                          }
+                                          className="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold px-3 py-1.5 rounded transition cursor-pointer flex items-center gap-1 animate-pulse"
+                                        >
+                                          🛵 Simulated Driver: Accept Delivery Ticket
+                                        </button>
+                                      ) : (
+                                        <span className="text-emerald-700 font-bold text-[11px] flex items-center gap-1 font-mono uppercase bg-emerald-50 px-2 py-1 rounded border border-emerald-200">
+                                          ● Ticket Accepted
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+
+                    {/* QUEUE 4: IN TRANSIT */}
+                    {(() => {
+                      const items = orders.filter(
+                        (o) => o.status === "driving",
                       );
                       return (
                         <div className="bg-slate-50/75 border border-slate-200 rounded-2xl p-4">
@@ -823,7 +865,7 @@ export default function AdminDashboard({
                                 className={`w-2.5 h-2.5 rounded-full bg-[#E0560B] ${items.length > 0 ? "animate-ping" : ""}`}
                               />
                               <h5 className="font-bold text-xs text-slate-800 uppercase tracking-wider">
-                                3. Active Deliveries ({items.length})
+                                4. In Transit ({items.length})
                               </h5>
                             </div>
                             <span className="text-[10px] bg-orange-50 text-[#E0560B] font-mono font-bold px-2 py-0.5 rounded border border-orange-200 uppercase">
@@ -888,7 +930,7 @@ export default function AdminDashboard({
                       );
                     })()}
 
-                    {/* SECTION 4: COMPLETED DELIVERIES */}
+                    {/* QUEUE 5: COMPLETED */}
                     {(() => {
                       const items = orders.filter(
                         (o) =>
@@ -900,7 +942,7 @@ export default function AdminDashboard({
                             <div className="flex items-center gap-2">
                               <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
                               <h5 className="font-bold text-xs text-slate-800 uppercase tracking-wider">
-                                4. Completed / Archived ({items.length})
+                                5. Completed / Archived ({items.length})
                               </h5>
                             </div>
                             <span className="text-[10px] bg-slate-100 text-slate-600 font-mono font-bold px-2 py-0.5 rounded border border-slate-200 uppercase">

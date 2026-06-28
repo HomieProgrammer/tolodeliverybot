@@ -137,7 +137,134 @@ export default function App() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isParsing, setIsParsing] = useState<boolean>(false);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersState, setOrdersState] = useState<Order[]>([]);
+
+  // Intercept state updates to synchronize orders to the shared Express backend
+  const setOrders = (updater: Order[] | ((prev: Order[]) => Order[])) => {
+    setOrdersState((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      
+      // Compute differences for accurate diagnostic logs
+      const prevMap = new Map<string, Order>(prev.map(o => [o.id, o]));
+      next.forEach(order => {
+        const prevOrder = prevMap.get(order.id);
+        if (!prevOrder) {
+          console.log("ORDER CREATED", order.id);
+          console.log("ORDER STATUS", order.id, order.status);
+          if (order.driverId) {
+            console.log("DRIVER ASSIGNED", order.id, order.driverId);
+          }
+        } else {
+          if (prevOrder.status !== order.status) {
+            console.log("ORDER STATUS", order.id, order.status);
+          }
+          if (prevOrder.driverId !== order.driverId && order.driverId) {
+            console.log("DRIVER ASSIGNED", order.id, order.driverId);
+          }
+        }
+      });
+      console.log("ACTIVE ORDERS COUNT", next.length);
+
+      fetch("/api/orders/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orders: next }),
+      }).catch((e) => console.error("Error syncing orders to server:", e));
+      return next;
+    });
+  };
+
+  const orders = ordersState;
+
+  // Background polling to synchronize and pull orders from the shared Express backend in real-time
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch("/api/orders");
+        if (res.ok) {
+          const data = (await res.json()) as any[];
+          setOrdersState((prev) => {
+            // Merge local and server state to avoid overwriting newer details on either side
+            const prevMap = new Map<string, Order>(prev.map(o => [o.id, o]));
+            const dataMap = new Map<string, any>(data.map((o: any) => [o.id, o]));
+            const allIds = Array.from(new Set([...prev.map(o => o.id), ...data.map((o: any) => o.id)]));
+            
+            const statusOrder = {
+              'pending': 1,
+              'payment_pending': 2,
+              'preparing': 3,
+              'driver_accepted': 4,
+              'driving': 5,
+              'completed': 6,
+              'cancelled': 7
+            };
+
+            let changed = false;
+            const mergedList = allIds.map(id => {
+              const lo = prevMap.get(id);
+              const so = dataMap.get(id) as any;
+              if (!lo) {
+                changed = true;
+                return so;
+              }
+              if (!so) return lo;
+
+              const loStatusVal = statusOrder[lo.status as keyof typeof statusOrder] || 0;
+              const soStatusVal = statusOrder[so.status as keyof typeof statusOrder] || 0;
+
+              const isStatusNewerOnServer = soStatusVal > loStatusVal;
+              const isDriverAssignedOnServer = so.driverId && !lo.driverId;
+              const isPaymentVerifiedOnServer = so.isPaymentVerified && !lo.isPaymentVerified;
+              const hasNewReceiptPhotoOnServer = so.paymentDetails?.receiptPhoto && !lo.paymentDetails?.receiptPhoto;
+
+              if (isStatusNewerOnServer || isDriverAssignedOnServer || isPaymentVerifiedOnServer || hasNewReceiptPhotoOnServer || JSON.stringify(lo) !== JSON.stringify(so)) {
+                changed = true;
+                const merged = { ...lo, ...so };
+                if (loStatusVal > soStatusVal) {
+                  merged.status = lo.status;
+                  merged.progress = lo.progress;
+                }
+                return merged;
+              }
+              return lo;
+            });
+
+            if (changed || prev.length !== mergedList.length) {
+              // Print diagnostic logs for polling changes as well
+              const prevMapLog = new Map<string, Order>(prev.map(o => [o.id, o]));
+              mergedList.forEach((order: any) => {
+                const prevOrder = prevMapLog.get(order.id);
+                if (!prevOrder) {
+                  console.log("ORDER CREATED", order.id);
+                  console.log("ORDER STATUS", order.id, order.status);
+                  if (order.driverId) {
+                    console.log("DRIVER ASSIGNED", order.id, order.driverId);
+                  }
+                } else {
+                  if (prevOrder.status !== order.status) {
+                    console.log("ORDER STATUS", order.id, order.status);
+                  }
+                  if (prevOrder.driverId !== order.driverId && order.driverId) {
+                    console.log("DRIVER ASSIGNED", order.id, order.driverId);
+                  }
+                }
+              });
+              console.log("ACTIVE ORDERS COUNT", mergedList.length);
+              return mergedList;
+            }
+            return prev;
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch orders from server:", err);
+      }
+    };
+
+    fetchOrders();
+    const interval = setInterval(fetchOrders, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   const [activeTrackingOrderId, setActiveTrackingOrderId] = useState<
     string | null
   >(null);
@@ -326,7 +453,7 @@ export default function App() {
   }, [orders, paymentDraftOrderId, paymentStep, isAmharic]);
 
   // Persistent Drivers management state
-  const [drivers, setDrivers] = useState<Driver[]>(() => {
+  const [driversState, setDriversState] = useState<Driver[]>(() => {
     try {
       const saved = localStorage.getItem("tolo_drivers");
       if (saved) {
@@ -370,9 +497,79 @@ export default function App() {
     ];
   });
 
+  const setDrivers = (updater: Driver[] | ((prev: Driver[]) => Driver[])) => {
+    setDriversState((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      localStorage.setItem("tolo_drivers", JSON.stringify(next));
+      fetch("/api/drivers/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ drivers: next }),
+      }).catch((e) => console.error("Error syncing drivers to server:", e));
+      return next;
+    });
+  };
+
+  const drivers = driversState;
+
+  // Background polling to synchronize and pull drivers from the shared Express backend in real-time
   useEffect(() => {
-    localStorage.setItem("tolo_drivers", JSON.stringify(drivers));
-  }, [drivers]);
+    const fetchDrivers = async () => {
+      try {
+        const res = await fetch("/api/drivers");
+        if (res.ok) {
+          const data = (await res.json()) as any[];
+          setDriversState((prev) => {
+            const prevMap = new Map<string, Driver>(prev.map(d => [d.id, d]));
+            let changed = false;
+            const mergedList = data.map((sd: any) => {
+              const ld = prevMap.get(sd.id);
+              if (!ld) {
+                changed = true;
+                return sd;
+              }
+              const mergedHistory = [...ld.earningsHistory];
+              if (Array.isArray(sd.earningsHistory)) {
+                sd.earningsHistory.forEach((item: any) => {
+                  if (!mergedHistory.some((h: any) => h.orderId === item.orderId)) {
+                    mergedHistory.push(item);
+                  }
+                });
+              }
+              const totalDeliveries = Math.max(ld.totalDeliveries, sd.totalDeliveries, mergedHistory.length);
+              const totalEarnings = mergedHistory.reduce((sum, item) => sum + item.amount, 0);
+
+              const merged = {
+                ...ld,
+                ...sd,
+                totalDeliveries,
+                totalEarnings,
+                earningsHistory: mergedHistory
+              };
+
+              if (JSON.stringify(ld) !== JSON.stringify(merged)) {
+                changed = true;
+                return merged;
+              }
+              return ld;
+            });
+
+            if (changed || prev.length !== mergedList.length) {
+              localStorage.setItem("tolo_drivers", JSON.stringify(mergedList));
+              return mergedList;
+            }
+            return prev;
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch drivers from server:", err);
+      }
+    };
+
+    fetchDrivers();
+    const interval = setInterval(fetchDrivers, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   // View Control: On mobile, users can toggle panes if side-by-side is crowded
   const [currentPane, setCurrentPane] = useState<

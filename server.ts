@@ -95,6 +95,149 @@ app.post("/api/admin/menu/reset", (req, res) => {
   res.json({ success: true, menu: currentMenu });
 });
 
+// In-memory backend database of orders for real-time synchronization
+let activeOrders: any[] = [];
+
+// API: Get all synchronized orders
+app.get("/api/orders", (req, res) => {
+  res.json(activeOrders);
+});
+
+// API: Synchronize/merge client-side orders with server state
+app.post("/api/orders/sync", (req, res) => {
+  const { orders } = req.body;
+  if (Array.isArray(orders)) {
+    orders.forEach((co: any) => {
+      const idx = activeOrders.findIndex(o => o.id === co.id);
+      if (idx === -1) {
+        activeOrders.push(co);
+      } else {
+        const so = activeOrders[idx];
+        const statusOrder = {
+          'pending': 1,
+          'payment_pending': 2,
+          'preparing': 3,
+          'driver_accepted': 4,
+          'driving': 5,
+          'completed': 6,
+          'cancelled': 7
+        };
+        const coStatusVal = statusOrder[co.status as keyof typeof statusOrder] || 0;
+        const soStatusVal = statusOrder[so.status as keyof typeof statusOrder] || 0;
+
+        // Perform smart merge
+        const merged = { ...so, ...co };
+
+        // Retain the higher status progress
+        if (soStatusVal > coStatusVal) {
+          merged.status = so.status;
+          merged.progress = so.progress;
+        }
+
+        // Retain driver assignment if it exists on the server
+        if (so.driverId && !co.driverId) {
+          merged.driverId = so.driverId;
+          merged.driverName = so.driverName;
+          merged.driverPhone = so.driverPhone;
+          merged.isDriverAssigned = so.isDriverAssigned;
+          merged.isDriverAccepted = so.isDriverAccepted;
+        }
+
+        // Retain payment verification if verified on the server
+        if (so.isPaymentVerified && !co.isPaymentVerified) {
+          merged.isPaymentVerified = so.isPaymentVerified;
+        }
+
+        // Retain receipt photo if uploaded on the server
+        if (so.paymentDetails?.receiptPhoto && !co.paymentDetails?.receiptPhoto) {
+          merged.paymentDetails = {
+            ...co.paymentDetails,
+            ...so.paymentDetails
+          };
+        }
+
+        activeOrders[idx] = merged;
+      }
+    });
+  }
+  res.json({ success: true, orders: activeOrders });
+});
+
+// In-memory backend database of drivers for real-time synchronization
+let activeDrivers: any[] = [
+  {
+    id: "DRV-102",
+    name: "Almaz Demeke",
+    phone: "0912112233",
+    plateNumber: "AA-B33045",
+    status: "Online",
+    totalEarnings: 120.00,
+    totalDeliveries: 3,
+    todayEarnings: 0.00,
+    earningsHistory: [
+      { orderId: "1001", amount: 40.00, timestamp: "06/26/2026, 05:30 PM", deliveryFee: 100 },
+      { orderId: "1002", amount: 40.00, timestamp: "06/26/2026, 06:15 PM", deliveryFee: 100 },
+      { orderId: "1003", amount: 40.00, timestamp: "06/26/2026, 07:45 PM", deliveryFee: 100 },
+    ],
+  },
+  {
+    id: "DRV-405",
+    name: "Bekele Abebe",
+    phone: "0916454545",
+    plateNumber: "AA-C89112",
+    status: "Online",
+    totalEarnings: 80.00,
+    totalDeliveries: 2,
+    todayEarnings: 0.00,
+    earningsHistory: [
+      { orderId: "1004", amount: 40.00, timestamp: "06/26/2026, 04:00 PM", deliveryFee: 100 },
+      { orderId: "1005", amount: 40.00, timestamp: "06/26/2026, 08:30 PM", deliveryFee: 100 },
+    ],
+  },
+];
+
+// API: Get all synchronized drivers
+app.get("/api/drivers", (req, res) => {
+  res.json(activeDrivers);
+});
+
+// API: Synchronize/merge client-side drivers with server state
+app.post("/api/drivers/sync", (req, res) => {
+  const { drivers } = req.body;
+  if (Array.isArray(drivers)) {
+    drivers.forEach((cd: any) => {
+      const idx = activeDrivers.findIndex(d => d.id === cd.id);
+      if (idx === -1) {
+        activeDrivers.push(cd);
+      } else {
+        const sd = activeDrivers[idx];
+        
+        // Merge driver earnings history uniquely by orderId
+        const mergedHistory = [...sd.earningsHistory];
+        if (Array.isArray(cd.earningsHistory)) {
+          cd.earningsHistory.forEach((item: any) => {
+            if (!mergedHistory.some((h: any) => h.orderId === item.orderId)) {
+              mergedHistory.push(item);
+            }
+          });
+        }
+        
+        const totalDeliveries = Math.max(sd.totalDeliveries, cd.totalDeliveries, mergedHistory.length);
+        const totalEarnings = mergedHistory.reduce((sum: number, item: any) => sum + item.amount, 0);
+        
+        activeDrivers[idx] = {
+          ...sd,
+          ...cd,
+          totalDeliveries,
+          totalEarnings,
+          earningsHistory: mergedHistory
+        };
+      }
+    });
+  }
+  res.json({ success: true, drivers: activeDrivers });
+});
+
 // API: Parse Order text using gemini-3.5-flash with a fallback rules-based parser
 app.post("/api/parse-order", async (req, res) => {
   const { text } = req.body;
