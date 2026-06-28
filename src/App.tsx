@@ -1896,27 +1896,31 @@ export default function App() {
   const showFullScreenMiniApp = isMenuOpen && currentPane === "consumer";
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-850 selection:bg-orange-100 flex flex-col justify-between">
+    <div className={`bg-slate-50 text-slate-850 selection:bg-orange-100 flex flex-col ${showFullScreenMiniApp ? "h-screen overflow-hidden" : "min-h-screen justify-between"}`}>
       {/* Universal Workspace Header */}
-      <header className="sticky top-0 bg-white border-b border-slate-200 z-30 shadow-sm px-6 py-4">
+      <header className={`sticky top-0 bg-white border-b border-slate-200 z-30 shadow-sm ${showFullScreenMiniApp ? "px-4 py-2" : "px-6 py-4"}`}>
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="p-2.5 bg-[#E0560B] text-white rounded-xl shadow-md shadow-orange-100">
-              <UtensilsCrossed className="w-5 h-5" />
+            <div className={`${showFullScreenMiniApp ? "p-1.5" : "p-2.5"} bg-[#E0560B] text-white rounded-xl shadow-md shadow-orange-100`}>
+              <UtensilsCrossed className={`${showFullScreenMiniApp ? "w-4 h-4" : "w-5 h-5"}`} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-lg text-slate-905 tracking-tight font-sans">
-                  ቶሎ/Tolo Delivery Bot Prototype
+                <span className={`font-bold text-slate-905 tracking-tight font-sans ${showFullScreenMiniApp ? "text-sm" : "text-lg"}`}>
+                  ቶሎ/Tolo Delivery Bot
                 </span>
-                <span className="text-[10px] bg-slate-100 text-slate-600 font-bold border border-slate-200 rounded px-1.5 py-0.2 uppercase font-mono tracking-wide">
-                  Demo Workspace
-                </span>
+                {!showFullScreenMiniApp && (
+                  <span className="text-[10px] bg-slate-100 text-slate-600 font-bold border border-slate-200 rounded px-1.5 py-0.2 uppercase font-mono tracking-wide">
+                    Demo Workspace
+                  </span>
+                )}
               </div>
-              <p className="text-xs text-slate-450 font-sans">
-                Conversational natural-text ordering & custom dispatch for Tolo
-                Delivery
-              </p>
+              {!showFullScreenMiniApp && (
+                <p className="text-xs text-slate-450 font-sans">
+                  Conversational natural-text ordering & custom dispatch for Tolo
+                  Delivery
+                </p>
+              )}
             </div>
           </div>
 
@@ -1928,7 +1932,7 @@ export default function App() {
                 className={`py-1.5 px-3 rounded-lg font-medium transition flex items-center gap-1.5 cursor-pointer ${currentPane === "consumer" ? "bg-white text-slate-950 shadow-sm font-semibold" : "text-slate-500 hover:text-slate-800"}`}
               >
                 <Smartphone className="w-3.5 h-3.5 text-[#E0560B]" />
-                <span>Telegram Bot</span>
+                <span>{showFullScreenMiniApp ? "Bot" : "Telegram Bot"}</span>
               </button>
               <button
                 id="pane-trigger-tracking"
@@ -1937,7 +1941,7 @@ export default function App() {
               >
                 <MapPin className="w-3.5 h-3.5 text-rose-500" />
                 <span>
-                  Live GPS Tracker (
+                  {showFullScreenMiniApp ? "Tracker" : "Live GPS Tracker"} (
                   {
                     orders.filter(
                       (o) => o.status === "preparing" || o.status === "driving" || o.status === "driver_accepted",
@@ -1952,7 +1956,7 @@ export default function App() {
                 className={`py-1.5 px-3 rounded-lg font-medium transition flex items-center gap-1.5 cursor-pointer ${currentPane === "admin" ? "bg-white text-slate-950 shadow-sm font-semibold" : "text-slate-500 hover:text-slate-800"}`}
               >
                 <Settings2 className="w-3.5 h-3.5 text-slate-600" />
-                <span>Kitchen Console</span>
+                <span>{showFullScreenMiniApp ? "Kitchen" : "Kitchen Console"}</span>
               </button>
               <button
                 id="pane-trigger-driver"
@@ -1960,7 +1964,7 @@ export default function App() {
                 className={`py-1.5 px-3 rounded-lg font-medium transition flex items-center gap-1.5 cursor-pointer ${currentPane === "driver" ? "bg-white text-slate-950 shadow-sm font-semibold" : "text-slate-500 hover:text-slate-800"}`}
               >
                 <Bike className="w-3.5 h-3.5 text-amber-600" />
-                <span>Driver Portal</span>
+                <span>{showFullScreenMiniApp ? "Driver" : "Driver Portal"}</span>
               </button>
             </div>
           </div>
@@ -1968,7 +1972,7 @@ export default function App() {
       </header>
 
       {/* Main Sandbox Workspace area */}
-      <main className={`flex-1 w-full mx-auto min-h-0 ${showFullScreenMiniApp ? "max-w-none px-0 py-0 flex flex-col h-[calc(100vh-76px)] overflow-hidden" : "max-w-7xl px-4 py-6"}`}>
+      <main className={`flex-1 w-full mx-auto min-h-0 ${showFullScreenMiniApp ? "max-w-none px-0 py-0 flex flex-col" : "max-w-7xl px-4 py-6"}`}>
         {/* Strategic business overview block */}
         {!showFullScreenMiniApp && <ExplanationAlert onAutoPlaceOrder={handleSendMessage} />}
 
@@ -2949,17 +2953,10 @@ export default function App() {
                     </div>
                     <div className="font-sans">
                       <h4 className="font-bold text-slate-850 text-sm">
-                        Awaiting Owner Verification...
+                        Payment submitted successfully.
                       </h4>
-                      <p className="text-[11px] text-amber-700 font-bold bg-amber-50 rounded-lg p-2 border border-amber-200 mt-1 max-w-sm mx-auto leading-relaxed">
-                        ⏳ Status: Pending Admin Approval
-                      </p>
-                      <p className="text-[11.5px] text-slate-500 mt-2 max-w-xs mx-auto leading-relaxed">
-                        Your payment photo screenshot has been submitted and
-                        shared with the owner.
-                        <strong>Only the administrator</strong> can review and
-                        approve it from the <strong>Kitchen Console</strong>{" "}
-                        dashboard.
+                      <p className="text-[11px] text-amber-700 font-bold bg-amber-50 rounded-lg p-2 border border-amber-200 mt-1.5 max-w-sm mx-auto leading-relaxed">
+                        ⏳ Status: Awaiting admin verification
                       </p>
                     </div>
                   </div>
@@ -3010,39 +3007,6 @@ export default function App() {
                         {bankTxRef || "TXN-AUTO"}
                       </span>
                     </span>
-                  </div>
-
-                  {/* Direct Simulator Action Buttons (Replaces kitchen console simulation guidance text) */}
-                  <div className="p-3 bg-slate-50 border border-slate-205 rounded-xl space-y-2.5 mt-1 shrink-0 font-sans">
-                    <span className="text-[9.5px] font-extrabold text-[#E0560B] uppercase tracking-wider block text-center">
-                      ⚡ Immediate Sandbox Decision Control
-                    </span>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (paymentDraftOrderId) {
-                            handleCancelActiveOrder(paymentDraftOrderId);
-                          }
-                        }}
-                        className="bg-rose-50 hover:bg-rose-100 active:bg-rose-200 text-rose-700 border border-rose-205 text-[11px] font-bold py-2.5 px-3 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1 font-sans"
-                        id="sandbox-btn-cancel"
-                      >
-                        ❌ Cancel Order
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (paymentDraftOrderId) {
-                            handleVerifyPayment(paymentDraftOrderId);
-                          }
-                        }}
-                        className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-[11px] font-bold py-2.5 px-3 rounded-xl shadow-xs transition-all cursor-pointer flex items-center justify-center gap-1 font-sans"
-                        id="sandbox-btn-approve"
-                      >
-                        ✅ Approve Order
-                      </button>
-                    </div>
                   </div>
 
                   {/* Action or Loader */}
@@ -3150,27 +3114,29 @@ export default function App() {
       </AnimatePresence>
 
       {/* Corporate Pitch Footer */}
-      <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 py-6 mt-12 shrink-0">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-light text-center sm:text-left">
-          <div>
-            <span className="block font-bold text-white mb-0.5 tracking-tight font-sans">
-              ቶሎ/Tolo Delivery Logistics Solutions Ltd.
-            </span>
-            <span className="text-slate-400 block max-w-md leading-relaxed text-[11.5px]">
-              Ready-made catalogue integration & semantic order parsing. Powered
-              server-side by modern Antigravity Gemini-3.5 models.
-            </span>
+      {!showFullScreenMiniApp && (
+        <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 py-6 mt-12 shrink-0">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-light text-center sm:text-left">
+            <div>
+              <span className="block font-bold text-white mb-0.5 tracking-tight font-sans">
+                ቶሎ/Tolo Delivery Logistics Solutions Ltd.
+              </span>
+              <span className="text-slate-400 block max-w-md leading-relaxed text-[11.5px]">
+                Ready-made catalogue integration & semantic order parsing. Powered
+                server-side by modern Antigravity Gemini-3.5 models.
+              </span>
+            </div>
+            <div className="text-right">
+              <span className="text-[10px] text-slate-500 block font-mono">
+                Simulated Sandbox Version 1.0.4
+              </span>
+              <span className="text-orange-400 font-semibold block mt-0.5">
+                Perfect for Small Town Hyperlocal Scaling
+              </span>
+            </div>
           </div>
-          <div className="text-right">
-            <span className="text-[10px] text-slate-500 block font-mono">
-              Simulated Sandbox Version 1.0.4
-            </span>
-            <span className="text-orange-400 font-semibold block mt-0.5">
-              Perfect for Small Town Hyperlocal Scaling
-            </span>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }
