@@ -10,7 +10,8 @@ dotenv.config();
 const app = express();
 const PORT = 3000;
 
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 // Initialize Gemini Client
 const apiKey = process.env.GEMINI_API_KEY;
@@ -100,12 +101,26 @@ let activeOrders: any[] = [];
 
 // API: Get all synchronized orders
 app.get("/api/orders", (req, res) => {
+  console.log("GET ORDERS", activeOrders.length);
+  const targetOrder = activeOrders.find(o => o.paymentDetails?.receiptPhoto);
+  const targetId = targetOrder ? targetOrder.id : (activeOrders[0]?.id || "none");
+  console.log("RECEIPT RETURNED TO CLIENT", activeOrders.find(o=>o.id===targetId)?.paymentDetails?.receiptPhoto?.substring(0,200));
+  console.log("SERVER ORDERS", JSON.stringify(activeOrders, null, 2));
+  console.log("GET RESPONSE", JSON.stringify(activeOrders));
   res.json(activeOrders);
 });
 
 // API: Synchronize/merge client-side orders with server state
 app.post("/api/orders/sync", (req, res) => {
+  console.log("REAL ORDER RECEIVED BY SERVER", JSON.stringify(req.body, null, 2));
   const { orders } = req.body;
+  const ordersList = Array.isArray(orders) ? orders : [];
+  console.log("RECEIPT RECEIVED BY SERVER", ordersList[0]?.paymentDetails?.receiptPhoto?.substring(0,200));
+  console.log("SYNC RECEIVED", ordersList.length);
+  console.log("ORDER IDS", ordersList.map((o: any) => o.id));
+  console.log("SYNC REQUEST BODY:", JSON.stringify(req.body));
+  console.log("SYNC ORDERS LENGTH:", ordersList.length);
+  console.log("ACTIVE ORDERS LENGTH BEFORE MERGE:", activeOrders.length);
   if (Array.isArray(orders)) {
     orders.forEach((co: any) => {
       const idx = activeOrders.findIndex(o => o.id === co.id);
@@ -158,8 +173,13 @@ app.post("/api/orders/sync", (req, res) => {
 
         activeOrders[idx] = merged;
       }
+      const targetId = co.id;
+      console.log("SERVER STORED RECEIPT", activeOrders.find(o=>o.id===targetId)?.paymentDetails?.receiptPhoto?.substring(0,200));
     });
   }
+  console.log("ACTIVE ORDERS AFTER MERGE", activeOrders.length);
+  console.log("ACTIVE ORDERS LENGTH AFTER MERGE:", activeOrders.length);
+  console.log(JSON.stringify(activeOrders, null, 2));
   res.json({ success: true, orders: activeOrders });
 });
 

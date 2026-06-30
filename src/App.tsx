@@ -144,6 +144,8 @@ export default function App() {
     setOrdersState((prev) => {
       const next = typeof updater === "function" ? updater(prev) : updater;
       
+      console.log("REAL ORDER SYNC PAYLOAD", JSON.stringify(next, null, 2));
+
       // Compute differences for accurate diagnostic logs
       const prevMap = new Map<string, Order>(prev.map(o => [o.id, o]));
       next.forEach(order => {
@@ -165,6 +167,7 @@ export default function App() {
       });
       console.log("ACTIVE ORDERS COUNT", next.length);
 
+      console.log("SYNCING TO SERVER", next);
       fetch("/api/orders/sync", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -178,11 +181,14 @@ export default function App() {
 
   // Background polling to synchronize and pull orders from the shared Express backend in real-time
   useEffect(() => {
+    console.log("WINDOW ORIGIN:", window.location.origin);
     const fetchOrders = async () => {
       try {
         const res = await fetch("/api/orders");
         if (res.ok) {
-          const data = (await res.json()) as any[];
+          const rawData = await res.json();
+          const data = Array.isArray(rawData) ? rawData : [];
+          console.log("FETCHED FROM SERVER", data);
           setOrdersState((prev) => {
             // Merge local and server state to avoid overwriting newer details on either side
             const prevMap = new Map<string, Order>(prev.map(o => [o.id, o]));
@@ -403,6 +409,7 @@ export default function App() {
   const [payerPhone, setPayerPhone] = useState("");
   const [receiptPhoto, _setReceiptPhoto] = useState<string>("");
   const setReceiptPhoto = (photoUrl: string) => {
+    console.log("RECEIPT UPLOADED", photoUrl?.substring(0,200));
     console.log("[MOBILE/DESKTOP TRACE] setReceiptPhoto is invoked!");
     console.log("[MOBILE/DESKTOP TRACE] Raw type & length of photoUrl:", photoUrl ? `${typeof photoUrl} (len: ${photoUrl.length})` : "empty");
     if (photoUrl) {
@@ -518,7 +525,8 @@ export default function App() {
       try {
         const res = await fetch("/api/drivers");
         if (res.ok) {
-          const data = (await res.json()) as any[];
+          const rawData = await res.json();
+          const data = Array.isArray(rawData) ? rawData : [];
           setDriversState((prev) => {
             const prevMap = new Map<string, Driver>(prev.map(d => [d.id, d]));
             let changed = false;
@@ -1188,7 +1196,8 @@ export default function App() {
               },
             };
 
-            console.log("CREATING ORDER", tempOrder);
+            console.log("REAL ORDER CREATED", JSON.stringify(tempOrder, null, 2));
+            console.log("REAL ORDER BEFORE SAVE", JSON.stringify(tempOrder, null, 2));
 
             setOrders((prev) => {
               const updated = [...prev, tempOrder];
@@ -1336,7 +1345,8 @@ export default function App() {
               progress: 0,
               driverPathIndex: 0,
             };
-            console.log("CREATING ORDER", tempOrder);
+            console.log("REAL ORDER CREATED", JSON.stringify(tempOrder, null, 2));
+            console.log("REAL ORDER BEFORE SAVE", JSON.stringify(tempOrder, null, 2));
             setOrders((prev) => [...prev, tempOrder]);
             sendNewOrderTelegramNotification(tempOrder);
           }
@@ -1463,6 +1473,8 @@ export default function App() {
               progress: 0,
               driverPathIndex: 0,
             };
+            console.log("REAL ORDER CREATED", JSON.stringify(tempOrder, null, 2));
+            console.log("REAL ORDER BEFORE SAVE", JSON.stringify(tempOrder, null, 2));
             setOrders((prev) => [...prev, tempOrder]);
             sendNewOrderTelegramNotification(tempOrder);
 
@@ -1559,6 +1571,41 @@ export default function App() {
     console.log(`[DIAGNOSTIC SAVE] Order ID: ${draftId}`);
     console.log(`[DIAGNOSTIC SAVE] receiptPhoto.length: ${finalReceiptPhoto.length}`);
     console.log(`[DIAGNOSTIC SAVE] first 50 chars of order.paymentDetails.receiptPhoto: ${finalReceiptPhoto.substring(0, 50)}`);
+
+    const targetOrderForLog = orders.find((o) => o.id === draftId);
+    const updatedOrderObj = targetOrderForLog ? {
+      ...targetOrderForLog,
+      status: "payment_pending" as OrderStatus,
+      progress: 5,
+      customerName: customerProfile.name,
+      customerPhone: customerProfile.phone,
+      deliveryAddress: customerProfile.address,
+      pickupAddress: customerProfile.pickupAddress,
+      isPaymentVerified: false,
+      isDriverAssigned: false,
+      isDriverAccepted: false,
+      driverName: "",
+      driverPhone: "",
+      paymentDetails: {
+        amount: advancePaid,
+        method:
+          paymentType === "telebirr"
+            ? "Telebirr"
+            : paymentType === "cbe_birr"
+              ? "CBE Birr"
+              : "CBE Bank Account",
+        reference: txId,
+        timestamp: new Date().toLocaleString(),
+        receiptPhoto: finalReceiptPhoto,
+      },
+    } : null;
+
+    if (updatedOrderObj) {
+      console.log("REAL ORDER CREATED", JSON.stringify(updatedOrderObj, null, 2));
+      console.log("REAL ORDER BEFORE SAVE", JSON.stringify(updatedOrderObj, null, 2));
+      const order = updatedOrderObj;
+      console.log("ORDER RECEIPT BEFORE SAVE", order.paymentDetails?.receiptPhoto?.substring(0,200));
+    }
 
     // Bind the final profile details exactly to this active order and mark status as "Payment Pending Verification"
     setOrders((prev) =>
@@ -2111,6 +2158,45 @@ export default function App() {
                     Demo Workspace
                   </span>
                 )}
+                <button
+                  id="btn-sync-test"
+                  onClick={() => {
+                    const testOrder: Order = {
+                      id: "SYNC_TEST",
+                      rawText: "Test order created from diagnostic console button.",
+                      items: [],
+                      subtotal: 0,
+                      deliveryFee: 100,
+                      tax: 0,
+                      total: 100,
+                      status: "pending",
+                      createdAt: new Date().toISOString(),
+                      customerName: "Sync Test Customer",
+                      customerPhone: "0911223344",
+                      deliveryAddress: "Sync Test Address",
+                      pickupAddress: "ToLo Kitchen",
+                      driverName: "",
+                      driverPhone: "",
+                      isPaymentVerified: false,
+                      isDriverAssigned: false,
+                      isDriverAccepted: false,
+                      etaMinutes: 20,
+                      progress: 0,
+                      driverPathIndex: 0
+                    };
+                    console.log("TRIGGERING SYNC_TEST ORDER");
+                    setOrders((prev) => {
+                      const exists = prev.some(o => o.id === "SYNC_TEST");
+                      if (exists) {
+                        return prev.map(o => o.id === "SYNC_TEST" ? testOrder : o);
+                      }
+                      return [...prev, testOrder];
+                    });
+                  }}
+                  className="text-[10px] bg-red-600 hover:bg-red-700 text-white font-bold rounded px-2 py-0.5 uppercase tracking-wide cursor-pointer transition ml-2"
+                >
+                  📡 Trigger Sync Test
+                </button>
               </div>
               {!showFullScreenMiniApp && (
                 <p className="text-xs text-slate-450 font-sans">

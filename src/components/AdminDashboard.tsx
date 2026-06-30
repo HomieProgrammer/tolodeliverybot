@@ -75,6 +75,42 @@ export default function AdminDashboard({
   drivers,
   onUpdateDrivers,
 }: AdminDashboardProps) {
+  console.log("ADMIN RECEIVED ORDERS", orders.length);
+  console.log("ADMIN ORDER IDS", orders.map(o => o.id));
+
+  const pendingPaymentOrders = orders.filter((o) => (o.status === "payment_pending") || (o.status === "pending" && !o.isPaymentVerified));
+  const awaitingDriverOrders = orders.filter((o) => o.isPaymentVerified && !o.isDriverAssigned && o.status !== "completed" && o.status !== "cancelled");
+  const preparingOrders = orders.filter((o) => o.isPaymentVerified && o.isDriverAssigned && (o.status === "driver_accepted" || o.status === "preparing" || o.status === "pending"));
+  const inTransitOrders = orders.filter((o) => o.status === "driving");
+  const archiveOrders = orders.filter((o) => o.status === "completed" || o.status === "cancelled");
+
+  orders.forEach((o) => {
+    const order = o;
+    console.log("ADMIN RECEIPT SOURCE", order.paymentDetails?.receiptPhoto?.substring(0,200));
+    let queue = "NONE";
+    if ((o.status === "payment_pending") || (o.status === "pending" && !o.isPaymentVerified)) {
+      queue = "Pending Payment Verification";
+    } else if (o.isPaymentVerified && !o.isDriverAssigned && o.status !== "completed" && o.status !== "cancelled") {
+      queue = "Awaiting Driver Assignment";
+    } else if (o.isPaymentVerified && o.isDriverAssigned && (o.status === "driver_accepted" || o.status === "preparing" || o.status === "pending")) {
+      queue = "Driver Accepted / Preparing";
+    } else if (o.status === "driving") {
+      queue = "In Transit";
+    } else if (o.status === "completed" || o.status === "cancelled") {
+      queue = "Archive";
+    }
+    console.log(`ORDER ID: ${o.id}`);
+    console.log(`STATUS: ${o.status}`);
+    console.log(`isPaymentVerified: ${o.isPaymentVerified}`);
+    console.log(`WHICH QUEUE IT WAS ASSIGNED TO: ${queue}`);
+  });
+
+  console.log("PENDING PAYMENT", pendingPaymentOrders);
+  console.log("AWAITING DRIVER", awaitingDriverOrders);
+  console.log("PREPARING", preparingOrders);
+  console.log("IN TRANSIT", inTransitOrders);
+  console.log("ARCHIVE", archiveOrders);
+
   const [activeTab, setActiveTab] = useState<
     "orders" | "metrics" | "bot-setup" | "drivers"
   >("orders");
@@ -403,7 +439,7 @@ export default function AdminDashboard({
                     {/* QUEUE 1: PENDING PAYMENT VERIFICATION */}
                     {(() => {
                       const items = orders.filter(
-                        (o) => o.status === "payment_pending",
+                        (o) => (o.status === "payment_pending") || (o.status === "pending" && !o.isPaymentVerified),
                       );
                       return (
                         <div className="bg-slate-50/75 border border-slate-200 rounded-2xl p-4">
@@ -484,10 +520,15 @@ export default function AdminDashboard({
 
                                   {order.paymentDetails?.receiptPhoto && (
                                     <div className="space-y-1 font-sans">
+                                      {(() => {
+                                        console.log("RECEIPT LENGTH", order.paymentDetails?.receiptPhoto?.length);
+                                        console.log("RECEIPT PREFIX", order.paymentDetails?.receiptPhoto?.substring(0,100));
+                                        return null;
+                                      })()}
                                       <span className="text-[10px] font-bold text-[#E0560B] uppercase tracking-wider block">
                                         📷 Uploaded Proof Receipt (Screenshot):
                                       </span>
-                                      <div className="relative border border-slate-200 rounded-xl p-1 bg-slate-50 flex justify-center items-center shadow-inner w-full max-w-full">
+                                      <div className="relative border-4 border-red-500 rounded-xl p-2 bg-slate-50 flex justify-center items-center shadow-inner w-full max-w-full">
                                         <img
                                           src={
                                             order.paymentDetails.receiptPhoto
@@ -501,6 +542,20 @@ export default function AdminDashboard({
                                             objectFit: "contain",
                                           }}
                                           referrerPolicy="no-referrer"
+                                          onLoad={(e) => {
+                                            const img = e.currentTarget;
+                                            console.log("IMG LOAD SUCCESS");
+                                            console.log("IMG ELEMENT SRC", img.src);
+                                            console.log("IMG NATURAL WIDTH", img.naturalWidth);
+                                            console.log("IMG NATURAL HEIGHT", img.naturalHeight);
+                                          }}
+                                          onError={(e) => {
+                                            const img = e.currentTarget;
+                                            console.log("IMG LOAD ERROR");
+                                            console.log("IMG ELEMENT SRC", img.src);
+                                            console.log("IMG NATURAL WIDTH", img.naturalWidth);
+                                            console.log("IMG NATURAL HEIGHT", img.naturalHeight);
+                                          }}
                                         />
                                       </div>
                                     </div>
