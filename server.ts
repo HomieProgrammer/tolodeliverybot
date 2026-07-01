@@ -96,6 +96,23 @@ app.post("/api/admin/menu/reset", (req, res) => {
   res.json({ success: true, menu: currentMenu });
 });
 
+// API: Get real uploaded mobile screenshot proof receipt as base64
+app.get("/api/admin/receipt-sample", (req, res) => {
+  try {
+    const fs = require("fs");
+    const filePath = path.join(process.cwd(), "src/assets/images/tolo_redesign_screenshot_1781601114642.jpg");
+    if (fs.existsSync(filePath)) {
+      const data = fs.readFileSync(filePath);
+      const base64 = `data:image/jpeg;base64,${data.toString("base64")}`;
+      res.json({ success: true, base64 });
+    } else {
+      res.status(404).json({ success: false, error: "File not found" });
+    }
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // In-memory backend database of orders for real-time synchronization
 let activeOrders: any[] = [];
 
@@ -163,13 +180,20 @@ app.post("/api/orders/sync", (req, res) => {
           merged.isPaymentVerified = so.isPaymentVerified;
         }
 
-        // Retain receipt photo if uploaded on the server
-        if (so.paymentDetails?.receiptPhoto && !co.paymentDetails?.receiptPhoto) {
-          merged.paymentDetails = {
-            ...co.paymentDetails,
-            ...so.paymentDetails
-          };
+        // Smart retain receipt photo: never overwrite a real image (screenshot file) with a generated/placeholder SVG
+        const isRealImage = (src: string | undefined) => src && src.startsWith("data:image/") && !src.startsWith("data:image/svg+xml");
+        const soPhoto = so.paymentDetails?.receiptPhoto;
+        const coPhoto = co.paymentDetails?.receiptPhoto;
+        let finalPhoto = coPhoto || soPhoto;
+        if (isRealImage(soPhoto) && !isRealImage(coPhoto)) {
+          finalPhoto = soPhoto;
         }
+
+        merged.paymentDetails = {
+          ...so.paymentDetails,
+          ...co.paymentDetails,
+          receiptPhoto: finalPhoto
+        };
 
         activeOrders[idx] = merged;
       }

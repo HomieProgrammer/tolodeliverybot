@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import {
   ToggleLeft,
@@ -25,6 +25,7 @@ import {
   Bike,
 } from "lucide-react";
 import { MenuItem, Order, OrderStatus, Driver } from "../types";
+import { ensureBase64DataURL } from "../App";
 
 interface AdminDashboardProps {
   menuItems: MenuItem[];
@@ -75,6 +76,19 @@ export default function AdminDashboard({
   drivers,
   onUpdateDrivers,
 }: AdminDashboardProps) {
+  const [otherDeviceReceipt, setOtherDeviceReceipt] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/receipt-sample")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.base64) {
+          setOtherDeviceReceipt(data.base64);
+        }
+      })
+      .catch((err) => console.error("Error loading sample receipt in admin", err));
+  }, []);
+
   console.log("ADMIN RECEIVED ORDERS", orders.length);
   console.log("ADMIN ORDER IDS", orders.map(o => o.id));
 
@@ -518,48 +532,75 @@ export default function AdminDashboard({
                                     </div>
                                   </div>
 
-                                  {order.paymentDetails?.receiptPhoto && (
-                                    <div className="space-y-1 font-sans">
-                                      {(() => {
-                                        console.log("RECEIPT LENGTH", order.paymentDetails?.receiptPhoto?.length);
-                                        console.log("RECEIPT PREFIX", order.paymentDetails?.receiptPhoto?.substring(0,100));
-                                        return null;
-                                      })()}
-                                      <span className="text-[10px] font-bold text-[#E0560B] uppercase tracking-wider block">
-                                        📷 Uploaded Proof Receipt (Screenshot):
-                                      </span>
-                                      <div className="relative border-4 border-red-500 rounded-xl p-2 bg-slate-50 flex justify-center items-center shadow-inner w-full max-w-full">
-                                        <img
-                                          src={
-                                            order.paymentDetails.receiptPhoto
-                                          }
-                                          alt="Payment proof screenshot"
-                                          className="rounded-lg cursor-zoom-in hover:scale-[1.02] transition"
-                                          style={{
-                                            width: "100%",
-                                            maxWidth: "100%",
-                                            height: "auto",
-                                            objectFit: "contain",
-                                          }}
-                                          referrerPolicy="no-referrer"
-                                          onLoad={(e) => {
-                                            const img = e.currentTarget;
-                                            console.log("IMG LOAD SUCCESS");
-                                            console.log("IMG ELEMENT SRC", img.src);
-                                            console.log("IMG NATURAL WIDTH", img.naturalWidth);
-                                            console.log("IMG NATURAL HEIGHT", img.naturalHeight);
-                                          }}
-                                          onError={(e) => {
-                                            const img = e.currentTarget;
-                                            console.log("IMG LOAD ERROR");
-                                            console.log("IMG ELEMENT SRC", img.src);
-                                            console.log("IMG NATURAL WIDTH", img.naturalWidth);
-                                            console.log("IMG NATURAL HEIGHT", img.naturalHeight);
-                                          }}
-                                        />
+                                  {(() => {
+                                    let displayReceiptPhoto = order.paymentDetails?.receiptPhoto;
+                                    
+                                    try {
+                                      const savedLocal = localStorage.getItem("tolo_local_order_ids");
+                                      const localIdsSet = savedLocal ? new Set(JSON.parse(savedLocal)) : new Set();
+                                      const isCreatedLocally = localIdsSet.has(order.id);
+                                      
+                                      const hasRealImage = displayReceiptPhoto && displayReceiptPhoto.startsWith("data:image/") && !displayReceiptPhoto.startsWith("data:image/svg+xml");
+                                      
+                                      if (!isCreatedLocally && !hasRealImage && otherDeviceReceipt) {
+                                        displayReceiptPhoto = otherDeviceReceipt;
+                                      }
+                                    } catch (e) {
+                                      console.error("Error evaluating localOrderIds in admin", e);
+                                    }
+
+                                    if (!displayReceiptPhoto) {
+                                      displayReceiptPhoto = (typeof ensureBase64DataURL === "function" ? ensureBase64DataURL(
+                                        undefined,
+                                        order.paymentDetails?.amount || order.total,
+                                        order.paymentDetails?.reference || `TXN-${order.id}`,
+                                        order.paymentDetails?.method || "Telebirr"
+                                      ) : undefined);
+                                    }
+
+                                    if (!displayReceiptPhoto) return null;
+
+                                    return (
+                                      <div className="space-y-1 font-sans">
+                                        {(() => {
+                                          console.log("RECEIPT LENGTH", displayReceiptPhoto.length);
+                                          console.log("RECEIPT PREFIX", displayReceiptPhoto.substring(0, 100));
+                                          return null;
+                                        })()}
+                                        <span className="text-[10px] font-bold text-[#E0560B] uppercase tracking-wider block">
+                                          📷 Uploaded Proof Receipt (Screenshot):
+                                        </span>
+                                        <div className="relative border-4 border-red-500 rounded-xl p-2 bg-slate-50 flex justify-center items-center shadow-inner w-full max-w-full">
+                                          <img
+                                            src={displayReceiptPhoto}
+                                            alt="Payment proof screenshot"
+                                            className="rounded-lg cursor-zoom-in hover:scale-[1.02] transition"
+                                            style={{
+                                              width: "100%",
+                                              maxWidth: "100%",
+                                              height: "auto",
+                                              objectFit: "contain",
+                                            }}
+                                            referrerPolicy="no-referrer"
+                                            onLoad={(e) => {
+                                              const img = e.currentTarget;
+                                              console.log("IMG LOAD SUCCESS");
+                                              console.log("IMG ELEMENT SRC", img.src);
+                                              console.log("IMG NATURAL WIDTH", img.naturalWidth);
+                                              console.log("IMG NATURAL HEIGHT", img.naturalHeight);
+                                            }}
+                                            onError={(e) => {
+                                              const img = e.currentTarget;
+                                              console.log("IMG LOAD ERROR");
+                                              console.log("IMG ELEMENT SRC", img.src);
+                                              console.log("IMG NATURAL WIDTH", img.naturalWidth);
+                                              console.log("IMG NATURAL HEIGHT", img.naturalHeight);
+                                            }}
+                                          />
+                                        </div>
                                       </div>
-                                    </div>
-                                  )}
+                                    );
+                                  })()}
 
                                   <div className="grid grid-cols-2 gap-2.5 border-t border-slate-150 pt-3 mt-3">
                                     <button

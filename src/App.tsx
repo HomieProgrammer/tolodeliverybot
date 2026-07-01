@@ -230,6 +230,20 @@ export default function App() {
                   merged.status = lo.status;
                   merged.progress = lo.progress;
                 }
+                if (lo.paymentDetails || so.paymentDetails) {
+                  const isRealImage = (src: string | undefined) => src && src.startsWith("data:image/") && !src.startsWith("data:image/svg+xml");
+                  const loPhoto = lo.paymentDetails?.receiptPhoto;
+                  const soPhoto = so.paymentDetails?.receiptPhoto;
+                  let finalPhoto = soPhoto || loPhoto;
+                  if (isRealImage(loPhoto) && !isRealImage(soPhoto)) {
+                    finalPhoto = loPhoto;
+                  }
+                  merged.paymentDetails = {
+                    ...lo.paymentDetails,
+                    ...so.paymentDetails,
+                    receiptPhoto: finalPhoto
+                  };
+                }
                 return merged;
               }
               return lo;
@@ -3062,6 +3076,25 @@ export default function App() {
                                     className="text-[9.5px] bg-slate-50 hover:bg-white text-slate-800 font-bold border border-slate-205 px-2 py-1.5 rounded-lg text-center truncate cursor-pointer transition shadow-3xs"
                                   >
                                     🧾 CBE Wallet Slip Info
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={async () => {
+                                      try {
+                                        const res = await fetch("/api/admin/receipt-sample");
+                                        if (res.ok) {
+                                          const data = await res.json();
+                                          if (data.success && data.base64) {
+                                            setReceiptPhoto(data.base64);
+                                          }
+                                        }
+                                      } catch (err) {
+                                        console.error("Error loading real mobile receipt", err);
+                                      }
+                                    }}
+                                    className="col-span-2 text-[9.5px] bg-orange-600 hover:bg-orange-700 text-white font-bold border border-orange-500 px-2 py-2 rounded-lg text-center cursor-pointer transition shadow-xs flex items-center justify-center gap-1"
+                                  >
+                                    📸 Upload Real Mobile Receipt Screenshot
                                   </button>
                                 </div>
                               </div>

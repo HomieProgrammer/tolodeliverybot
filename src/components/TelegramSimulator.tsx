@@ -30,6 +30,7 @@ import {
   Compass,
 } from "lucide-react";
 import { ChatMessage, MenuItem, Order, OrderItem } from "../types";
+import sunnyBurgerCover from "../assets/images/sunny_burger_cover_1782895487166.jpg";
 
 interface TelegramSimulatorProps {
   messages: ChatMessage[];
@@ -70,6 +71,12 @@ export const CENTRAL_RESTAURANT_THEMES: Record<string, StoreBrandTheme> = {
     primaryHover: "#166534",
     primaryRgb: "21, 128, 61",
     brandingEmoji: "🌲",
+  },
+  mountain_cafe: {
+    primary: "#0F766E",
+    primaryHover: "#115E59",
+    primaryRgb: "15, 118, 110",
+    brandingEmoji: "☕",
   },
   htown: {
     primary: "#DC2626",
@@ -279,7 +286,7 @@ export const STORE_PAGES = [
     "Sunny burger",
     "YOM BURGERIZZA",
     "Barcon Migb Bet",
-    "Liyu Taim (ልዩ ጣዕም)",
+    "Liyu Taim",
     "Zanzibar kitchen",
     "medi shiro",
     "Lewi piyasa",
@@ -459,6 +466,18 @@ export const getStoreMeta = (storeName: string) => {
   }
 
   if (
+    storeName === "Sunny burger" ||
+    (storeName.toLowerCase().includes("sunny") && storeName.toLowerCase().includes("burger") && !storeName.includes("2"))
+  ) {
+    return {
+      rating: "4.9",
+      deliveryTime: "10-20 min",
+      deliveryFee: "Free Delivery",
+      image: sunnyBurgerCover,
+    };
+  }
+
+  if (
     storeName === "Sunny burger #2" ||
     storeName.toLowerCase().includes("sunny burger #2") ||
     (storeName.toLowerCase().includes("sunny") && storeName.includes("2"))
@@ -502,7 +521,7 @@ export const getStoreMeta = (storeName: string) => {
 
   if (
     storeName === "liyu taim migb bet" ||
-    storeName === "Liyu Taim (ልዩ ጣዕም)" ||
+    storeName === "Liyu Taim" ||
     storeName.toLowerCase().includes("liyu") ||
     storeName.toLowerCase().includes("taim")
   ) {
@@ -837,72 +856,109 @@ export const MOUNTAIN_HOTEL_MENU: Record<string, MountainItem[]> = {
     { name: "Orange Tea", price: 200.0 },
   ],
   Pizza: [
-    { name: "Special Pizza", price: 810.0 },
-    { name: "Fasting Pizza", price: 490.0 },
-    { name: "Special Mini Beef Pizza", price: 520.0 },
+    { name: "Special Pizza", price: 880.0 },
     { name: "Chicken Pizza", price: 820.0 },
-    { name: "Mini beef pizza", price: 480.0 },
-    { name: "Mountain Family Pizza", price: 1100.0 },
-    { name: "Beef Pizza", price: 780.0 },
-    { name: "Tuna Pizza", price: 740.0 },
-    { name: "Margarita Pizza", price: 580.0 },
-    { name: "Al Tuna", price: 730.0 },
+    { name: "MIni SpeciaPizza", price: 580.0 },
+    { name: "Fasting Pizza", price: 500.0 },
   ],
   Sandwich: [
-    { name: "Club Sandwich", price: 690.0 },
-    { name: "Chef's Special Sandwich", price: 730.0 },
-    { name: "Half Club sandwich", price: 550.0 },
-    { name: "Egg Sandwich", price: 350.0 },
-    { name: "Tuna Sandwich", price: 540.0 },
-    { name: "Fasting Sandwich", price: 480.0 },
-    { name: "Vegetable Sandwich", price: 450.0 },
+    { name: "Club Sandwich", price: 680.0 },
+    { name: "Chef's Sandwich", price: 720.0 },
+    { name: "Half Special Sandwich", price: 550.0 },
+    { name: "Half Club Sandwich", price: 550.0 },
+    { name: "Fasting Chips", price: 350.0 },
   ],
   Shawarma: [
     { name: "Special Shawarma", price: 770.0 },
-    { name: "Fasting Shawarma", price: 560.0 },
-    { name: "Beef Shwarma", price: 720.0 },
-    { name: "Normal Chips", price: 290.0 },
-    { name: "Chicken Shawarma", price: 730.0 },
-    { name: "Chicken Burrito", price: 780.0 },
-    { name: "Beef Burrito", price: 680.0 },
-    { name: "Beef Roll", price: 560.0 },
-    { name: "Tuna Shawarma", price: 680.0 },
-    { name: "Tuna Burrito", price: 730.0 },
+    { name: "Half Chicken Shawarma", price: 510.0 },
+    { name: "Half Special Shawarma", price: 530.0 },
+    { name: "Half Beef Shawarma", price: 500.0 },
+    { name: "Special Beef Shawarma", price: 740.0 },
   ],
   Breakfast: [
-    { name: "Beef Loaded Fries", price: 460.0 },
-    { name: "Special ፈጠራ", price: 390.0 },
-    { name: "Special Melewa", price: 380.0 },
-    { name: "Chips Masala", price: 310.0 },
-    { name: "Beef Fajita", price: 700.0 },
-    { name: "Chechebsa", price: 360.0 },
-    { name: "Fasting Salad", price: 380.0 },
-    { name: "Special Beef Salad", price: 530.0 },
-    { name: "Special Chips", price: 370.0 },
+    { name: "Chicken loaded fries", price: 620.0 },
+    { name: "Beef Loaded Fries", price: 500.0 },
   ],
   Burger: [
-    { name: "Special Burger", price: 690.0 },
+    { name: "Special Burger", price: 680.0 },
+    { name: "Half Special Burger", price: 480.0 },
     { name: "Juicy Burger", price: 610.0 },
+    { name: "King Juicy Burger", price: 690.0 },
+    { name: "Double Burger", price: 690.0 },
+    { name: "Double Double Burger", price: 1270.0 },
+    { name: "barbecue burger", price: 600.0 },
     { name: "Cheese Burger", price: 560.0 },
-    { name: "Beef Burger", price: 550.0 },
+    { name: "Normal Burger", price: 550.0 },
     { name: "Chicken Burger", price: 730.0 },
-    { name: "Double cheese Burger", price: 690.0 },
-    { name: "Barbecue Burger", price: 600.0 },
-    { name: "Fasting Burger", price: 460.0 },
+    { name: "Fasting Burger", price: 420.0 },
   ],
   Cake: [
-    { name: "Torta cake 2 killo", price: 1500.0 },
-    { name: "White fores mini cake", price: 150.0 },
-    { name: "Starwberry mini cake", price: 180.0 },
-    { name: "Tekorach", price: 110.0 },
-    { name: "Tekorach", price: 90.0 },
-    { name: "Puncakes", price: 260.0 },
+    { name: "Mini Cake", price: 180.0 },
   ],
-  Chicken: [
-    { name: "Chicken loaded fries", price: 480.0 },
-    { name: "Crispy Fried chicken", price: 770.0 },
-    { name: "Chicken tender", price: 790.0 },
-    { name: "Chicken Wings", price: 790.0 },
+  Fish: [
+    { name: "Fish Chips", price: 580.0 },
+  ],
+};
+
+export const MOUNTAIN_CAFE_MENU: Record<string, MountainItem[]> = {
+  Juice: [
+    { name: "Special Juice", price: 370.0 },
+    { name: "Mango Juice", price: 290.0 },
+    { name: "Avocado Juice", price: 290.0 },
+    { name: "Strawberry Mojito", price: 270.0 },
+    { name: "Strawberry Shake", price: 410.0 },
+    { name: "Macchiato", price: 110.0 },
+    { name: "Sprice Juice", price: 290.0 },
+    { name: "Chocolate Shake", price: 430.0 },
+    { name: "Papaya Juice", price: 290.0 },
+    { name: "Iced late", price: 240.0 },
+    { name: "Pineapple Mojito", price: 270.0 },
+    { name: "Strawberry Smoothie", price: 370.0 },
+    { name: "Lemon Mojito", price: 270.0 },
+    { name: "Orange Tea", price: 200.0 },
+  ],
+  Pizza: [
+    { name: "Special Pizza", price: 880.0 },
+    { name: "Chicken Pizza", price: 820.0 },
+    { name: "MIni SpeciaPizza", price: 580.0 },
+    { name: "Fasting Pizza", price: 500.0 },
+  ],
+  Sandwich: [
+    { name: "Club Sandwich", price: 680.0 },
+    { name: "Chef's Sandwich", price: 720.0 },
+    { name: "Half Special Sandwich", price: 550.0 },
+    { name: "Half Club Sandwich", price: 550.0 },
+    { name: "Fasting Chips", price: 350.0 },
+  ],
+  Shawarma: [
+    { name: "Special Shawarma", price: 770.0 },
+    { name: "Half Chicken Shawarma", price: 510.0 },
+    { name: "Half Special Shawarma", price: 530.0 },
+    { name: "Half Beef Shawarma", price: 500.0 },
+    { name: "Special Beef Shawarma", price: 740.0 },
+  ],
+  Breakfast: [
+    { name: "Chicken loaded fries", price: 620.0 },
+    { name: "Beef Loaded Fries", price: 500.0 },
+  ],
+  Burger: [
+    { name: "Special Burger", price: 680.0 },
+    { name: "Half Special Burger", price: 480.0 },
+    { name: "Juicy Burger", price: 610.0 },
+    { name: "King Juicy Burger", price: 690.0 },
+    { name: "Double Burger", price: 690.0 },
+    { name: "Double Double Burger", price: 1270.0 },
+    { name: "barbecue burger", price: 600.0 },
+    { name: "Cheese Burger", price: 560.0 },
+    { name: "Normal Burger", price: 550.0 },
+    { name: "Chicken Burger", price: 730.0 },
+    { name: "Fasting Burger", price: 420.0 },
+  ],
+  Cake: [
+    { name: "Mini Cake", price: 180.0 },
+  ],
+  Fish: [
+    { name: "Fish Chips", price: 580.0 },
   ],
 };
 
@@ -1247,7 +1303,8 @@ export const BARCON_MENU: Record<string, MountainItem[]> = {
     { name: "Mahberawi 1/2(ማህበራዊ)", price: 1100.0 },
     { name: "Shiro Feses(ሽሮ ፈሰስ)", price: 200.0 },
     { name: "Misir Wet(ምስር ወጥ)", price: 200.0 },
-    { name: "vegetabl With Meat(አትክልት በስጋ)", price: 400.0 },
+    { name: "vegetable With Meat(አትክልት በስጋ) x1", price: 450.0 },
+    { name: "ግማሽ አገልግል(Half Agelgil)", price: 1100.0 },
   ],
   Pasta: [
     { name: "ፓስታ በስጎ", price: 200.0 },
@@ -1296,7 +1353,10 @@ export const MEDI_SHIRO_MENU: Record<string, MountainItem[]> = {
     { name: "Pasta Besugo", price: 180.0 },
   ],
   "Traditional Foods": [{ name: "አትክልት በስጋ", price: 290.0 }],
-  Pasta: [{ name: "ፓስታ በአትክልት", price: 180.0 }],
+  Pasta: [
+    { name: "ፓስታ በአትክልት", price: 180.0 },
+    { name: "ፓስታ በስጋ", price: 290.0 },
+  ],
 };
 
 export const LEWI_PIYASA_MENU: Record<string, MountainItem[]> = {
@@ -1440,7 +1500,7 @@ export const CAFE_9_MENU: Record<string, MountainItem[]> = {
     { name: "Special Pizza", price: 730.0 },
   ],
   Breakfast: [
-    { name: "የፆም ስንድዊች", price: 435.0 },
+    { name: "የፆም ሽፍንፍን", price: 435.0 },
     { name: "French Fries", price: 215.0 },
     { name: "Vegetable Rize", price: 285.0 },
   ],
@@ -1451,6 +1511,7 @@ export const CAFE_9_MENU: Record<string, MountainItem[]> = {
   Fish: [{ name: "Fish cotlet", price: 385.0 }],
   Juice: [{ name: "Special Juice", price: 225.0 }],
   Shawarma: [{ name: "Tuna Wrap", price: 415.0 }],
+  Cake: [{ name: "Torta Cake", price: 1000.0 }],
 };
 
 export const LIYU_TAIM_MENU: Record<string, MountainItem[]> = {
@@ -1475,6 +1536,8 @@ export const LIYU_TAIM_MENU: Record<string, MountainItem[]> = {
   Breakfast: [
     { name: "እንቁላል በስጋ", price: 375.0 },
     { name: "እንቁላል ፍርፍር (Enkulal Firfir)", price: 275.0 },
+    { name: "Normal Firfir", price: 225.0 },
+    { name: "Dabo Firfir (ዳቦ ፍርፍር)", price: 175.0 },
   ],
   Local: [
     { name: "ጥብስ", price: 425.0 },
@@ -1536,7 +1599,7 @@ export const YOM_BURGERIZZA_MENU: Record<string, MountainItem[]> = {
     { name: "Double Burger", price: 730.0 },
     { name: "Cheese Burger", price: 650.0 },
     { name: "Beef Burger", price: 600.0 },
-    { name: "የየም በረገር", price: 450.0 },
+    { name: "fasting burger", price: 450.0 },
     { name: "Fasting Burger", price: 350.0 },
     { name: "Margarita Pizza", price: 690.0 },
   ],
@@ -1549,7 +1612,7 @@ export const YOM_BURGERIZZA_MENU: Record<string, MountainItem[]> = {
     { name: "Tuna With Cheese Pizza", price: 800.0 },
     { name: "Beef Pizza", price: 750.0 },
     { name: "Peperoni Pizza", price: 720.0 },
-    { name: "Mini Special Fasting Pizza", price: 650.0 },
+    { name: "Mini Special Fasting Pizza", price: 610.0 },
     { name: "Fasting Special Pizza", price: 610.0 },
     { name: "Mini Pizza", price: 580.0 },
   ],
@@ -1595,7 +1658,7 @@ export const YOM_BURGERIZZA_MENU: Record<string, MountainItem[]> = {
   Local: [
     { name: "Grilled Goat Tibs", price: 950.0 },
     { name: "Tibs", price: 860.0 },
-    { name: "በዘነ ሽሮ", price: 590.0 },
+    { name: "Bozena Shiro", price: 590.0 },
   ],
 };
 
@@ -1795,6 +1858,13 @@ export const SAFELAND_CAFE_MENU: Record<string, MountainItem[]> = {
     { name: "Chicken Shawarma", price: 630.0 },
   ],
   Breakfast: [{ name: "Special Chips", price: 500.0 }],
+  Sandwich: [
+    { name: "Normal Chips", price: 330.0 },
+    { name: "Chicken Burrito", price: 700.0 },
+    { name: "Club Sandwich", price: 750.0 },
+    { name: "Tuna Sandwich", price: 450.0 },
+    { name: "Vegetable Sandwich", price: 300.0 },
+  ],
 };
 
 export const ADDIS_ASA_MENU: Record<string, MountainItem[]> = {
@@ -1807,7 +1877,6 @@ export const ADDIS_ASA_MENU: Record<string, MountainItem[]> = {
     { name: "እሳ ጥብስ ግማሽ", price: 750.0 },
     { name: "እሳ ዱለት", price: 500.0 },
     { name: "ዓሳ ወጥ", price: 500.0 },
-    { name: "እሳ ዱለት", price: 500.0 },
     { name: "Fish With Vegetab (እሳ በአትክልት)", price: 500.0 },
     { name: "እሳ ጥብስ 1ኪሎ", price: 950.0 },
     { name: "Fish Salad", price: 550.0 },
@@ -1904,15 +1973,16 @@ export const BLISS_COFFEE_MENU: Record<string, MountainItem[]> = {
 };
 
 export const TINA_FAYA_MENU: Record<string, MountainItem[]> = {
-  "Traditional Foods": [
-    { name: "Chukame Betibis(ጨካሜ በትቢስ) with እርጎ", price: 930.0 },
-    { name: "Chukame Betibis(ጨካሜ በትቢስ) without እርጎ", price: 850.0 },
-    { name: "Burissame", price: 630.0 },
-  ],
   Habeshan: [
-    { name: "Chukame Betibis(ጨካሜ በትቢስ) with እርጎ", price: 930.0 },
-    { name: "Chukame Betibis(ጨካሜ በትቢስ) without እርጎ", price: 850.0 },
-    { name: "Burissame", price: 630.0 },
+    { name: "Kitfo", price: 1261.0 },
+    { name: "እሩብ ጥብስ", price: 861.0 },
+    { name: "Dulet", price: 460.0 },
+    { name: "1/4 ሆላንድ", price: 1050.0 },
+    { name: "Tire Siga Erub", price: 850.0 },
+    { name: "Tefersho", price: 650.0 },
+    { name: "Enkulal Besiga", price: 550.0 },
+    { name: "1 Kg Tire Siga", price: 3300.0 },
+    { name: "Special Kitfo", price: 1650.0 },
   ],
 };
 
@@ -2344,6 +2414,7 @@ export default function TelegramSimulator({
     | "stores_p3"
     | "stores_p4"
     | "mountain_hotel_menu"
+    | "mountain_cafe_menu"
     | "htown_menu"
     | "sunny_menu"
     | "rome_menu"
@@ -2404,6 +2475,7 @@ export default function TelegramSimulator({
     | "stores_p3"
     | "stores_p4"
     | "mountain_hotel_menu"
+    | "mountain_cafe_menu"
     | "htown_menu"
     | "sunny_menu"
     | "rome_menu"
@@ -2502,12 +2574,19 @@ export default function TelegramSimulator({
         if (arg) {
           setLocalPickupAddress(arg);
           onSendMessage(`StoreSelected: ${arg}`);
-          if (arg === "Mountain Hotel" || arg === "Mountain cafe") {
+          if (arg === "Mountain Hotel") {
             setTgKeyboard("mountain_hotel_menu");
             setMountainCategory("Juice");
             setMenuPage(0);
             setToastMessage(
               `⛰️ Welcome to Mountain Hotel Live Interactive Menu!`,
+            );
+          } else if (arg === "Mountain cafe") {
+            setTgKeyboard("mountain_cafe_menu");
+            setMountainCategory("Juice");
+            setMenuPage(0);
+            setToastMessage(
+              `☕ Welcome to Mountain cafe Cozy Menu!`,
             );
           } else if (arg === "H-Town Burger") {
             setTgKeyboard("htown_menu");
@@ -2579,14 +2658,14 @@ export default function TelegramSimulator({
             setToastMessage(`🥘 Welcome to Barkon ምግብ ቤት Premium Menu!`);
           } else if (
             arg === "liyu taim migb bet" ||
-            arg === "Liyu Taim (ልዩ ጣዕም)" ||
+            arg === "Liyu Taim" ||
             arg.toLowerCase().includes("liyu") ||
             arg.toLowerCase().includes("taim")
           ) {
             setTgKeyboard("liyu_taim_menu");
             setMountainCategory("Injera");
             setMenuPage(0);
-            setToastMessage(`🥘 Welcome to Liyu Taim (ልዩ ጣዕም) Premium Menu!`);
+            setToastMessage(`🥘 Welcome to Liyu Taim Premium Menu!`);
           } else if (
             arg === "Zanzibar kitchen" ||
             arg.toLowerCase().includes("zanzibar")
@@ -2786,7 +2865,7 @@ export default function TelegramSimulator({
             arg.toLowerCase().includes("faaya")
           ) {
             setTgKeyboard("tina_faya_menu");
-            setMountainCategory("Traditional Foods");
+            setMountainCategory("Habeshan");
             setMenuPage(0);
             setToastMessage(`🥘 Welcome to Tina Faaya Kitfo Premium Menu!`);
           } else if (
@@ -3314,6 +3393,7 @@ export default function TelegramSimulator({
     isInsideWebApp: boolean,
     menuType:
       | "mountain"
+      | "mountain_cafe"
       | "htown"
       | "sunny"
       | "rome"
@@ -3370,7 +3450,9 @@ export default function TelegramSimulator({
     const menuData =
       menuType === "mountain"
         ? MOUNTAIN_HOTEL_MENU
-        : menuType === "htown"
+        : menuType === "mountain_cafe"
+          ? MOUNTAIN_CAFE_MENU
+          : menuType === "htown"
           ? HTOWN_MENU
           : menuType === "sunny"
             ? SUNNY_BURGER_MENU
@@ -3500,7 +3582,19 @@ export default function TelegramSimulator({
                                                                                                                 : YOM_BURGERIZZA_MENU;
 
     const rawCategories =
-      menuType === "yom"
+      menuType === "mountain" || menuType === "mountain_cafe"
+        ? [
+            "All",
+            "Burger",
+            "Shawarma",
+            "Sandwich",
+            "Pizza",
+            "Juice",
+            "Breakfast",
+            "Cake",
+            "Fish",
+          ]
+        : menuType === "yom"
         ? [
             "All",
             "Burger",
@@ -3551,6 +3645,7 @@ export default function TelegramSimulator({
                                 "Fish",
                                 "Juice",
                                 "Shawarma",
+                                "Cake",
                               ]
                             : menuType === "zanzibar"
                               ? [
@@ -3566,11 +3661,12 @@ export default function TelegramSimulator({
                                 ]
                               : menuType === "time_cafe"
                                 ? ["All", "Sandwich", "Pizza", "Burger", "Cake"]
-                                : menuType === "fenet_kitfo" ||
-                                    menuType === "tina_faya" ||
-                                    menuType === "azi_hotel"
-                                  ? ["All", "Traditional Foods", "Habeshan"]
-                                  : menuType === "bekos_pastry"
+                                : menuType === "tina_faya"
+                                  ? ["All", "Habeshan"]
+                                  : menuType === "fenet_kitfo" ||
+                                      menuType === "azi_hotel"
+                                    ? ["All", "Traditional Foods", "Habeshan"]
+                                    : menuType === "bekos_pastry"
                                     ? [
                                         "All",
                                         "Cake",
@@ -3609,6 +3705,7 @@ export default function TelegramSimulator({
                                               "Pizza",
                                               "Shawarma",
                                               "Breakfast",
+                                              "Sandwich",
                                             ]
                                           : menuType === "addis_asa"
                                             ? ["All", "Fish"]
@@ -3745,6 +3842,13 @@ export default function TelegramSimulator({
               ? "ከምርጦቹ ምርጫዎች ይምረጡ (በገጽ 10 እቃዎች)፦"
               : "Select from Mountain Hotel's premium offerings (10 per page):",
           };
+        case "mountain_cafe":
+          return {
+            title: "☕ Mountain cafe Cozy Menu",
+            desc: isAmharic
+              ? "ከካፌው ምርጥ ምርጫዎች ይምረጡ (በገጽ 10 እቃዎች)፦"
+              : "Select from Mountain cafe's cozy offerings (10 per page):",
+          };
         case "htown":
           return {
             title: "🍔 H-Town Burger Premium Menu",
@@ -3803,7 +3907,7 @@ export default function TelegramSimulator({
           };
         case "liyu_taim":
           return {
-            title: "🥘 Liyu Taim (ልዩ ጣዕም) Premium Menu",
+            title: "🥘 Liyu Taim Premium Menu",
             desc: isAmharic
               ? "ከሊዩ ጣዕም ምርጥ ምርጫዎች ይምረጡ (በገጽ 20 እቃዎች)፦"
               : "Select an item to add (20 per page):",
@@ -4138,7 +4242,7 @@ export default function TelegramSimulator({
                                               : menuType === "safeland_cafe"
                                                 ? "SAFELAND CAFE Piasa"
                                                 : menuType === "liyu_taim"
-                                                  ? "Liyu Taim (ልዩ ጣዕም)"
+                                                  ? "Liyu Taim"
                                                   : menuType === "zanzibar"
                                                     ? "Zanzibar kitchen"
                                                     : menuType === "addis_asa"
@@ -4489,7 +4593,7 @@ export default function TelegramSimulator({
                                     : menuType === "cafe_9"
                                       ? "Cafe 9"
                                       : menuType === "liyu_taim"
-                                        ? "Liyu Taim (ልዩ ጣዕም)"
+                                        ? "Liyu Taim"
                                         : menuType === "zanzibar"
                                           ? "Zanzibar kitchen"
                                           : "YOM BURGERIZZA";
@@ -5243,6 +5347,7 @@ export default function TelegramSimulator({
   const currentActiveKey = (() => {
     const activeKbd = isMenuOpen ? webAppKeyboard : tgKeyboard;
     if (activeKbd === "mountain_hotel_menu") return "mountain";
+    if (activeKbd === "mountain_cafe_menu") return "mountain_cafe";
     if (activeKbd === "htown_menu") return "htown";
     if (activeKbd === "sunny_menu") return "sunny";
     if (activeKbd === "rome_menu") return "rome";
@@ -5762,6 +5867,8 @@ export default function TelegramSimulator({
             className={`mt-4 p-3 rounded-2xl space-y-3.5 select-none shadow-3xs border transition-all duration-300 ${
               tgKeyboard === "mountain_hotel_menu"
                 ? "bg-emerald-800/5 border-emerald-500/10"
+                : tgKeyboard === "mountain_cafe_menu"
+                  ? "bg-teal-850/5 border-teal-500/10"
                 : tgKeyboard === "htown_menu"
                   ? "bg-[#E0560B]/5 border-[#E0560B]/10"
                   : tgKeyboard === "sunny_menu"
@@ -5800,6 +5907,7 @@ export default function TelegramSimulator({
             }`}
           >
             {tgKeyboard === "mountain_hotel_menu" ||
+            tgKeyboard === "mountain_cafe_menu" ||
             tgKeyboard === "htown_menu" ||
             tgKeyboard === "sunny_menu" ||
             tgKeyboard === "rome_menu" ||
@@ -5856,7 +5964,9 @@ export default function TelegramSimulator({
                 false,
                 tgKeyboard === "mountain_hotel_menu"
                   ? "mountain"
-                  : tgKeyboard === "htown_menu"
+                  : tgKeyboard === "mountain_cafe_menu"
+                    ? "mountain_cafe"
+                    : tgKeyboard === "htown_menu"
                     ? "htown"
                     : tgKeyboard === "sunny_menu"
                       ? "sunny"
@@ -6489,6 +6599,7 @@ export default function TelegramSimulator({
                       {/* Render the Custom Telegram Bot Menu Keyboard in Web App */}
                       <div className="p-3 bg-white border border-slate-200/85 rounded-2xl space-y-3 select-none shadow-2xs">
                         {webAppKeyboard === "mountain_hotel_menu" ||
+                        webAppKeyboard === "mountain_cafe_menu" ||
                         webAppKeyboard === "htown_menu" ||
                         webAppKeyboard === "sunny_menu" ||
                         webAppKeyboard === "rome_menu" ||
@@ -6538,7 +6649,9 @@ export default function TelegramSimulator({
                             true,
                             webAppKeyboard === "mountain_hotel_menu"
                               ? "mountain"
-                              : webAppKeyboard === "htown_menu"
+                              : webAppKeyboard === "mountain_cafe_menu"
+                                ? "mountain_cafe"
+                                : webAppKeyboard === "htown_menu"
                                 ? "htown"
                                 : webAppKeyboard === "sunny_menu"
                                   ? "sunny"
@@ -6768,10 +6881,7 @@ export default function TelegramSimulator({
                                               onSendMessage(
                                                 `StoreSelected: ${store}`,
                                               );
-                                              if (
-                                                store === "Mountain Hotel" ||
-                                                store === "Mountain cafe"
-                                              ) {
+                                              if (store === "Mountain Hotel") {
                                                 setWebAppKeyboard(
                                                   "mountain_hotel_menu",
                                                 );
@@ -6779,6 +6889,15 @@ export default function TelegramSimulator({
                                                 setMenuPage(0);
                                                 setToastMessage(
                                                   "⛰️ Opening Mountain Hotel Live Interactive Menu!",
+                                                );
+                                              } else if (store === "Mountain cafe") {
+                                                setWebAppKeyboard(
+                                                  "mountain_cafe_menu",
+                                                );
+                                                setMountainCategory("Juice");
+                                                setMenuPage(0);
+                                                setToastMessage(
+                                                  "☕ Opening Mountain cafe Cozy Menu!",
                                                 );
                                               } else if (
                                                 store === "H-Town Burger"
@@ -7097,7 +7216,7 @@ export default function TelegramSimulator({
                                                 store ===
                                                   "liyu taim migb bet" ||
                                                 store ===
-                                                  "Liyu Taim (ልዩ ጣዕም)" ||
+                                                  "Liyu Taim" ||
                                                 store
                                                   .toLowerCase()
                                                   .includes("liyu") ||
@@ -7111,7 +7230,7 @@ export default function TelegramSimulator({
                                                 setMountainCategory("Injera");
                                                 setMenuPage(0);
                                                 setToastMessage(
-                                                  "🥘 Opening Liyu Taim (ልዩ ጣዕም) Premium Menu!",
+                                                  "🥘 Opening Liyu Taim Premium Menu!",
                                                 );
                                               } else if (
                                                 store === "Zanzibar kitchen" ||
@@ -7497,7 +7616,7 @@ export default function TelegramSimulator({
                                                   "tina_faya_menu",
                                                 );
                                                 setMountainCategory(
-                                                  "Traditional Foods",
+                                                  "Habeshan",
                                                 );
                                                 setMenuPage(0);
                                                 setToastMessage(
